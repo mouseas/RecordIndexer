@@ -1,12 +1,22 @@
-package client.dataAccess;
+package shared.dataTransfer;
 
-import java.util.*;
-import shared.dataTransfer.*;
+import java.util.List;
 
-public class Batch{
+import client.dataAccess.FieldOld;
+import client.dataAccess.ProjectOld;
+import client.dataAccess.RecordOld;
+
+public class Batch extends ObjectWithID {
 	
-	public Batch(XferBatch b) {
-		
+	private int projectID;
+	private String imageFilename;
+	private Image image;
+	
+	public Batch(int id, int projectID, String imageFilename) {
+		setID(id);
+		this.projectID = projectID;
+		this.imageFilename = imageFilename;
+		this.image = null;
 	}
 	
 	/**
@@ -55,7 +65,7 @@ public class Batch{
 	 * @param f Field to get the x position of
 	 * @return
 	 */
-	public int getFieldX(Field f) {
+	public int getFieldX(FieldOld f) {
 		return 0;
 	}
 	
@@ -77,7 +87,12 @@ public class Batch{
 	}
 	
 	
-	
-//	private int numRecords;
-//	private List<Field> fields;
 }
+//DROP TABLE batches;
+//CREATE TABLE batches
+//(
+//	id integer not null primary key autoincrement,
+//	project_id integer not null,
+//	filename blob,
+//	foreign key(project_id) references projects(id)
+//);

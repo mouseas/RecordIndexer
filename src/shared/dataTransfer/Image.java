@@ -1,19 +1,28 @@
 package shared.dataTransfer;
 
-import client.dataAccess.Project;
+import client.dataAccess.ProjectOld;
+import java.awt.image.*;
 
 public class Image {
 	
+	private String filename;
+	private Project project;
+	
 	public Image(Project p, String filename) {
-		
+		this.project = p;
+		this.filename = filename;
 	}
 	
-	public Project getProject() {
+	public ProjectOld getProject() {
 		return null;
 	}
 	
-	public void getImage() {
-		
+	public RenderedImage getImage() {
+		return null;
+	}
+	
+	public String getFilename() {
+		return filename;
 	}
 	
 	

@@ -1,11 +1,24 @@
-package client.dataAccess;
+package shared.dataTransfer;
 
-import shared.dataTransfer.*;
+import java.util.*;
 
-public class Project extends DataAccessObject {
+public class Project extends ObjectWithID {
 	
-	public Project(XferProject p) {
-		
+	private String title;
+	private int recordsPerImage;
+	private int firstYCoord;
+	private int fieldHeight;
+	private int numRows;
+	private List<Field> fields;
+	
+	public Project(int id, int recordsPerImage, int firstYCoord, int fieldHeight,
+			int numRows, String title) {
+		setID(id);
+		this.title = title;
+		this.recordsPerImage = recordsPerImage;
+		this.firstYCoord = firstYCoord;
+		this.fieldHeight = fieldHeight;
+		this.numRows = numRows;
 	}
 	
 	/**
@@ -15,7 +28,7 @@ public class Project extends DataAccessObject {
 	 * @return (row height * line number) + y position of first row
 	 */
 	public int getY(int lineNumber) {
-		return 0;
+		return (fieldHeight * lineNumber) + firstYCoord;
 	}
 	
 	/**
@@ -24,7 +37,7 @@ public class Project extends DataAccessObject {
 	 * @return
 	 */
 	public int getRecordsPerImage() {
-		return 0;
+		return numRows;
 	}
 	
 	/**
@@ -32,7 +45,7 @@ public class Project extends DataAccessObject {
 	 * @return
 	 */
 	public int getRowHeight() {
-		return 0;
+		return fieldHeight;
 	}
 	
 	/**
@@ -49,7 +62,7 @@ public class Project extends DataAccessObject {
 	 * @return
 	 */
 	public String getTitle() {
-		return "";
+		return title;
 	}
 	
 	/**
@@ -60,11 +73,4 @@ public class Project extends DataAccessObject {
 	public boolean assignBatch(Batch b) {
 		return false;
 	}
-	
 }
-//id integer not null primary key autoincrement,
-//title varchar(255) not null,
-//records_per_image integer not null,
-//first_y_coord integer not null,
-//width integer not null,
-//record_height integer not null

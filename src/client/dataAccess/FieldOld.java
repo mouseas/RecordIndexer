@@ -3,9 +3,9 @@ package client.dataAccess;
 import java.util.*;
 import shared.dataTransfer.*;
 
-public class Field {
+public class FieldOld {
 	
-	public Field(XferField f) {
+	public FieldOld(Field f) {
 		
 	}
 	
@@ -13,7 +13,7 @@ public class Field {
 	 * Gets the project this field belongs to
 	 * @return
 	 */
-	public Project getProject() {
+	public ProjectOld getProject() {
 		return null;
 	}
 	

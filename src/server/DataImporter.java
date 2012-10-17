@@ -15,23 +15,23 @@ public class DataImporter {
 		
 	}
 	
-	public List<User> importUsers() {
+	public List<UserOld> importUsers() {
 		return null;
 	}
 	
-	public List<Project> importProjects() {
+	public List<ProjectOld> importProjects() {
 		return null;
 	}
 	
-	public List<Batch> importBatches() {
+	public List<BatchOld> importBatches() {
 		return null;
 	}
 	
-	public List<Field> importFields() {
+	public List<FieldOld> importFields() {
 		return null;
 	}
 	
-	public List<Record> importRecords() {
+	public List<RecordOld> importRecords() {
 		return null;
 	}
 	

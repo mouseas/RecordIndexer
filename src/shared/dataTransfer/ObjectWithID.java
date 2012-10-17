@@ -1,11 +1,11 @@
-package client.dataAccess;
+package shared.dataTransfer;
 
 /**
  * All objects from the database have an ID.
  * @author Martin Carney
  *
  */
-public abstract class DataAccessObject {
+public abstract class ObjectWithID {
 	private int ID;
 	
 	public int getID() {

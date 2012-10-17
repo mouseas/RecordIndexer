@@ -14,7 +14,7 @@ public class ServerCommunicator {
 	 * This user object is held as long as the user is logged in, and is used
 	 * in subsequent SQL requests.
 	 */
-	private User currentUser;
+	private UserOld currentUser;
 	
 	/**
 	 * Verifies a username + password combo, and returns the user's info (or null
@@ -24,24 +24,15 @@ public class ServerCommunicator {
 	 * @return A user object with the validated user's information, or null for an
 	 * invalid username or password
 	 */
-	public XferUser verifyUser(String username, String password) {
+	public User verifyUser(String username, String password) {
 		return null;
-	}
-	
-	/**
-	 * Attempts to register a user to the database.
-	 * @param u User to register
-	 * @return Whether the registration was successful.
-	 */
-	public boolean registerUser(XferUser u) {
-		return false;
 	}
 	
 	/**
 	 * Requests a list of all the Projects available for indexing
 	 * @return All projects currently available to the user for indexing.
 	 */
-	public List<XferProject> requestProjectsList() {
+	public List<Project> requestProjectsList() {
 		return null;
 	}
 	
@@ -51,7 +42,7 @@ public class ServerCommunicator {
 	 * @param p The project to request a sample from
 	 * @return An image from the project.
 	 */
-	public Image requestSampleImage(XferProject p) {
+	public Image requestSampleImage(Project p) {
 		return null;
 	}
 	
@@ -61,7 +52,7 @@ public class ServerCommunicator {
 	 * @param p The project to request a batch from
 	 * @return The batch received, or null if no batch received.
 	 */
-	public XferBatch requestBatch(XferProject p) {
+	public Batch requestBatch(Project p) {
 		return null;
 	}
 
@@ -73,7 +64,7 @@ public class ServerCommunicator {
 	 * will not be submitted to a user to index, but may be searched.
 	 * @return Whether the submission was accepted by the server.
 	 */
-	public boolean submitBatch(XferBatch b, boolean completed) {
+	public boolean submitBatch(Batch b, boolean completed) {
 		return false;
 	}
 	
@@ -97,7 +88,7 @@ public class ServerCommunicator {
 	 * @param searchValues One or more search terms to check for in all of the fields
 	 * @return All records with a field-value match.
 	 */
-	public List<XferRecordValue> searchRecords(List<XferField> fields, List<String> searchValues) {
+	public List<Record> searchRecords(List<Field> fields, List<String> searchValues) {
 		return null;
 	}
 	
@@ -106,7 +97,7 @@ public class ServerCommunicator {
 	 * menu in the search tool.
 	 * @return A list containing one of every field in the database.
 	 */
-	public List<XferField> requestFieldsList() {
+	public List<Field> requestFieldsList() {
 		return null;
 	}
 

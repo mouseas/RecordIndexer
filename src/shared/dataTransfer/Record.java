@@ -1,12 +1,22 @@
-package client.dataAccess;
+package shared.dataTransfer;
 
-import java.util.*;
-import shared.dataTransfer.*;
+import java.util.List;
 
-public class Record extends DataAccessObject{
+
+public class Record extends ObjectWithID {
+
+	private int batchID;
+	private int fieldID;
+	private int rowNumber;
+	private String value;
 	
-	public Record (List<XferRecordValue> values) {
-		
+	public Record(int id, int batchID, int fieldID, int rowNumber, 
+			String value) {
+		setID(id);
+		this.batchID = batchID;
+		this.fieldID = fieldID;
+		this.rowNumber = rowNumber;
+		this.value = value;
 	}
 	
 	/**
@@ -72,7 +82,15 @@ public class Record extends DataAccessObject{
 	public String search(String searchTerm, Field searchField) {
 		return null;
 	}
-	
-	
-	
 }
+//DROP TABLE record_values;
+//CREATE TABLE record_values
+//(
+//	id integer not null primary key autoincrement,
+//	batch_id integer not null,
+//	field_id integer not null,
+//	row_number integer not null,
+//	value varchar(255),
+//	foreign key(batch_id) references batches(id),
+//	foreign key(field_id) references fields(id)
+//);

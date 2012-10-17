@@ -1,9 +1,35 @@
-package client.dataAccess;
+package shared.dataTransfer;
 
-import shared.dataTransfer.*;
+public class User extends ObjectWithID {
 
-public class User extends DataAccessObject{
-
+	private String username;
+	private String firstName;
+	private String lastName;
+	private String email;
+	private int indexedRecords;
+	private String password;
+	
+	public User(int id, String username, String firstname, String lastname,
+			String email, int indexedRecords, String password) {
+		
+	}
+	
+	/**
+	 * Gets the user's password
+	 * @return
+	 */
+	public String getPassword() {
+		return password;
+	}
+	
+	/**
+	 * Attempts to change the user's password. Requires the current password
+	 * @param pass Password to assign
+	 */
+	public void setPassword(String pass) {
+		password = pass;
+	}
+	
 	/**
 	 * Attempts to register a new User to the database
 	 * @param username
@@ -30,33 +56,28 @@ public class User extends DataAccessObject{
 		return null;
 	}
 	
-	public User(XferUser u) {
-		
-	}
-	
 	public String getUsername() {
-		return null;
+		return username;
 	}
 	
 	public String getFullName() {
-		return null;
+		return firstName + " " + lastName;
 	}
 	
 	public String getFirstName() {
-		return null;
+		return firstName;
 	}
 	
 	public String getLastName() {
-		return null;
+		return lastName;
 	}
 	
 	public String getEmail() {
-		return null;
+		return email;
 	}
 	
 	public int getNumIndexedRecords() {
-		return 0;
+		return indexedRecords;
 	}
-	
 	
 }
