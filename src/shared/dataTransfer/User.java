@@ -11,7 +11,13 @@ public class User extends ObjectWithID {
 	
 	public User(int id, String username, String firstname, String lastname,
 			String email, int indexedRecords, String password) {
-		
+		setID(id);
+		this.username = username;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.email = email;
+		this.indexedRecords = indexedRecords;
+		this.password = password;
 	}
 	
 	/**

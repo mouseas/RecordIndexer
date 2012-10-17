@@ -1,4 +1,4 @@
-package server;
+package server.dataAccess;
 
 //import java.util.*;
 //import shared.*;

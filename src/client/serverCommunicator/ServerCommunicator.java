@@ -3,8 +3,8 @@ package client.serverCommunicator;
 //import java.sql.*;
 import java.util.*;
 
-import client.dataAccess.*;
 
+import server.dataAccess.*;
 import shared.dataTransfer.*;
 
 public class ServerCommunicator {
