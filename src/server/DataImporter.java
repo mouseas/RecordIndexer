@@ -2,7 +2,7 @@ package server;
 
 import java.util.*;
 
-import client.dataAccess.*;
+import shared.dataTransfer.*;
 
 
 public class DataImporter {
@@ -15,23 +15,23 @@ public class DataImporter {
 		
 	}
 	
-	public List<UserOld> importUsers() {
+	public List<User> importUsers() {
 		return null;
 	}
 	
-	public List<ProjectOld> importProjects() {
+	public List<Project> importProjects() {
 		return null;
 	}
 	
-	public List<BatchOld> importBatches() {
+	public List<Batch> importBatches() {
 		return null;
 	}
 	
-	public List<FieldOld> importFields() {
+	public List<Field> importFields() {
 		return null;
 	}
 	
-	public List<RecordOld> importRecords() {
+	public List<Record> importRecords() {
 		return null;
 	}
 	

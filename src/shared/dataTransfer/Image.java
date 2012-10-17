@@ -1,6 +1,5 @@
 package shared.dataTransfer;
 
-import client.dataAccess.ProjectOld;
 import java.awt.image.*;
 
 public class Image {
@@ -13,7 +12,7 @@ public class Image {
 		this.filename = filename;
 	}
 	
-	public ProjectOld getProject() {
+	public Project getProject() {
 		return null;
 	}
 	

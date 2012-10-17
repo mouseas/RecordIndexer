@@ -2,8 +2,6 @@ package shared.dataTransfer;
 
 import java.util.List;
 
-import client.dataAccess.ProjectOld;
-
 public class Field extends ObjectWithID {
 	
 	private int projectID;

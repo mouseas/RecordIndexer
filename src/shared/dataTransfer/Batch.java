@@ -2,10 +2,6 @@ package shared.dataTransfer;
 
 import java.util.List;
 
-import client.dataAccess.FieldOld;
-import client.dataAccess.ProjectOld;
-import client.dataAccess.RecordOld;
-
 public class Batch extends ObjectWithID {
 	
 	private int projectID;
@@ -65,7 +61,7 @@ public class Batch extends ObjectWithID {
 	 * @param f Field to get the x position of
 	 * @return
 	 */
-	public int getFieldX(FieldOld f) {
+	public int getFieldX(Field f) {
 		return 0;
 	}
 	

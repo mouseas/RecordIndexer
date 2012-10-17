@@ -14,7 +14,7 @@ public class ServerCommunicator {
 	 * This user object is held as long as the user is logged in, and is used
 	 * in subsequent SQL requests.
 	 */
-	private UserOld currentUser;
+	private User currentUser;
 	
 	/**
 	 * Verifies a username + password combo, and returns the user's info (or null
