@@ -5,7 +5,6 @@ import java.util.List;
 public class Field extends ObjectWithID {
 	
 	private int projectID;
-	private Project project;
 	private String title;
 	private int xCoord;
 	private int width;
@@ -27,8 +26,8 @@ public class Field extends ObjectWithID {
 	 * Gets the project this field belongs to
 	 * @return
 	 */
-	public Project getProject() {
-		return project;
+	public int getProjectID() {
+		return projectID;
 	}
 	
 	/**

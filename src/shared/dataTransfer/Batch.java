@@ -12,7 +12,7 @@ public class Batch extends ObjectWithID {
 		setID(id);
 		this.projectID = projectID;
 		this.imageFilename = imageFilename;
-		this.image = null;
+		getImage(); // initializes the Image object.
 	}
 	
 	/**
@@ -20,7 +20,11 @@ public class Batch extends ObjectWithID {
 	 * @return
 	 */
 	public Image getImage() {
-		return null;
+		if (image == null) {
+			image = new Image(getProjectID(), imageFilename);
+		}
+		
+		return image;
 	}
 	
 	/**
@@ -43,8 +47,8 @@ public class Batch extends ObjectWithID {
 	 * Gets the project this batch belongs to
 	 * @return
 	 */
-	public Project getProject() {
-		return null;
+	public int getProjectID() {
+		return projectID;
 	}
 	
 	/**

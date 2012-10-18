@@ -54,7 +54,15 @@ public class Project extends ObjectWithID {
 	 * @return
 	 */
 	public int getWidth() {
-		return 0;
+		if (fields != null) {
+			int result = 0;
+			for (int i = 0; i < fields.size(); i++) {
+				result += fields.get(i).getWidth();
+			}
+			return result;
+		} else {
+			return -1;
+		}
 	}
 	
 	/**
@@ -66,11 +74,10 @@ public class Project extends ObjectWithID {
 	}
 	
 	/**
-	 * Assigns a batch to a project.
-	 * @param b The batch to assign to this project.
-	 * @return Whether the batch was successfully assigned to the project.
+	 * Assigns a list of Fields to an existing project.
+	 * @param fields
 	 */
-	public boolean assignBatch(Batch b) {
-		return false;
+	public void setFields (List<Field> fields) {
+		this.fields = fields;
 	}
 }

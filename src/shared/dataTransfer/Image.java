@@ -5,15 +5,15 @@ import java.awt.image.*;
 public class Image {
 	
 	private String filename;
-	private Project project;
+	private int projectID;
 	
-	public Image(Project p, String filename) {
-		this.project = p;
+	public Image(int projectID, String filename) {
+		this.projectID = projectID;
 		this.filename = filename;
 	}
 	
-	public Project getProject() {
-		return null;
+	public int getProjectID() {
+		return projectID;
 	}
 	
 	public RenderedImage getImage() {
