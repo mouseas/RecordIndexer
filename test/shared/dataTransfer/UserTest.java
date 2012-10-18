@@ -6,64 +6,68 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class BatchTest {
+public class UserTest {
 
-	private Batch b;
-	
 	@Before
 	public void setUp() throws Exception {
-		b = new Batch(17, 3, "test.png");
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		b = null;
 	}
 
 	@Test
-	public void testBatch() {
-		assertEquals(17, b.getID());
-		assertEquals(3, b.getProjectID());
-		assertEquals("test.png", b.getImage().getFilename());
-	}
-
-	@Test
-	public void testGetImage() {
+	public void testUser() {
 		fail("Not yet implemented");
 	}
 
 	@Test
-	public void testGetFields() {
+	public void testGetPassword() {
 		fail("Not yet implemented");
 	}
 
 	@Test
-	public void testGetRecords() {
+	public void testSetPassword() {
 		fail("Not yet implemented");
 	}
 
 	@Test
-	public void testGetProjectID() {
-		assertEquals(3, b.getProjectID());
-	}
-
-	@Test
-	public void testGetNumRecords() {
+	public void testRegister() {
 		fail("Not yet implemented");
 	}
 
 	@Test
-	public void testGetFieldX() {
+	public void testLogin() {
 		fail("Not yet implemented");
 	}
 
 	@Test
-	public void testGetFieldY() {
+	public void testGetUsername() {
 		fail("Not yet implemented");
 	}
 
 	@Test
-	public void testGetRowHeight() {
+	public void testGetFullName() {
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testGetFirstName() {
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testGetLastName() {
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testGetEmail() {
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testGetNumIndexedRecords() {
 		fail("Not yet implemented");
 	}
 

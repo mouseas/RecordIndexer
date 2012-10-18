@@ -6,29 +6,23 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class BatchTest {
+public class RecordTest {
 
-	private Batch b;
-	
 	@Before
 	public void setUp() throws Exception {
-		b = new Batch(17, 3, "test.png");
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		b = null;
 	}
 
 	@Test
-	public void testBatch() {
-		assertEquals(17, b.getID());
-		assertEquals(3, b.getProjectID());
-		assertEquals("test.png", b.getImage().getFilename());
+	public void testRecord() {
+		fail("Not yet implemented");
 	}
 
 	@Test
-	public void testGetImage() {
+	public void testGetBatch() {
 		fail("Not yet implemented");
 	}
 
@@ -38,32 +32,27 @@ public class BatchTest {
 	}
 
 	@Test
-	public void testGetRecords() {
+	public void testGetRowNumber() {
 		fail("Not yet implemented");
 	}
 
 	@Test
-	public void testGetProjectID() {
-		assertEquals(3, b.getProjectID());
-	}
-
-	@Test
-	public void testGetNumRecords() {
+	public void testGetValues() {
 		fail("Not yet implemented");
 	}
 
 	@Test
-	public void testGetFieldX() {
+	public void testGetLockedValues() {
 		fail("Not yet implemented");
 	}
 
 	@Test
-	public void testGetFieldY() {
+	public void testGetValueByField() {
 		fail("Not yet implemented");
 	}
 
 	@Test
-	public void testGetRowHeight() {
+	public void testSearch() {
 		fail("Not yet implemented");
 	}
 
