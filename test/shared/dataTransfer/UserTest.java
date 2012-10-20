@@ -8,67 +8,72 @@ import org.junit.Test;
 
 public class UserTest {
 
+	public User u;
+	
 	@Before
 	public void setUp() throws Exception {
+		u = new User(2, "mouseasw", "Martin", "Carney", "mouseasw@gmail.com",
+				78, "passwordTest");
+		
 	}
 
 	@After
 	public void tearDown() throws Exception {
+		u = null;
 	}
 
 	@Test
 	public void testUser() {
-		fail("Not yet implemented");
+		assertEquals(2, u.getID());
+		assertEquals("mouseasw", u.getUsername());
+		assertEquals("Martin", u.getFirstName());
+		assertEquals("Carney", u.getLastName());
+		assertEquals("mouseasw@gmail.com", u.getEmail());
+		assertEquals(78, u.getNumIndexedRecords());
+		assertEquals("passwordTest", u.getPassword());
+		
 	}
 
 	@Test
 	public void testGetPassword() {
-		fail("Not yet implemented");
+		assertEquals("passwordTest", u.getPassword());
 	}
 
 	@Test
 	public void testSetPassword() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testRegister() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testLogin() {
-		fail("Not yet implemented");
+		assertEquals("passwordTest", u.getPassword());
+		u.setPassword("testSetting");
+		assertEquals("testSetting", u.getPassword());
 	}
 
 	@Test
 	public void testGetUsername() {
-		fail("Not yet implemented");
+		assertEquals("mouseasw", u.getUsername());
 	}
 
 	@Test
 	public void testGetFullName() {
-		fail("Not yet implemented");
+		assertEquals("Martin Carney", u.getFullName());
 	}
 
 	@Test
 	public void testGetFirstName() {
-		fail("Not yet implemented");
+		assertEquals("Martin", u.getFirstName());
 	}
 
 	@Test
 	public void testGetLastName() {
-		fail("Not yet implemented");
+		assertEquals("Carney", u.getLastName());
 	}
 
 	@Test
 	public void testGetEmail() {
-		fail("Not yet implemented");
+		assertEquals("mouseasw@gmail.com", u.getEmail());
 	}
 
 	@Test
 	public void testGetNumIndexedRecords() {
-		fail("Not yet implemented");
+		assertEquals(78, u.getNumIndexedRecords());
 	}
 
 }

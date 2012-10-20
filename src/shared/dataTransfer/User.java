@@ -13,8 +13,8 @@ public class User extends ObjectWithID {
 			String email, int indexedRecords, String password) {
 		setID(id);
 		this.username = username;
-		this.firstName = firstName;
-		this.lastName = lastName;
+		this.firstName = firstname;
+		this.lastName = lastname;
 		this.email = email;
 		this.indexedRecords = indexedRecords;
 		this.password = password;
@@ -34,32 +34,6 @@ public class User extends ObjectWithID {
 	 */
 	public void setPassword(String pass) {
 		password = pass;
-	}
-	
-	/**
-	 * Attempts to register a new User to the database
-	 * @param username
-	 * @param password
-	 * @param firstname
-	 * @param lastname
-	 * @param email
-	 * @return Whether the registration attempt was successful
-	 */
-	public static boolean register (String username, String password, 
-			String firstname, String lastname, String email) {
-		return false;
-	}
-	
-	/**
-	 * Attempts to log in an existing user, and returns a User object if
-	 * successful, or null if unsuccessful.
-	 * @param username
-	 * @param password
-	 * @return Successfully logged-in user, or null for incorrect username 
-	 * and/or password.
-	 */
-	public static User login(String username, String password) {
-		return null;
 	}
 	
 	public String getUsername() {

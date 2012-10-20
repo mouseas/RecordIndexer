@@ -59,6 +59,7 @@ public class Field extends ObjectWithID {
 	 * @return Non-editable list of acceptable entries for the field.
 	 */
 	public List<String> getKnownData() {
+		System.out.println("Not implemented yet!");
 		return null;
 	}
 	
@@ -67,6 +68,7 @@ public class Field extends ObjectWithID {
 	 * @return
 	 */
 	public String getHelpText() {
+		System.out.println("Not implemented yet!");
 		return  "";
 	}
 	

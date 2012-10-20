@@ -8,32 +8,37 @@ import org.junit.Test;
 
 public class ImageTest {
 
+	private Image image;
+	
 	@Before
 	public void setUp() throws Exception {
+		image = new Image(7, "test.png");
 	}
 
 	@After
 	public void tearDown() throws Exception {
+		image = null;
 	}
 
 	@Test
 	public void testImage() {
-		fail("Not yet implemented");
+		assertEquals(7, image.getProjectID());
+		assertEquals("test.png", image.getFilename());
 	}
 
 	@Test
 	public void testGetProjectID() {
-		fail("Not yet implemented");
+		assertEquals(7, image.getProjectID());
 	}
 
-	@Test
-	public void testGetImage() {
-		fail("Not yet implemented");
-	}
+//	@Test
+//	public void testGetImage() {
+//		fail("Not yet implemented");
+//	}
 
 	@Test
 	public void testGetFilename() {
-		fail("Not yet implemented");
+		assertEquals("test.png", image.getFilename());
 	}
 
 }

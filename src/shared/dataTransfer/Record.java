@@ -16,72 +16,54 @@ public class Record extends ObjectWithID {
 		this.batchID = batchID;
 		this.fieldID = fieldID;
 		this.rowNumber = rowNumber;
-		this.value = value;
+		setValue(value);
 	}
 	
 	/**
-	 * Gets the batch that this record belongs to
+	 * Gets the batch that this record belongs to. Kind of like y position ballpark.
 	 * @return
 	 */
-	public Batch getBatch() {
-		return null;
-	}
-	
-	/**
-	 * Gets the list of fields from the project this record belongs to
-	 * @return
-	 */
-	public List<Field> getFields() {
-		return null;
+	public int getBatchID() {
+		return batchID;
 	}
 
 	/**
-	 * Gets the row number of this record within its batch
+	 * Gets the row number of this record within its batch. Kind of like y position.
 	 * @return
 	 */
 	public int getRowNumber() {
-		return 0;
+		return rowNumber;
 	}
 	
 	/**
-	 * Returns an editable list of values, used when modifying a record.
-	 * @return List of String values corresponding to the project's fields.
+	 * Returns the value of the individual record
+	 * @return String value
 	 */
-	public List<String> getValues() {
-		return null;
+	public String getValue() {
+		return value;
 	}
 	
 	/**
-	 * Returns an un-editable list of values, used when reading a record.
-	 * @return Unalterable list of String values corresponding to the 
-	 * project's fields.
+	 * Assigns a value to the record
+	 * @param newVal The string to be set as the value for this record entry
 	 */
-	public List<String> getLockedValues() {
-		return null;
+	public void setValue(String newVal) {
+		if (newVal == null) {
+			value = "";
+		} else {
+			value = newVal;
+		}
+		
+	}
+
+	/**
+	 * Get the field ID for this record entry. Kind of like x position in the table.
+	 * @return
+	 */
+	public int getFieldID() {
+		return fieldID;
 	}
 	
-	/**
-	 * Gets a single value based on the field. Returns null if the field is
-	 * not part of the record.
-	 * @param f Field to get the value of.
-	 * @return String value of the record in that field's column, or null if
-	 * the field is not in this record.
-	 */
-	public String getValueByField(Field f) {
-		return null;
-	}
-	
-	/**
-	 * Checks a record for a matching search term within a given search field.
-	 * Always checks the first instance of the search field (which should be
-	 * the only instance).
-	 * @param searchTerm The term to check for
-	 * @param searchField The field to check in
-	 * @return The value found, or null if nothing found.
-	 */
-	public String search(String searchTerm, Field searchField) {
-		return null;
-	}
 }
 //DROP TABLE record_values;
 //CREATE TABLE record_values

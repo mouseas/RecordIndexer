@@ -29,42 +29,12 @@ public class BatchTest {
 
 	@Test
 	public void testGetImage() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testGetFields() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testGetRecords() {
-		fail("Not yet implemented");
+		assertEquals("test.png", b.getImage().getFilename());
 	}
 
 	@Test
 	public void testGetProjectID() {
 		assertEquals(3, b.getProjectID());
-	}
-
-	@Test
-	public void testGetNumRecords() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testGetFieldX() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testGetFieldY() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testGetRowHeight() {
-		fail("Not yet implemented");
 	}
 
 }

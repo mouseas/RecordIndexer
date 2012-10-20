@@ -5,17 +5,14 @@ import java.util.*;
 public class Project extends ObjectWithID {
 	
 	private String title;
-	private int recordsPerImage;
 	private int firstYCoord;
 	private int fieldHeight;
 	private int numRows;
 	private List<Field> fields;
 	
-	public Project(int id, int recordsPerImage, int firstYCoord, int fieldHeight,
-			int numRows, String title) {
+	public Project(int id, int firstYCoord, int fieldHeight, int numRows, String title) {
 		setID(id);
 		this.title = title;
-		this.recordsPerImage = recordsPerImage;
 		this.firstYCoord = firstYCoord;
 		this.fieldHeight = fieldHeight;
 		this.numRows = numRows;
@@ -48,22 +45,22 @@ public class Project extends ObjectWithID {
 		return fieldHeight;
 	}
 	
-	/**
-	 * Gets the width, in pixels, of a whole row, which should be the sum
-	 * of the widths of all of the fields in this project.
-	 * @return
-	 */
-	public int getWidth() {
-		if (fields != null) {
-			int result = 0;
-			for (int i = 0; i < fields.size(); i++) {
-				result += fields.get(i).getWidth();
-			}
-			return result;
-		} else {
-			return -1;
-		}
-	}
+//	/**
+//	 * Gets the width, in pixels, of a whole row, which should be the sum
+//	 * of the widths of all of the fields in this project.
+//	 * @return
+//	 */
+//	public int getWidth() {
+//		if (fields != null) {
+//			int result = 0;
+//			for (int i = 0; i < fields.size(); i++) {
+//				result += fields.get(i).getWidth();
+//			}
+//			return result;
+//		} else {
+//			return -1;
+//		}
+//	}
 	
 	/**
 	 * Gets the name of the project
@@ -73,11 +70,11 @@ public class Project extends ObjectWithID {
 		return title;
 	}
 	
-	/**
-	 * Assigns a list of Fields to an existing project.
-	 * @param fields
-	 */
-	public void setFields (List<Field> fields) {
-		this.fields = fields;
-	}
+//	/**
+//	 * Assigns a list of Fields to an existing project.
+//	 * @param fields
+//	 */
+//	public void setFields (List<Field> fields) {
+//		this.fields = fields;
+//	}
 }

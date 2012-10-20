@@ -8,47 +8,49 @@ import org.junit.Test;
 
 public class ProjectTest {
 
+	private Project p;
+	
 	@Before
 	public void setUp() throws Exception {
+		p = new Project(7, 347, 20, 30, "1842 Census");
 	}
 
 	@After
 	public void tearDown() throws Exception {
+		p = null;
 	}
 
 	@Test
 	public void testProject() {
-		fail("Not yet implemented");
+		assertEquals(7, p.getID());
+		assertEquals(347, p.getY(0));
+		assertEquals(367, p.getY(1));
+		assertEquals(387, p.getY(2));
+		assertEquals(20, p.getRowHeight());
+		assertEquals(30, p.getRecordsPerImage());
+		assertEquals("1842 Census", p.getTitle());
 	}
 
 	@Test
 	public void testGetY() {
-		fail("Not yet implemented");
+		assertEquals(347, p.getY(0));
+		assertEquals(367, p.getY(1));
+		assertEquals(387, p.getY(2));
 	}
 
 	@Test
 	public void testGetRecordsPerImage() {
-		fail("Not yet implemented");
+		assertEquals(30, p.getRecordsPerImage());
 	}
 
 	@Test
 	public void testGetRowHeight() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testGetWidth() {
-		fail("Not yet implemented");
+		assertEquals(20, p.getRowHeight());
 	}
 
 	@Test
 	public void testGetTitle() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testSetFields() {
-		fail("Not yet implemented");
+		assertEquals("1842 Census", p.getTitle());
 	}
 
 }

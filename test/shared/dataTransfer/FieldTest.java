@@ -8,47 +8,55 @@ import org.junit.Test;
 
 public class FieldTest {
 
+	private Field f;
+	
 	@Before
 	public void setUp() throws Exception {
+		f = new Field(17, 3, "First Name", 27, 127, "help.html", "firstNameKnown.txt");
 	}
 
 	@After
 	public void tearDown() throws Exception {
+		f = null;
 	}
 
 	@Test
 	public void testField() {
-		fail("Not yet implemented");
+		assertEquals(17, f.getID());
+		assertEquals(3, f.getProjectID());
+		assertEquals("First Name", f.getTitle());
+		assertEquals(27, f.getXCoord());
+		assertEquals(127, f.getWidth());
 	}
 
 	@Test
 	public void testGetProjectID() {
-		fail("Not yet implemented");
+		assertEquals(3, f.getProjectID());
 	}
 
 	@Test
 	public void testGetXCoord() {
-		fail("Not yet implemented");
+		assertEquals(27, f.getXCoord());
 	}
 
 	@Test
 	public void testGetTitle() {
-		fail("Not yet implemented");
+		assertEquals("First Name", f.getTitle());
 	}
 
 	@Test
 	public void testGetWidth() {
-		fail("Not yet implemented");
+		assertEquals(127, f.getWidth());
 	}
 
-	@Test
-	public void testGetKnownData() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testGetHelpText() {
-		fail("Not yet implemented");
-	}
+//	@Test
+//	public void testGetKnownData() {
+//		fail("Not yet implemented");
+//	}
+//
+//	@Test
+//	public void testGetHelpText() {
+//		fail("Not yet implemented");
+//	}
 
 }
