@@ -50,11 +50,12 @@ public class Database {
 	 */
 	public void startTransaction() throws ServerException {
 		try {
-			connection = DriverManager.getConnection("jbdc:sqlite:" + location);
+			connection = DriverManager.getConnection("jdbc:sqlite:" + location);
 			connection.setAutoCommit(false);
 		} catch (SQLException e) {
 			//System.out.println(e.getMessage());
-			throw new ServerException("Failed to make a connection to server at: " + location);
+			throw new ServerException("Failed to make a connection to server at: "
+					+ location + "\n" + e.getMessage());
 		}
 	}
 
@@ -74,10 +75,10 @@ public class Database {
 			System.out.println("Exception while performing a query.");
 			System.out.println(e.getMessage());
 		} finally {
-			try {
-				if (statement != null) { statement.close(); }
-			} catch (SQLException e) {
-				System.out.println("Well, crap. Exception while closing statement.");
+			if (statement != null) {
+//				 try { statement.close(); } catch (SQLException e) {
+//					 System.out.println("Well, crap. Exception while closing statement.");
+//				 }
 			}
 		}
 		return result;
@@ -97,13 +98,42 @@ public class Database {
 		} catch (SQLException e) {
 			System.out.println("Error while committing or rolling back. Commit=" + commit);
 		} finally {
-			try {   
-				connection.close(); 
-				connection = null;
-	         } catch (SQLException e) {  
-	        	 e.printStackTrace();  
-	         }
+			close();
 		}
+	}
+	
+	/**
+	 * Closes the database connection. Generally endTransaction() should be used publicly,
+	 * but close() can be used as a last-ditch effort.
+	 */
+	public void close() {
+		try {   
+			if (connection != null) {
+				connection.close();
+				connection = null;
+			}
+         } catch (SQLException e) {  
+        	 e.printStackTrace();  
+         }
+	}
+
+	public static boolean isInitialized() {
+		return initialized;
+	}
+
+	public String getLocation() {
+		return location;
+	}
+
+	/**
+	 * Changes the database location, and closes any open connection
+	 * @param location Location of the new database.
+	 */
+	public void setLocation(String location) {
+		if (connection != null) {
+			close();
+		}
+		this.location = location;
 	}
 	
 }

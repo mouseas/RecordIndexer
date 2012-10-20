@@ -26,29 +26,5 @@ public class DataAccess {
 		return null;
 	}
 	
-	/**
-	 * Performs a query on the database.
-	 * @param query The query to perform.
-	 * @return ResultSet from the query. This must be closed once you're done using it.
-	 */
-	private ResultSet performQuery(String query) {
-		assert db != null;
-		PreparedStatement statement = null;
-		ResultSet result = null;
-		try {
-			statement = db.getConnection().prepareStatement(query);
-			result = statement.executeQuery();
-		} catch (SQLException e) {
-			System.out.println("Exception while performing a query.");
-			System.out.println(e.getMessage());
-		} finally {
-			try {
-				if (statement != null) { statement.close(); }
-			} catch (SQLException e) {
-				System.out.println("Well, crap. Exception while closing statement.");
-			}
-		}
-		return result;
-	}
 	
 }
