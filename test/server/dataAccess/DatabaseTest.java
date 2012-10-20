@@ -56,10 +56,15 @@ public class DatabaseTest {
 	public void testStartTransaction() {
 		try {
 			db.startTransaction();
+			assertNotNull(db.getConnection());
+			//assertTrue(db.getConnection().isValid(0));
 		} catch (ServerException e) {
 			fail(e.getMessage());
+//		} catch (SQLException e) {
+//			fail(e.getMessage());
+		} finally {
+			db.close();
 		}
-		assertNotNull(db.getConnection());
 	}
 
 	@Test

@@ -65,6 +65,7 @@ public class Database {
 	 * @return ResultSet from the query. This must be closed once you're done using it.
 	 */
 	public ResultSet performQuery(String query) {
+		// This function may be superfluous.
 		assert connection != null;
 		PreparedStatement statement = null;
 		ResultSet result = null;
