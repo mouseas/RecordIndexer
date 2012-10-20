@@ -1,5 +1,6 @@
 package server.dataAccess;
 
+import server.ServerException;
 import shared.dataTransfer.*;
 import java.sql.*;
 
@@ -9,23 +10,25 @@ public class DataAccess {
 	// Returns dataTransfer objects to the server.
 	
 	private String dbName;
+	private Database db;
 	
 	public DataAccess(String databaseName) {
 		this.dbName = databaseName;
-		
 		try {
-			final String driver = "org.sqlite.JDBC";
-			Class.forName(driver);
+			db = new Database(dbName);
+		} catch (ServerException e) {
+			System.out.println(e.getMessage());
 		}
-		catch (ClassNotFoundException e) {
-			// ERROR! Could not load database driver
-		}
+		
 	}
 	
 	public User validateUser(String username, String password) {
 		return null;
 	}
 	
-	
+
+	private ResultSet performQuery(String query) {
+		return null;
+	}
 	
 }
