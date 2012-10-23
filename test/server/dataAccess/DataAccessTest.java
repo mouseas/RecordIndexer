@@ -1,0 +1,144 @@
+package server.dataAccess;
+
+import static org.junit.Assert.*;
+
+import java.io.File;
+import java.util.*;
+import java.sql.*;
+
+import org.junit.*;
+import shared.dataTransfer.*;
+import server.ServerException;
+
+public class DataAccessTest {
+
+	private DataAccess da;
+	
+	@BeforeClass
+	public static void initialize() throws Exception {
+		Database.initialize();
+	}
+	
+	@Before
+	public void setUp() throws Exception {
+		da = new DataAccess("database" + File.separator +  "indexer-app.sqlite");
+	}
+
+	@After
+	public void tearDown() throws Exception {
+		da = null;
+	}
+
+	@Test
+	public void testDataAccess() {
+		// no real test here, as long as no exceptions occur.
+	}
+
+	@Test
+	public void testGetUser() {
+		User expected = new User(1, "mouseasw", "Martin", "Carney",
+				"mouseasw@gmail.com", 0, "password");
+		User actual = da.getUser("mouseasw", "password");
+		assertEquals(expected.getFullName(), actual.getFullName());
+		assertEquals(expected.getUsername(), actual.getUsername());
+		assertEquals(expected.getID(), actual.getID());
+		assertEquals(expected.getEmail(), actual.getEmail());
+		assertEquals(expected.getPassword(), actual.getPassword());
+		
+		actual = da.getUser("invalid", "hjsdbfgkefgn");
+		assertNull(actual);
+		
+		expected = new User(2, "test", "Mister", "Test",
+				"mouse_asw@yahoo.com", 0, "password");
+		actual = da.getUser("test", "password");
+		assertEquals(expected.getFullName(), actual.getFullName());
+		assertEquals(expected.getUsername(), actual.getUsername());
+		assertEquals(expected.getID(), actual.getID());
+		assertEquals(expected.getEmail(), actual.getEmail());
+		assertEquals(expected.getPassword(), actual.getPassword());
+	}
+
+	@Test
+	public void testGetProjectList() {
+		Project expected = new Project(1, 327, 20, 30, "1987 Census");
+		List<Project> actualList = da.getProjectList();
+		Project actual = actualList.get(0);
+		assertEquals(expected.getID(), actual.getID());
+		assertEquals(expected.getTitle(), actual.getTitle());
+		assertEquals(expected.getRecordsPerImage(), actual.getRecordsPerImage());
+		assertEquals(expected.getRowHeight(), actual.getRowHeight());
+		assertEquals(expected.getY(0), actual.getY(0));
+	}
+
+	@Test
+	public void testGetSampleImageLocation() {
+		try {
+			String expected = "batch001.png";
+			String actual = da.getSampleImageLocation(1);
+			assertEquals(expected, actual);
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("Exception thrown: " + e.getMessage());
+		}
+	}
+
+	@Test
+	public void testGetNextBatch() {
+		try {
+			Batch expected = new Batch(3, 1, "batch003.png");
+			Batch actual = da.getNextBatch(1);
+			assertEquals(expected.getID(), actual.getID());
+			assertEquals(expected.getImage().getFilename(), 
+					actual.getImage().getFilename());
+			assertEquals(expected.getProjectID(), actual.getProjectID());
+		} catch (Exception e) {
+			fail("Exception thrown: " + e.getMessage());
+		}
+	}
+
+	@Test
+	public void testSaveBatch() {
+		try {
+			Batch result = new Batch(3, 1, "batch003.png");
+			assertTrue(da.saveBatch(result, true));
+			assertTrue(da.saveBatch(result, false));
+		} catch (Exception e) {
+			fail("Exception thrown: " + e.getMessage());
+		}
+	}
+
+	@Test
+	public void testSaveMultpleRecords() {
+		try {
+			List<Record> records = new ArrayList<Record>();
+			records.add(new Record(1, 2, 1, 0, "Martin"));
+			records.add(new Record(2, 2, 2, 0, "Carney"));
+			records.add(new Record(3, 2, 3, 0, "Male"));
+			records.add(new Record(4, 2, 4, 0, "06/19/1987"));
+			records.add(new Record(5, 2, 1, 0, "Ashley"));
+			records.add(new Record(2, 2, 2, 0, "Carney"));
+			records.add(new Record(3, 2, 3, 0, "Female"));
+			records.add(new Record(4, 2, 4, 0, "10/08/1988"));
+			
+			assertTrue(da.saveSeveralRecords(records));
+		} catch (Exception e) {
+			fail("Exception thrown: " + e.getMessage());
+		}
+	}
+
+	@Test
+	public void testGetRecord() {
+		//fail("Not yet implemented");
+	}
+
+	@Test
+	public void testSearch() {
+		//fail("Not yet implemented");
+	}
+
+	@Test
+	public void testGetFields() {
+		//fail("Not yet implemented");
+	}
+
+}

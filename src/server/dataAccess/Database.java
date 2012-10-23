@@ -98,6 +98,8 @@ public class Database {
 			}
 		} catch (SQLException e) {
 			System.out.println("Error while committing or rolling back. Commit=" + commit);
+			System.out.println(e.getMessage());
+			//e.printStackTrace();
 		} finally {
 			close();
 		}

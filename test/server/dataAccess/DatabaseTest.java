@@ -74,10 +74,10 @@ public class DatabaseTest {
 			db.startTransaction();
 			rs = db.performQuery("SELECT * FROM fields");
 			int numResults = 0;
-			do {
-				System.out.println("ID: " + rs.getString("id"));
+			while (rs.next()) {
+				System.out.println("ID: " + rs.getString("id") + " Title: " + rs.getString("title"));
 				numResults++;
-			} while (rs.next());
+			}
 			assertTrue("Empty query results returned!", numResults > 0);
 			db.endTransaction(false);
 		} catch (SQLException e) {
