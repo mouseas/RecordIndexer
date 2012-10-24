@@ -1,0 +1,4 @@
+Record Indexer to do:
+- re-create database from scratch
+- make the DataAccess class use one connection. Add a start transaction and end transaction function, then functions like getUser and saveRecord all use one connection.
+- Switch the blobs over to varchar(255) for filenames.

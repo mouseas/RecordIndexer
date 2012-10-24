@@ -22,10 +22,12 @@ public class DataAccessTest {
 	@Before
 	public void setUp() throws Exception {
 		da = new DataAccess("database" + File.separator +  "indexer-app.sqlite");
+		da.startTransaction();
 	}
 
 	@After
 	public void tearDown() throws Exception {
+		da.endTransaction(false);
 		da = null;
 	}
 
@@ -87,6 +89,7 @@ public class DataAccessTest {
 		try {
 			Batch expected = new Batch(3, 1, "batch003.png");
 			Batch actual = da.getNextBatch(1);
+			assertNotNull("No batch returned!", actual);
 			assertEquals(expected.getID(), actual.getID());
 			assertEquals(expected.getImage().getFilename(), 
 					actual.getImage().getFilename());
@@ -100,10 +103,12 @@ public class DataAccessTest {
 	public void testSaveBatch() {
 		try {
 			Batch result = new Batch(3, 1, "batch003.png");
-			assertTrue(da.saveBatch(result, true));
-			assertTrue(da.saveBatch(result, false));
+			assertTrue("Failed with completed.", da.saveBatch(result, true));
+			assertTrue("Failed with not completed.", da.saveBatch(result, false));
 		} catch (Exception e) {
 			fail("Exception thrown: " + e.getMessage());
+		} finally {
+			da.endTransaction(true);
 		}
 	}
 
@@ -123,6 +128,8 @@ public class DataAccessTest {
 			assertTrue(da.saveSeveralRecords(records));
 		} catch (Exception e) {
 			fail("Exception thrown: " + e.getMessage());
+		} finally {
+			da.endTransaction(true);
 		}
 	}
 

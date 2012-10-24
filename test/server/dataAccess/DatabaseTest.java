@@ -63,7 +63,7 @@ public class DatabaseTest {
 //		} catch (SQLException e) {
 //			fail(e.getMessage());
 		} finally {
-			db.close();
+			try { db.close(); } catch (SQLException e) { fail(); }
 		}
 	}
 
@@ -86,10 +86,12 @@ public class DatabaseTest {
 			fail(e.getMessage());
 		}
 		finally {
-			if (rs != null) {
-				try { rs.close(); } catch (SQLException e) {}
-			}
-			db.close();
+			try {
+				if (rs != null) {
+					rs.close();
+				}
+				db.close();
+			} catch (SQLException e) { fail("Failed to close on PerformQuery()"); }
 		}
 	}
 
@@ -98,7 +100,7 @@ public class DatabaseTest {
 		try {
 			db.startTransaction();
 			db.endTransaction(false);
-		} catch (ServerException e) {
+		} catch (Exception e) {
 			fail(e.getMessage());
 		}
 		// not fully implemented.

@@ -89,35 +89,26 @@ public class Database {
 	 * Commit or rollback the transaction and close the connection
 	 * @param commit Whether to commit or rollback the transaction.
 	 */
-	public void endTransaction(boolean commit) {
-		try {
+	public void endTransaction(boolean commit) throws SQLException {
+		if (connection != null) {
 			if (commit) {
 				connection.commit();
 			} else {
 				connection.rollback();
 			}
-		} catch (SQLException e) {
-			System.out.println("Error while committing or rolling back. Commit=" + commit);
-			System.out.println(e.getMessage());
-			//e.printStackTrace();
-		} finally {
-			close();
 		}
+		close();
 	}
 	
 	/**
 	 * Closes the database connection. Generally endTransaction() should be used publicly,
 	 * but close() can be used as a last-ditch effort.
 	 */
-	public void close() {
-		try {   
-			if (connection != null) {
-				connection.close();
-				connection = null;
-			}
-         } catch (SQLException e) {  
-        	 e.printStackTrace();  
-         }
+	public void close() throws SQLException { 
+		if (connection != null) {
+			connection.close();
+			connection = null;
+		}
 	}
 
 	public static boolean isInitialized() {
@@ -134,7 +125,12 @@ public class Database {
 	 */
 	public void setLocation(String location) {
 		if (connection != null) {
-			close();
+			try {
+				close();
+			} catch (SQLException e) {
+				System.out.println("Exception while changing location: ");
+				System.out.println(e.getMessage());
+			}
 		}
 		this.location = location;
 	}

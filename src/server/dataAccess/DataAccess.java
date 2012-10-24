@@ -13,6 +13,8 @@ public class DataAccess {
 	private String dbName;
 	private Database db;
 	
+	private Connection connection;
+	
 	/**
 	 * Constructor
 	 * @param databaseName
@@ -21,6 +23,35 @@ public class DataAccess {
 	public DataAccess(String databaseName) throws ServerException {
 		this.dbName = databaseName;
 		db = new Database(dbName); // may throw a ServerException
+	}
+	
+	/**
+	 * Starts a transaction with the database.
+	 */
+	public void startTransaction() {
+		if (db != null) {
+			try {
+				db.startTransaction();
+				connection = db.getConnection();
+			} catch (Exception e) {
+				System.out.println("Start transaction error:");
+				System.out.println(e.getMessage());
+			}
+		}
+	}
+	
+	/**
+	 * Ends the current transaction with the database.
+	 * @param commit Whether to commit or not.
+	 */
+	public void endTransaction(boolean commit) {
+		try {
+			db.endTransaction(commit);
+			connection = null;
+		} catch (Exception e) {
+			System.out.println("End transaction error:");
+			System.out.println(e.getMessage());
+		}
 	}
 	
 	/**
@@ -35,8 +66,7 @@ public class DataAccess {
 		ResultSet rs = null;
 		String statement = "SELECT * FROM users WHERE username = ? AND password = ?";
 		try {
-			db.startTransaction();
-			ps = db.getConnection().prepareStatement(statement);
+			ps = connection.prepareStatement(statement);
 			ps.setString(1, username);
 			ps.setString(2, password);
 			rs = ps.executeQuery();
@@ -45,7 +75,6 @@ public class DataAccess {
 			} else {
 				result = null; // invalid username/password
 			}
-			db.endTransaction(true);
 		} catch (Exception e) {
 			System.out.println("Exception while trying to get a user.");
 			System.out.println(e.getMessage());
@@ -53,7 +82,7 @@ public class DataAccess {
 			try {
 				if (ps != null) { ps.close(); }
 				if (rs != null) { rs.close(); }
-			} catch (SQLException e) { /**/ }
+			} catch (SQLException e) { System.out.println("Failed to close"); }
 		}
 		return result;
 	}
@@ -68,16 +97,13 @@ public class DataAccess {
 		ResultSet rs = null;
 		String statement = "SELECT * FROM projects";
 		try {
-			db.startTransaction();
-			ps = db.getConnection().prepareStatement(statement);
+			ps = connection.prepareStatement(statement);
 			rs = ps.executeQuery();
 			while (rs.next()) {
 				result.add(buildProject(rs));
 			}
 		} catch (Exception e) {
 			System.out.println("Exception while getting the project list.");
-		} finally {
-			db.endTransaction(false);
 		}
 		
 		return result;
@@ -95,19 +121,15 @@ public class DataAccess {
 		ResultSet rs = null;
 		String statement = "SELECT * FROM batches WHERE project_id = ?";
 		
-		db.startTransaction();
-		ps = db.getConnection().prepareStatement(statement);
+		ps = connection.prepareStatement(statement);
 		ps.setInt(1, projectID);
 		rs = ps.executeQuery();
 		if (rs.next()) {
-			Blob b = rs.getBlob("filename");
-			byte[] bytes = b.getBytes(1, (int)b.length());
-			result = Arrays.toString(bytes);
+			result = rs.getString("filename");
 		} else {
 			result = null; // no sample image available
 			// Either no batches in project, or invalid project id
 		}
-		db.endTransaction(false);
 	
 		if (ps != null) { ps.close(); }
 		if (rs != null) { rs.close(); }
@@ -126,21 +148,21 @@ public class DataAccess {
 		ResultSet rs = null;
 		String statement = "SELECT * FROM batches WHERE project_id = ? AND " +
 				"completed = 0 AND in_use = 0";
-		db.startTransaction();
-		ps = db.getConnection().prepareStatement(statement);
+
+		ps = connection.prepareStatement(statement);
 		ps.setInt(1, projectID);
 		rs = ps.executeQuery();
 		if (rs.next()) {
 			result = buildBatch(rs); // get first available batch
+			rs.close();
 			// then mark that batch as in_use.
 			statement = "UPDATE batches SET in_use = 1 WHERE id = ?";
 			ps = db.getConnection().prepareStatement(statement);
 			ps.setInt(1, result.getID());
-			ps.executeQuery();
+			ps.executeUpdate();
 		} else {
 			result = null; // no batches available
 		}
-		db.endTransaction(true);
 		if (ps != null) { ps.close(); }
 		if (rs != null) { rs.close(); }
 		return result;
@@ -158,16 +180,14 @@ public class DataAccess {
 		String statement = "UPDATE batches SET completed = ?, in_use = 0" +
 				" WHERE id = ?";
 		
-		db.startTransaction();
-		ps = db.getConnection().prepareStatement(statement);
+		ps = connection.prepareStatement(statement);
 		if (completed) { ps.setInt(1, 1); } // completed
 		else { ps.setInt(1, 0); } // not completed
 		ps.setInt(2, input.getID());
 		ps.execute();
-		db.endTransaction(true);
 	
 		if (ps != null) { ps.close(); }
-		return false;
+		return true;
 	}
 	
 	/**
@@ -179,14 +199,16 @@ public class DataAccess {
 	 */
 	public boolean saveSeveralRecords(List<Record> inputList) 
 			throws SQLException, ServerException {
-		db.startTransaction();
+		if (inputList == null) {
+			throw new ServerException("Attempting to save a null list of Records");
+		}
 		boolean result = true;
+		
 		for (int i = 0; i < inputList.size(); i++) {
 			if (!saveRecord(inputList.get(i), db.getConnection())) {
 				result = false; // if even one record failed to save, return false.
 			}
 		}
-		db.endTransaction(result); // rollback if any record save failed.
 		
 		return result;
 	}
@@ -280,7 +302,7 @@ public class DataAccess {
 	private Batch buildBatch (ResultSet rs) throws SQLException {
 		int id = rs.getInt("id");
 		int projectID = rs.getInt("project_id");
-		String imageFilename = rs.getBlob("filename").toString();
+		String imageFilename = rs.getString("filename");
 		return new Batch(id, projectID, imageFilename);
 	}
 	
