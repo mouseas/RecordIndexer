@@ -214,6 +214,54 @@ public class DataAccess {
 	}
 	
 	/**
+	 * Wipes the database's contents, usually in preparation to import data from a
+	 * separate file.
+	 * @param confirm Will only wipe the database if confirm == true.
+	 * @return
+	 */
+	public boolean wipeDatabase(boolean confirm) {
+		if (!confirm) { return false; }
+		return false;
+	}
+	
+	/**
+	 * Adds a User to the database.
+	 * @param user
+	 * @return
+	 */
+	public boolean addUser(User user) {
+		return false;
+	}
+	
+	/**
+	 * Adds a Batch to the database.
+	 * @param batch
+	 * @return
+	 */
+	public boolean addBatch(Batch batch) {
+		return false;
+	}
+	
+	/**
+	 * Adds a Project to the database. You will need to add the project
+	 * before adding any fields or batches assigned to it.
+	 * @param project
+	 * @return
+	 */
+	public boolean addProject(Project project) {
+		return false;
+	}
+	
+	/**
+	 * Adds a Field to the database.
+	 * @param field
+	 * @return
+	 */
+	public boolean addField(Field field) {
+		return false;
+	}
+	
+	/**
 	 * Takes in a Record and saves it to the database. Called exclusively by 
 	 * saveSeveralRecords().
 	 * @param input Individual Record to be saved to the database
