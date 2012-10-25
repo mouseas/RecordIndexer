@@ -1,9 +1,6 @@
 package shared.dataTransfer;
 
-import java.util.List;
-
-
-public class Record extends ObjectWithID {
+public class Record extends DataTransferObject {
 
 	private int batchID;
 	private int fieldID;

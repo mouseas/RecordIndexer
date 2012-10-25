@@ -1,14 +1,11 @@
 package shared.dataTransfer;
 
-import java.util.*;
-
-public class Project extends ObjectWithID {
+public class Project extends DataTransferObject {
 	
 	private String title;
 	private int firstYCoord;
 	private int fieldHeight;
 	private int numRows;
-	private List<Field> fields;
 	
 	public Project(int id, int firstYCoord, int fieldHeight, int numRows, String title) {
 		setID(id);

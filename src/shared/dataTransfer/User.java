@@ -1,6 +1,6 @@
 package shared.dataTransfer;
 
-public class User extends ObjectWithID {
+public class User extends DataTransferObject {
 
 	private String username;
 	private String firstName;

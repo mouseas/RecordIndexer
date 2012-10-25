@@ -1,8 +1,6 @@
 package shared.dataTransfer;
 
-import java.util.List;
-
-public class Batch extends ObjectWithID {
+public class Batch extends DataTransferObject {
 	
 	private int projectID;
 	private String imageFilename;

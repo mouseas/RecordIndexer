@@ -205,7 +205,7 @@ public class DataAccess {
 		boolean result = true;
 		
 		for (int i = 0; i < inputList.size(); i++) {
-			if (!saveRecord(inputList.get(i), db.getConnection())) {
+			if (!saveRecord(inputList.get(i))) {
 				result = false; // if even one record failed to save, return false.
 			}
 		}
@@ -217,22 +217,25 @@ public class DataAccess {
 	 * Takes in a Record and saves it to the database. Called exclusively by 
 	 * saveSeveralRecords().
 	 * @param input Individual Record to be saved to the database
-	 * @param connection Connection created during an open transaction.
 	 * @return
 	 */
-	private boolean saveRecord(Record input, Connection connection) 
-			throws SQLException, ServerException {
+	private boolean saveRecord(Record input) throws SQLException {
 		PreparedStatement ps = null;
-		String statement = "INSERT OR REPLACE INTO records (id, batch_id," +
-				"field_id, row_number, value) VALUES (?, ?, ?, ?, ?);";
+		String statement = null;
 		
+		if (recordExists(input)) { // Update it
+			statement = "UPDATE records SET value = ? " +
+				"WHERE batch_id = ? AND field_id = ? AND row_number = ?";
+		} else { // Create it
+			statement = "INSERT INTO records (value, batch_id," +
+				"field_id, row_number) VALUES (?, ?, ?, ?);";
+		}
 		ps = connection.prepareStatement(statement);
 		
-		ps.setInt(1, input.getID());
+		ps.setString(1, input.getValue());
 		ps.setInt(2, input.getBatchID());
 		ps.setInt(3, input.getFieldID());
 		ps.setInt(4, input.getRowNumber());
-		ps.setString(5, input.getValue());
 		
 		ps.execute();
 		
@@ -248,8 +251,32 @@ public class DataAccess {
 	 * @param fieldID
 	 * @return
 	 */
-	public Record getRecord(Batch batch, int rowNumber, int fieldID) {
-		return null;
+	public Record getRecord(int batchID, int rowNumber, int fieldID) {
+		String statement = "SELECT * FROM records WHERE " +
+			"batch_id = ? AND field_id = ? AND row_number = ?";
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		Record result = null;
+		
+		try {
+			ps = connection.prepareStatement(statement);
+			ps.setInt(1, batchID);
+			ps.setInt(2, fieldID);
+			ps.setInt(3, rowNumber);
+			rs = ps.executeQuery();
+			if (rs.next()) {
+				result = buildRecord(rs);
+			} // else result is null; no matching record found.
+		} catch (SQLException e) {
+			System.out.println("Error at getRecord(): " + e.getMessage());
+		} finally {
+			try {
+				if (rs != null) { rs.close(); }
+				if (ps != null) { ps.close(); }
+			} catch (Exception e) {}
+		}
+		
+		return result;
 	}
 	
 	/**
@@ -259,7 +286,34 @@ public class DataAccess {
 	 * @return
 	 */
 	public List<Record> search(int fieldID, String searchValue) {
-		return null;
+		String statement = "SELECT * FROM records WHERE field_id = ?";
+		searchValue = searchValue.toLowerCase();
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		List<Record> results = new ArrayList<Record>();
+		
+		try {
+			ps = connection.prepareStatement(statement);
+			ps.setInt(1, fieldID);
+			rs = ps.executeQuery();
+			while (rs != null && rs.next()) {
+				String value = rs.getString("value");
+				value = value.toLowerCase();
+				if (value.contains(searchValue)) {
+					Record r = buildRecord(rs);
+					results.add(r);
+				}
+			}
+		} catch (SQLException e) {
+			System.out.println("Exception during Search: " + e.getMessage());
+		} finally {
+			try {
+				if (rs != null) { rs.close(); }
+				if (ps != null) { ps.close(); }
+			} catch (Exception e) {}
+		}
+		
+		return results;
 	}
 	
 	/**
@@ -306,4 +360,30 @@ public class DataAccess {
 		return new Batch(id, projectID, imageFilename);
 	}
 	
+	private Record buildRecord (ResultSet rs) throws SQLException {
+		if (rs == null) { return null; }
+		int id = rs.getInt("id");
+		int batchID = rs.getInt("batch_id");
+		int fieldID = rs.getInt("field_id");
+		int rowNum = rs.getInt("row_number");
+		String value = rs.getString("value");
+		return new Record(id, batchID, fieldID, rowNum, value);
+	}
+	
+	private boolean recordExists(Record input) throws SQLException {
+		String selectStatement = "SELECT * FROM records " +
+				"WHERE batch_id = ? AND field_id = ? AND row_number = ?";
+		
+		PreparedStatement ps = connection.prepareStatement(selectStatement);
+		ps.setInt(1, input.getBatchID());
+		ps.setInt(2, input.getFieldID());
+		ps.setInt(3, input.getRowNumber());
+		
+		ResultSet rs = ps.executeQuery();
+		boolean result = rs.next();
+		
+		if (rs != null) { rs.close(); }
+		if (ps != null) { ps.close(); }
+		return result;
+	}
 }

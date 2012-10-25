@@ -4,11 +4,9 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import java.util.*;
-import java.sql.*;
 
 import org.junit.*;
 import shared.dataTransfer.*;
-import server.ServerException;
 
 public class DataAccessTest {
 
@@ -120,13 +118,14 @@ public class DataAccessTest {
 			records.add(new Record(2, 2, 2, 0, "Carney"));
 			records.add(new Record(3, 2, 3, 0, "Male"));
 			records.add(new Record(4, 2, 4, 0, "06/19/1987"));
-			records.add(new Record(5, 2, 1, 0, "Ashley"));
-			records.add(new Record(2, 2, 2, 0, "Carney"));
-			records.add(new Record(3, 2, 3, 0, "Female"));
-			records.add(new Record(4, 2, 4, 0, "10/08/1988"));
+			records.add(new Record(5, 2, 1, 1, "Ashley"));
+			records.add(new Record(6, 2, 2, 1, "Carney"));
+			records.add(new Record(7, 2, 3, 1, "Female"));
+			records.add(new Record(8, 2, 4, 1, "10/08/1988"));
 			
 			assertTrue(da.saveSeveralRecords(records));
 		} catch (Exception e) {
+			e.printStackTrace();
 			fail("Exception thrown: " + e.getMessage());
 		} finally {
 			da.endTransaction(true);
@@ -135,12 +134,23 @@ public class DataAccessTest {
 
 	@Test
 	public void testGetRecord() {
-		//fail("Not yet implemented");
+		Record expected = new Record(5, 2, 1, 1, "Ashley");
+		Record actual = da.getRecord(2, 1, 1);
+		assertNotNull("No Record returned!", actual);
+		assertEquals(expected.getBatchID(), actual.getBatchID());
+		assertEquals(expected.getFieldID(), actual.getFieldID());
+		assertEquals(expected.getRowNumber(), actual.getRowNumber());
+		assertEquals(expected.getValue(), actual.getValue());
 	}
 
 	@Test
 	public void testSearch() {
-		//fail("Not yet implemented");
+		Record expected = new Record(5, 2, 1, 1, "Ashley");
+		List<Record> actual = da.search(1, "AshlEy");
+		assertNotNull(actual);
+		assertTrue(actual.size() > 0);
+		assertEquals(expected.getRowNumber(), actual.get(0).getRowNumber());
+		assertEquals("Ashley", actual.get(0).getValue());
 	}
 
 	@Test

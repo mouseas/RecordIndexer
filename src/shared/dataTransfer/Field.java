@@ -2,14 +2,14 @@ package shared.dataTransfer;
 
 import java.util.List;
 
-public class Field extends ObjectWithID {
+public class Field extends DataTransferObject {
 	
 	private int projectID;
 	private String title;
 	private int xCoord;
 	private int width;
 	private String helpHtml;
-	private String knownData;
+	private String knownDataLocation;
 	
 	public Field (int id, int projectID, String title, int xCoord,
 			int width, String helpHtml, String knownData) {
@@ -19,7 +19,7 @@ public class Field extends ObjectWithID {
 		this.xCoord = xCoord;
 		this.width = width;
 		this.helpHtml = helpHtml;
-		this.knownData = knownData;
+		this.knownDataLocation = knownData;
 	}
 	
 	/**
@@ -68,8 +68,7 @@ public class Field extends ObjectWithID {
 	 * @return
 	 */
 	public String getHelpText() {
-		System.out.println("Not implemented yet!");
-		return  "";
+		return helpHtml;
 	}
 	
 }
