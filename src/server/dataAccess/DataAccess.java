@@ -290,7 +290,7 @@ public class DataAccess {
 		searchValue = searchValue.toLowerCase();
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		List<Record> results = new ArrayList<Record>();
+		List<Record> output = new ArrayList<Record>();
 		
 		try {
 			ps = connection.prepareStatement(statement);
@@ -301,7 +301,7 @@ public class DataAccess {
 				value = value.toLowerCase();
 				if (value.contains(searchValue)) {
 					Record r = buildRecord(rs);
-					results.add(r);
+					output.add(r);
 				}
 			}
 		} catch (SQLException e) {
@@ -313,7 +313,7 @@ public class DataAccess {
 			} catch (Exception e) {}
 		}
 		
-		return results;
+		return output;
 	}
 	
 	/**
@@ -322,7 +322,29 @@ public class DataAccess {
 	 * @return
 	 */
 	public List<Field> getFields(int projectID) {
-		return null;
+		String statement = "SELECT * FROM fields WHERE project_id = ?";
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		List<Field> output = new ArrayList<Field>();
+		
+		try {
+			ps = connection.prepareStatement(statement);
+			ps.setInt(1, projectID);
+			rs = ps.executeQuery();
+			while (rs != null && rs.next()) {
+				Field f = buildField(rs);
+				output.add(f);
+			}
+		} catch (SQLException e) {
+			System.out.println("Exception during getFields(): " + e.getMessage());
+		} finally {
+			try {
+				if (rs != null) { rs.close(); }
+				if (ps != null) { ps.close(); }
+			} catch (Exception e) {}
+		}
+		
+		return output;
 	}
 	
 	/**
@@ -368,6 +390,18 @@ public class DataAccess {
 		int rowNum = rs.getInt("row_number");
 		String value = rs.getString("value");
 		return new Record(id, batchID, fieldID, rowNum, value);
+	}
+	
+	private Field buildField(ResultSet rs) throws SQLException {
+		if (rs == null) { return null; }
+		int id = rs.getInt("id");
+		int projectID = rs.getInt("project_id");
+		String title = rs.getString("title");
+		int xCoord = rs.getInt("x_coord");
+		int width = rs.getInt("width");
+		String helpHtmlLoc = rs.getString("help_html");
+		String knownData = rs.getString("known_data");
+		return new Field(id, projectID, title, xCoord, width, helpHtmlLoc, knownData);
 	}
 	
 	private boolean recordExists(Record input) throws SQLException {

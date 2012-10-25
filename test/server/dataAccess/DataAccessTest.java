@@ -155,7 +155,23 @@ public class DataAccessTest {
 
 	@Test
 	public void testGetFields() {
-		//fail("Not yet implemented");
+		List<Field> expected = new ArrayList<Field>();
+		expected.add(new Field(1, 1, "First Name", 217, 87, "test.html", "names.txt"));
+		expected.add(new Field(2, 1, "Last Name", 304, 115, "test.html", "names.txt"));
+		expected.add(new Field(3, 1, "Gender", 419, 27, "test.html", "names.txt"));
+		expected.add(new Field(4, 1, "Date of Birth", 446, 65, "test.html", "names.txt"));
+		List<Field> actual = da.getFields(1);
+		assertNotNull("No Fields returned!", actual);
+		assertTrue(actual.size() > 3);
+		assertEquals(expected.get(0).getTitle(), actual.get(0).getTitle());
+		assertEquals(expected.get(1).getTitle(), actual.get(1).getTitle());
+		assertEquals(expected.get(2).getTitle(), actual.get(2).getTitle());
+		assertEquals(expected.get(3).getTitle(), actual.get(3).getTitle());
+		assertEquals(expected.get(0).getHelpText(), actual.get(0).getHelpText());
+		assertEquals(expected.get(0).getWidth(), actual.get(0).getWidth());
+		assertEquals(expected.get(0).getXCoord(), actual.get(0).getXCoord());
+		// KnownData is not implemented yet!
+//		assertEquals(expected.get(0).getKnownData(), actual.get(0).getKnownData());
 	}
 
 }
