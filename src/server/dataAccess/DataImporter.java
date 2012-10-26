@@ -48,64 +48,83 @@ public class DataImporter {
 		return da.wipeDatabase(true);
 	}
 	
+	/**
+	 * Imports users.
+	 * @return
+	 */
 	public boolean importUsers() {
 		if (doc == null || da == null) { return false; }
 		NodeList userList = doc.getElementsByTagName("user");
+		da.startTransaction();
 		for (int i = 0; i < userList.getLength(); i++) {
 			Element userNode = (Element)userList.item(i);
 			User user = parseUser(userNode, i);
 			// Add the user to the database, but if it fails, stop and return false.
 //			if (!da.addUser(user)) { return false; } 
 		}
+		da.endTransaction(true);
 		return true;
 	}
 	
+	/**
+	 * Imports projects, along with their associated fields, batches, and records.
+	 * @return
+	 */
 	public boolean importProjects() {
 		if (doc == null || da == null) { return false; }
 		NodeList projectList = doc.getElementsByTagName("PROJECT");
+		da.startTransaction();
 		for (int i = 0; i < projectList.getLength(); i++) {
 			Element projectNode = (Element)projectList.item(i);
 			Project project = parseProject(projectNode, i);
 			// Add the project to the database, but if it fails, stop and return false.
 //			if (!da.addProject(project)) { return false; } 
 		}
+		da.endTransaction(true);
 		return true;
 	}
 	
-	public boolean importBatches() {
+	private boolean importBatches() {
 		if (doc == null || da == null) { return false; }
 		NodeList batchList = doc.getElementsByTagName("BATCH");
+		da.startTransaction();
 		for (int i = 0; i < batchList.getLength(); i++) {
 			Element batchNode = (Element)batchList.item(i);
 			Batch batch = parseBatch(batchNode, i);
 			// Add the batch to the database, but if it fails, stop and return false.
 //			if (!da.addBatch(batch)) { return false; } 
 		}
+		da.endTransaction(true);
 		return true;
 	}
 	
-	public boolean importFields() {
+	private boolean importFields() {
 		if (doc == null || da == null) { return false; }
 		NodeList fieldList = doc.getElementsByTagName("FIELD");
+		da.startTransaction();
 		for (int i = 0; i < fieldList.getLength(); i++) {
 			Element fieldNode = (Element)fieldList.item(i);
 			Field field = parseField(fieldNode, i);
 			// Add the field to the database, but if it fails, stop and return false.
 //			if (!da.addField(field)) { return false; } 
 		}
+		da.endTransaction(true);
 		return true;
 	}
 	
-	public boolean importRecords() throws SQLException, ServerException {
+	private boolean importRecords() throws SQLException, ServerException {
 		if (doc == null || da == null) { return false; }
 		NodeList recordList = doc.getElementsByTagName("RECORD");
 		List<Record> records = new ArrayList<Record>();
+		da.startTransaction();
 		for (int i = 0; i < recordList.getLength(); i++) {
 			Element recordNode = (Element)recordList.item(i);
 			Record record = parseRecord(recordNode, i);
 			records.add(record);
 		}
-		return da.saveSeveralRecords(records);
+		boolean result = da.saveSeveralRecords(records);
+		da.endTransaction(true);
+		return result;
 	}
 	
 	public DataAccess getDataAccess() {

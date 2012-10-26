@@ -4,6 +4,7 @@ import server.ServerException;
 import shared.dataTransfer.*;
 import java.sql.*;
 import java.util.*;
+import java.io.*;
 
 public class DataAccess {
 	
@@ -14,6 +15,8 @@ public class DataAccess {
 	private Database db;
 	
 	private Connection connection;
+	
+	private static final String databaseSchemaLocation = "database-schema.txt";
 	
 	/**
 	 * Constructor
@@ -215,31 +218,121 @@ public class DataAccess {
 	
 	/**
 	 * Wipes the database's contents, usually in preparation to import data from a
-	 * separate file.
+	 * separate file. Loads the database-schema.txt file and uses it as a SQL
+	 * command to drop and create the tables used by the server.
 	 * @param confirm Will only wipe the database if confirm == true.
-	 * @return
+	 * @return Whether the wipe was successful. Returns false if confirm is false.
 	 */
 	public boolean wipeDatabase(boolean confirm) {
 		if (!confirm) { return false; }
-		return false;
+		File schemaFile = new File(databaseSchemaLocation);
+		PreparedStatement ps = null;
+		try { // load in the schema file
+			Scanner in = new Scanner(schemaFile);
+			StringBuilder sb = new StringBuilder();
+			while (in.hasNext()) { // convert it all into one string
+				sb.append(in.nextLine());
+				sb.append(" ");
+			} // convert the string to a prepared SQL statement
+			ps = connection.prepareStatement(sb.toString());
+			ps.execute(); // execute it.
+		} catch (Exception e) {
+			System.out.println("Exception while wiping database.");
+			System.out.println(e.getMessage());
+		} finally {
+			try {
+				if (ps != null) { ps.close(); }
+			} catch (Exception e) {}
+		}
+		return true;
 	}
 	
 	/**
 	 * Adds a User to the database.
-	 * @param user
+	 * @param user The User to add to the database.
 	 * @return
 	 */
+	
 	public boolean addUser(User user) {
-		return false;
+		String statement;
+		boolean IDalreadyExists = IDexists(user.getID(), "users");
+		if(userExists(user.getUsername(), user.getEmail())) {
+			return false; // user already exists, or email already in use.
+			// Cannot have two users with the same username and/or email address.
+		}
+		boolean result = false;
+		if (IDalreadyExists) {
+			statement = "INSERT INTO users (username, password, firstname," +
+					" lastname, email, indexed_records) VALUES (?, ?, ?, ?, ?, ?)";
+		} else {
+			statement = "INSERT INTO users" +
+				"(id, username, password, firstname, lastname, email, indexed_records) " +
+				"VALUES (" + user.getID() + ", ?, ?, ?, ?, ?, ?)";
+		}
+		
+		PreparedStatement ps = null;
+		try {
+			ps = connection.prepareStatement(statement);
+			ps.setString(1, user.getUsername());
+			ps.setString(2, user.getPassword());
+			ps.setString(3, user.getFirstName());
+			ps.setString(4, user.getLastName());
+			ps.setString(5, user.getEmail());
+			ps.setInt(6, user.getNumIndexedRecords());
+			result = ps.execute();
+		} catch (SQLException e) {
+			System.out.println("Exception while adding a user.");
+			System.out.println(e.getMessage());
+		} finally {
+			try {
+				if (ps != null) { ps.close(); }
+			} catch (Exception e) {}
+		}
+		
+		return result;
 	}
 	
 	/**
 	 * Adds a Batch to the database.
-	 * @param batch
+	 * @param batch The batch to add to the database.
+	 * @param completed Has the batch been completed? Set to true if it
+	 * has any records attached to it.
 	 * @return
 	 */
-	public boolean addBatch(Batch batch) {
-		return false;
+	public boolean addBatch(Batch batch, boolean completed) {
+		String statement;
+		boolean IDalreadyExists = IDexists(batch.getID(), "batches");
+		boolean result = false;
+		if (IDalreadyExists) {
+			statement = "INSERT INTO batches (project_id, filename, " +
+					"completed, in_use) VALUES (?, ?, ?, 0)";
+		} else {
+			statement = "INSERT INTO batches" +
+				"(id, project_id, filename, completed, in_use) " +
+				"VALUES (" + batch.getID() + ", ?, ?, ?, 0)";
+		}
+		
+		PreparedStatement ps = null;
+		try {
+			ps = connection.prepareStatement(statement);
+			ps.setInt(1, batch.getProjectID());
+			ps.setString(2, batch.getImage().getFilename());
+			if (completed) {
+				ps.setInt(3, 1); // 1 means completed.
+			} else {
+				ps.setInt(3, 0); // 0 means not completed.
+			}
+			result = ps.execute();
+		} catch (SQLException e) {
+			System.out.println("Exception while adding a batch.");
+			System.out.println(e.getMessage());
+		} finally {
+			try {
+				if (ps != null) { ps.close(); }
+			} catch (Exception e) {}
+		}
+		
+		return result;
 	}
 	
 	/**
@@ -249,7 +342,38 @@ public class DataAccess {
 	 * @return
 	 */
 	public boolean addProject(Project project) {
-		return false;
+		String statement;
+		boolean IDalreadyExists = IDexists(project.getID(), "projects");
+		boolean result = false;
+		if (IDalreadyExists) {
+			statement = "INSERT INTO projects (username, password, firstname," +
+					" lastname, email, indexed_records) VALUES (?, ?, ?, ?, ?, ?)";
+		} else {
+			statement = "INSERT INTO projects" +
+				"(id, username, password, firstname, lastname, email, indexed_records) " +
+				"VALUES (" + project.getID() + ", ?, ?, ?, ?, ?, ?)";
+		}
+		
+		PreparedStatement ps = null;
+		try {
+			ps = connection.prepareStatement(statement);
+//			ps.setString(1, project.getUsername());
+//			ps.setString(2, project.getPassword());
+//			ps.setString(3, project.getFirstName());
+//			ps.setString(4, project.getLastName());
+//			ps.setString(5, project.getEmail());
+//			ps.setInt(6, project.getNumIndexedRecords());
+			result = ps.execute();
+		} catch (SQLException e) {
+			System.out.println("Exception while adding a user.");
+			System.out.println(e.getMessage());
+		} finally {
+			try {
+				if (ps != null) { ps.close(); }
+			} catch (Exception e) {}
+		}
+		
+		return result;
 	}
 	
 	/**
@@ -258,7 +382,38 @@ public class DataAccess {
 	 * @return
 	 */
 	public boolean addField(Field field) {
-		return false;
+		String statement;
+		boolean IDalreadyExists = IDexists(field.getID(), "users");
+		boolean result = false;
+		if (IDalreadyExists) {
+			statement = "INSERT INTO users (username, password, firstname," +
+					" lastname, email, indexed_records) VALUES (?, ?, ?, ?, ?, ?)";
+		} else {
+			statement = "INSERT INTO users" +
+				"(id, username, password, firstname, lastname, email, indexed_records) " +
+				"VALUES (" + field.getID() + ", ?, ?, ?, ?, ?, ?)";
+		}
+		
+		PreparedStatement ps = null;
+		try {
+			ps = connection.prepareStatement(statement);
+//			ps.setString(1, field.getUsername());
+//			ps.setString(2, field.getPassword());
+//			ps.setString(3, field.getFirstName());
+//			ps.setString(4, field.getLastName());
+//			ps.setString(5, field.getEmail());
+//			ps.setInt(6, field.getNumIndexedRecords());
+			result = ps.execute();
+		} catch (SQLException e) {
+			System.out.println("Exception while adding a user.");
+			System.out.println(e.getMessage());
+		} finally {
+			try {
+				if (ps != null) { ps.close(); }
+			} catch (Exception e) {}
+		}
+		
+		return result;
 	}
 	
 	/**
@@ -466,6 +621,68 @@ public class DataAccess {
 		
 		if (rs != null) { rs.close(); }
 		if (ps != null) { ps.close(); }
+		return result;
+	}
+	
+	/**
+	 * Checks whether a given ID in a given table is available for use.
+	 * @param ID
+	 * @param table
+	 * @return
+	 */
+	private boolean IDexists(int ID, String table) {
+		String selectStatement = "SELECT * FROM ? WHERE id = ?";
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		boolean result = false;
+		try {
+			ps = connection.prepareStatement(selectStatement);
+			ps.setInt(1, ID);
+			ps.setString(2, table);
+			
+			rs = ps.executeQuery();
+			result = rs.next();
+		} catch (SQLException e) {
+			System.out.println("Exception while checking if an element exists with that ID");
+			System.out.println(e.getMessage());
+		} finally {
+			try {
+				if (rs != null) { rs.close(); }
+				if (ps != null) { ps.close(); }
+			} catch (SQLException e) {}
+		}
+		return result;
+	}
+	
+	/**
+	 * Checks whether either of a username and e-mail already exist in the database.
+	 * If either exists, this will return false, and prevent creating a new user.
+	 * @param username Username to check for
+	 * @param email Email to check for
+	 * @return
+	 */
+	private boolean userExists(String username, String email) {
+		String statement = "SELECT username, email FROM users" +
+				"WHERE username = ? OR email = ?";
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		boolean result = false;
+		try {
+			ps = connection.prepareStatement(statement);
+			ps.setString(1, username);
+			ps.setString(2, email);
+			
+			rs = ps.executeQuery();
+			result = rs.next();
+		} catch (SQLException e) {
+			System.out.println("Exception while checking if a user exists with given username or email");
+			System.out.println(e.getMessage());
+		} finally {
+			try {
+				if (rs != null) { rs.close(); }
+				if (ps != null) { ps.close(); }
+			} catch (SQLException e) {}
+		}
 		return result;
 	}
 }

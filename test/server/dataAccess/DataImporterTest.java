@@ -37,6 +37,10 @@ public class DataImporterTest {
 	public void testImportUsers() {
 		di.importUsers();
 		User actual = da.getUser("test1", "test1");
+		assertEquals("test1", actual.getUsername());
+		actual = da.getUser("sheila", "parker");
+		assertEquals("Sheila Parker", actual.getFullName());
+		assertEquals("sheila.parker@gmail.com", actual.getEmail());
 	}
 
 	@Test
