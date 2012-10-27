@@ -6,6 +6,7 @@ import java.io.File;
 import java.util.*;
 
 import org.junit.*;
+
 import shared.dataTransfer.*;
 
 public class DataAccessTest {
@@ -20,12 +21,10 @@ public class DataAccessTest {
 	@Before
 	public void setUp() throws Exception {
 		da = new DataAccess("database" + File.separator +  "indexer-app.sqlite");
-		da.startTransaction();
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		da.endTransaction(false);
 		da = null;
 	}
 
@@ -33,9 +32,143 @@ public class DataAccessTest {
 	public void testDataAccess() {
 		// no real test here, as long as no exceptions occur.
 	}
+	
+	@Test
+	public void testWipeAndRepopulateDatabase() {
+		System.out.println("wipe and repopulate ################");
+		da.startTransaction();
+		
+		testWipeDatabase();
+
+		da.endTransaction(true);
+		da.startTransaction();
+		
+		testAddProject();
+
+		da.endTransaction(true);
+		da.startTransaction();
+		
+		testAddUser();
+
+		da.endTransaction(true);
+		da.startTransaction();
+		
+		testAddField();
+
+		da.endTransaction(true);
+		da.startTransaction();
+		
+		testAddBatch();
+
+		da.endTransaction(true);
+	}
+	
+	private void testAddUser() {
+		da.addUser(new User(1, "mouseasw", "Martin", "Carney",
+				"mouseasw@gmail.com", 0, "password"));
+		da.addUser(new User(2, "test", "Mister", "Test",
+				"mouse_asw@yahoo.com", 0, "password"));
+		
+		User expected = new User(1, "mouseasw", "Martin", "Carney",
+				"mouseasw@gmail.com", 0, "password");
+		User actual = da.getUser("mouseasw", "password");
+		assertEquals(expected.getFullName(), actual.getFullName());
+		assertEquals(expected.getUsername(), actual.getUsername());
+		assertEquals(expected.getID(), actual.getID());
+		assertEquals(expected.getEmail(), actual.getEmail());
+		assertEquals(expected.getPassword(), actual.getPassword());
+		
+		expected = new User(2, "test", "Mister", "Test",
+				"mouse_asw@yahoo.com", 0, "password");
+		actual = da.getUser("test", "password");
+		assertEquals(expected.getFullName(), actual.getFullName());
+		assertEquals(expected.getUsername(), actual.getUsername());
+		assertEquals(expected.getID(), actual.getID());
+		assertEquals(expected.getEmail(), actual.getEmail());
+		assertEquals(expected.getPassword(), actual.getPassword());
+	}
+
+	private void testAddBatch() {
+		da.addBatch(new Batch(1, 1, "batch001.png"), true);
+		da.addBatch(new Batch(2, 1, "batch002.png"), false);
+		Batch batch2 = null;
+		try {
+			batch2 = da.getNextBatch(1); // marks batch 2 as in-use, and grabs it.
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+		da.addBatch(new Batch(3, 1, "batch003.png"), false);
+		assertEquals("batch002.png", batch2.getImage().getFilename());
+		assertEquals(2, batch2.getID());
+	}
+
+	private void testAddProject() {
+		da.addProject(new Project(1, 327, 20, 30, "1987 Census"));
+		List<Project> projects = da.getProjectList();
+		assertNotNull(projects);
+		assertTrue(projects.size() > 0);
+		Project p = projects.get(0);
+		assertEquals("1987 Census", p.getTitle());
+		assertEquals(327, p.getY(0));
+		assertEquals(20, p.getRowHeight());
+		assertEquals(30, p.getRecordsPerImage());
+	}
+
+	private void testAddField() {
+		da.addField(new Field(1, 1, "First Name", 217, 87, "test.html", "names.txt"));
+		da.addField(new Field(2, 1, "Last Name", 304, 115, "test.html", "names.txt"));
+		da.addField(new Field(3, 1, "Gender", 419, 27, "test.html", "names.txt"));
+		da.addField(new Field(4, 1, "Date of Birth", 446, 65, "test.html", "names.txt"));
+		
+		List<Field> fields = da.getFields(1);
+		assertNotNull(fields);
+		assertTrue(fields.size() > 3);
+		
+		Field f = fields.get(0);
+		assertEquals(1, f.getProjectID());
+		assertEquals(217, f.getXCoord());
+		assertEquals(87, f.getWidth());
+	}
+
+	@Test
+	public void testGetFields() {
+		System.out.println("get fields ################");
+		da.startTransaction();
+		
+		List<Field> expected = new ArrayList<Field>();
+		expected.add(new Field(1, 1, "First Name", 217, 87, "test.html", "names.txt"));
+		expected.add(new Field(2, 1, "Last Name", 304, 115, "test.html", "names.txt"));
+		expected.add(new Field(3, 1, "Gender", 419, 27, "test.html", "names.txt"));
+		expected.add(new Field(4, 1, "Date of Birth", 446, 65, "test.html", "names.txt"));
+		List<Field> actual = da.getFields(1);
+		assertNotNull("No Fields returned!", actual);
+		assertTrue("Less than 4 fields: " + actual.size(), actual.size() > 3);
+		assertEquals(expected.get(0).getTitle(), actual.get(0).getTitle());
+		assertEquals(expected.get(1).getTitle(), actual.get(1).getTitle());
+		assertEquals(expected.get(2).getTitle(), actual.get(2).getTitle());
+		assertEquals(expected.get(3).getTitle(), actual.get(3).getTitle());
+		assertEquals(expected.get(0).getHelpHtmlLoc(), actual.get(0).getHelpHtmlLoc());
+		assertEquals(expected.get(0).getWidth(), actual.get(0).getWidth());
+		assertEquals(expected.get(0).getXCoord(), actual.get(0).getXCoord());
+		assertEquals(expected.get(0).getKnownDataLoc(), actual.get(0).getKnownDataLoc());
+
+		da.endTransaction(false);
+	}
+	
+	private void testSearch() {
+		Record expected = new Record(5, 2, 1, 1, "Ashley");
+		List<Record> actual = da.search(1, "AshlEy");
+		assertNotNull(actual);
+		assertTrue(actual.size() > 0);
+		assertEquals(expected.getRowNumber(), actual.get(0).getRowNumber());
+		assertEquals("Ashley", actual.get(0).getValue());
+	}
 
 	@Test
 	public void testGetUser() {
+		System.out.println("get user ################");
+		da.startTransaction();
+		
 		User expected = new User(1, "mouseasw", "Martin", "Carney",
 				"mouseasw@gmail.com", 0, "password");
 		User actual = da.getUser("mouseasw", "password");
@@ -56,10 +189,15 @@ public class DataAccessTest {
 		assertEquals(expected.getID(), actual.getID());
 		assertEquals(expected.getEmail(), actual.getEmail());
 		assertEquals(expected.getPassword(), actual.getPassword());
+
+		da.endTransaction(false);
 	}
 
 	@Test
 	public void testGetProjectList() {
+		System.out.println("get project list ################");
+		da.startTransaction();
+		
 		Project expected = new Project(1, 327, 20, 30, "1987 Census");
 		List<Project> actualList = da.getProjectList();
 		Project actual = actualList.get(0);
@@ -68,10 +206,15 @@ public class DataAccessTest {
 		assertEquals(expected.getRecordsPerImage(), actual.getRecordsPerImage());
 		assertEquals(expected.getRowHeight(), actual.getRowHeight());
 		assertEquals(expected.getY(0), actual.getY(0));
+
+		da.endTransaction(false);
 	}
 
 	@Test
 	public void testGetSampleImageLocation() {
+		System.out.println("get sample image ################");
+		da.startTransaction();
+		
 		try {
 			String expected = "batch001.png";
 			String actual = da.getSampleImageLocation(1);
@@ -80,10 +223,27 @@ public class DataAccessTest {
 			e.printStackTrace();
 			fail("Exception thrown: " + e.getMessage());
 		}
+
+		da.endTransaction(false);
 	}
 
 	@Test
-	public void testGetNextBatch() {
+	public void testBatches() {
+		da.startTransaction();
+		
+		testGetNextBatch();
+		
+		da.endTransaction(true);
+		da.startTransaction();
+		
+		testSaveBatch();
+		
+		da.endTransaction(true);
+	}
+	
+	private void testGetNextBatch() {
+		System.out.println("get next batch ################");
+		
 		try {
 			Batch expected = new Batch(3, 1, "batch003.png");
 			Batch actual = da.getNextBatch(1);
@@ -93,25 +253,41 @@ public class DataAccessTest {
 					actual.getImage().getFilename());
 			assertEquals(expected.getProjectID(), actual.getProjectID());
 		} catch (Exception e) {
+			e.printStackTrace();
 			fail("Exception thrown: " + e.getMessage());
 		}
 	}
 
-	@Test
-	public void testSaveBatch() {
+	private void testSaveBatch() {
+		System.out.println("save batch ################");
+		
 		try {
 			Batch result = new Batch(3, 1, "batch003.png");
 			assertTrue("Failed with completed.", da.saveBatch(result, true));
 			assertTrue("Failed with not completed.", da.saveBatch(result, false));
 		} catch (Exception e) {
 			fail("Exception thrown: " + e.getMessage());
-		} finally {
-			da.endTransaction(true);
 		}
+
 	}
 
 	@Test
-	public void testSaveMultpleRecords() {
+	public void testSaveAndGetRecordsAndSearch() {
+		System.out.println("save and get records and search ################");
+		da.startTransaction();
+		
+		testSaveMultpleRecords();
+
+		da.endTransaction(true);
+		da.startTransaction();
+		
+		testGetRecord();
+		testSearch();
+
+		da.endTransaction(true);
+	}
+	
+	private void testSaveMultpleRecords() {
 		try {
 			List<Record> records = new ArrayList<Record>();
 			records.add(new Record(1, 2, 1, 0, "Martin"));
@@ -127,13 +303,10 @@ public class DataAccessTest {
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail("Exception thrown: " + e.getMessage());
-		} finally {
-			da.endTransaction(true);
 		}
 	}
 
-	@Test
-	public void testGetRecord() {
+	private void testGetRecord() {
 		Record expected = new Record(5, 2, 1, 1, "Ashley");
 		Record actual = da.getRecord(2, 1, 1);
 		assertNotNull("No Record returned!", actual);
@@ -142,36 +315,28 @@ public class DataAccessTest {
 		assertEquals(expected.getRowNumber(), actual.getRowNumber());
 		assertEquals(expected.getValue(), actual.getValue());
 	}
-
-	@Test
-	public void testSearch() {
-		Record expected = new Record(5, 2, 1, 1, "Ashley");
-		List<Record> actual = da.search(1, "AshlEy");
-		assertNotNull(actual);
-		assertTrue(actual.size() > 0);
-		assertEquals(expected.getRowNumber(), actual.get(0).getRowNumber());
-		assertEquals("Ashley", actual.get(0).getValue());
+	
+	private void testWipeDatabase() {
+		try {
+		da.wipeDatabase(true);
+		da.endTransaction(true); // commit change
+		da.startTransaction(); // start another transaction
+		List<Field> actualFields = da.getFields(1);
+		assertTrue("Fields were not empty!", actualFields.size() < 1);
+		List<Project> actualProjects = da.getProjectList();
+		assertTrue("Projects were not empty!", actualProjects.size() < 1);
+		Batch actualBatch = da.getNextBatch(1);
+		assertNull("Batches exist", actualBatch);
+		User actualUser = da.getUser("mouseasw", "password");
+		assertNull("User exists", actualUser);
+		
+		} catch (Exception e) {
+			fail("Exception occured during database wipe.");
+		} finally {
+			da.endTransaction(true);
+		}
+		
 	}
 
-	@Test
-	public void testGetFields() {
-		List<Field> expected = new ArrayList<Field>();
-		expected.add(new Field(1, 1, "First Name", 217, 87, "test.html", "names.txt"));
-		expected.add(new Field(2, 1, "Last Name", 304, 115, "test.html", "names.txt"));
-		expected.add(new Field(3, 1, "Gender", 419, 27, "test.html", "names.txt"));
-		expected.add(new Field(4, 1, "Date of Birth", 446, 65, "test.html", "names.txt"));
-		List<Field> actual = da.getFields(1);
-		assertNotNull("No Fields returned!", actual);
-		assertTrue(actual.size() > 3);
-		assertEquals(expected.get(0).getTitle(), actual.get(0).getTitle());
-		assertEquals(expected.get(1).getTitle(), actual.get(1).getTitle());
-		assertEquals(expected.get(2).getTitle(), actual.get(2).getTitle());
-		assertEquals(expected.get(3).getTitle(), actual.get(3).getTitle());
-		assertEquals(expected.get(0).getHelpText(), actual.get(0).getHelpText());
-		assertEquals(expected.get(0).getWidth(), actual.get(0).getWidth());
-		assertEquals(expected.get(0).getXCoord(), actual.get(0).getXCoord());
-		// KnownData is not implemented yet!
-//		assertEquals(expected.get(0).getKnownData(), actual.get(0).getKnownData());
-	}
-
+	
 }

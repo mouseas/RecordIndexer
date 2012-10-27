@@ -33,6 +33,9 @@ public class DataAccess {
 	 */
 	public void startTransaction() {
 		if (db != null) {
+			if (db.getConnection() != null) {
+				System.out.println("Connection already open!");
+			}
 			try {
 				db.startTransaction();
 				connection = db.getConnection();
@@ -82,10 +85,7 @@ public class DataAccess {
 			System.out.println("Exception while trying to get a user.");
 			System.out.println(e.getMessage());
 		} finally {
-			try {
-				if (ps != null) { ps.close(); }
-				if (rs != null) { rs.close(); }
-			} catch (SQLException e) { System.out.println("Failed to close"); }
+			closeQuery(rs, ps);
 		}
 		return result;
 	}
@@ -108,6 +108,7 @@ public class DataAccess {
 		} catch (Exception e) {
 			System.out.println("Exception while getting the project list.");
 		}
+		closeQuery(rs, ps);
 		
 		return result;
 	}
@@ -127,15 +128,13 @@ public class DataAccess {
 		ps = connection.prepareStatement(statement);
 		ps.setInt(1, projectID);
 		rs = ps.executeQuery();
-		if (rs.next()) {
+		if (rs != null && rs.next()) {
 			result = rs.getString("filename");
 		} else {
 			result = null; // no sample image available
 			// Either no batches in project, or invalid project id
 		}
-	
-		if (ps != null) { ps.close(); }
-		if (rs != null) { rs.close(); }
+		closeQuery(rs, ps);
 			
 		return result;
 	}
@@ -166,8 +165,7 @@ public class DataAccess {
 		} else {
 			result = null; // no batches available
 		}
-		if (ps != null) { ps.close(); }
-		if (rs != null) { rs.close(); }
+		closeQuery(rs, ps);
 		return result;
 	}
 	
@@ -188,8 +186,8 @@ public class DataAccess {
 		else { ps.setInt(1, 0); } // not completed
 		ps.setInt(2, input.getID());
 		ps.execute();
-	
-		if (ps != null) { ps.close(); }
+		
+		closeQuery(null, ps);
 		return true;
 	}
 	
@@ -233,16 +231,21 @@ public class DataAccess {
 			while (in.hasNext()) { // convert it all into one string
 				sb.append(in.nextLine());
 				sb.append(" ");
-			} // convert the string to a prepared SQL statement
-			ps = connection.prepareStatement(sb.toString());
-			ps.execute(); // execute it.
+				if (sb.toString().contains(";")) {
+					// convert the string to a prepared SQL statement
+					ps = connection.prepareStatement(sb.toString());
+					ps.execute(); // execute it.
+					ps.close();
+					ps = null;
+					sb = new StringBuilder(); // clear the string builder.
+				}
+			}
+			
 		} catch (Exception e) {
 			System.out.println("Exception while wiping database.");
 			System.out.println(e.getMessage());
 		} finally {
-			try {
-				if (ps != null) { ps.close(); }
-			} catch (Exception e) {}
+			closeQuery(null, ps);
 		}
 		return true;
 	}
@@ -284,9 +287,7 @@ public class DataAccess {
 			System.out.println("Exception while adding a user.");
 			System.out.println(e.getMessage());
 		} finally {
-			try {
-				if (ps != null) { ps.close(); }
-			} catch (Exception e) {}
+			closeQuery(null, ps);
 		}
 		
 		return result;
@@ -327,9 +328,7 @@ public class DataAccess {
 			System.out.println("Exception while adding a batch.");
 			System.out.println(e.getMessage());
 		} finally {
-			try {
-				if (ps != null) { ps.close(); }
-			} catch (Exception e) {}
+			closeQuery(null, ps);
 		}
 		
 		return result;
@@ -346,31 +345,27 @@ public class DataAccess {
 		boolean IDalreadyExists = IDexists(project.getID(), "projects");
 		boolean result = false;
 		if (IDalreadyExists) {
-			statement = "INSERT INTO projects (username, password, firstname," +
-					" lastname, email, indexed_records) VALUES (?, ?, ?, ?, ?, ?)";
+			statement = "INSERT INTO projects (title, records_per_image, first_y_coord," +
+					" field_height) VALUES (?, ?, ?, ?)";
 		} else {
 			statement = "INSERT INTO projects" +
-				"(id, username, password, firstname, lastname, email, indexed_records) " +
-				"VALUES (" + project.getID() + ", ?, ?, ?, ?, ?, ?)";
+				"(id, title, records_per_image, first_y_coord, field_height) " +
+				"VALUES (" + project.getID() + ", ?, ?, ?, ?)";
 		}
 		
 		PreparedStatement ps = null;
 		try {
 			ps = connection.prepareStatement(statement);
-//			ps.setString(1, project.getUsername());
-//			ps.setString(2, project.getPassword());
-//			ps.setString(3, project.getFirstName());
-//			ps.setString(4, project.getLastName());
-//			ps.setString(5, project.getEmail());
-//			ps.setInt(6, project.getNumIndexedRecords());
+			ps.setString(1, project.getTitle());
+			ps.setInt(2, project.getRecordsPerImage());
+			ps.setInt(3, project.getY(0));
+			ps.setInt(4, project.getRowHeight());
 			result = ps.execute();
 		} catch (SQLException e) {
-			System.out.println("Exception while adding a user.");
+			System.out.println("Exception while adding a project.");
 			System.out.println(e.getMessage());
 		} finally {
-			try {
-				if (ps != null) { ps.close(); }
-			} catch (Exception e) {}
+			closeQuery(null, ps);
 		}
 		
 		return result;
@@ -386,31 +381,30 @@ public class DataAccess {
 		boolean IDalreadyExists = IDexists(field.getID(), "users");
 		boolean result = false;
 		if (IDalreadyExists) {
-			statement = "INSERT INTO users (username, password, firstname," +
-					" lastname, email, indexed_records) VALUES (?, ?, ?, ?, ?, ?)";
+			statement = "INSERT INTO fields (project_id, title, x_coord," +
+					" width, help_html, known_data) VALUES (?, ?, ?, ?, ?, ?)";
 		} else {
-			statement = "INSERT INTO users" +
-				"(id, username, password, firstname, lastname, email, indexed_records) " +
+			statement = "INSERT INTO fields" +
+				"(id, project_id, title, x_coord, width, help_html, known_data) " +
 				"VALUES (" + field.getID() + ", ?, ?, ?, ?, ?, ?)";
 		}
 		
 		PreparedStatement ps = null;
 		try {
 			ps = connection.prepareStatement(statement);
-//			ps.setString(1, field.getUsername());
-//			ps.setString(2, field.getPassword());
-//			ps.setString(3, field.getFirstName());
-//			ps.setString(4, field.getLastName());
-//			ps.setString(5, field.getEmail());
-//			ps.setInt(6, field.getNumIndexedRecords());
+			ps.setInt(1, field.getProjectID());
+			ps.setString(2, field.getTitle());
+			ps.setInt(3, field.getXCoord());
+			ps.setInt(4, field.getWidth());
+			ps.setString(5, field.getHelpHtmlLoc());
+			ps.setString(6, field.getKnownDataLoc());
 			result = ps.execute();
 		} catch (SQLException e) {
-			System.out.println("Exception while adding a user.");
-			System.out.println(e.getMessage());
+			System.out.println("Exception while adding a field.");
+			System.out.println("\t" + statement);
+			System.out.println("\t" + e.getMessage());
 		} finally {
-			try {
-				if (ps != null) { ps.close(); }
-			} catch (Exception e) {}
+			closeQuery(null, ps);
 		}
 		
 		return result;
@@ -442,7 +436,7 @@ public class DataAccess {
 		
 		ps.execute();
 		
-		if (ps != null) { ps.close(); }
+		closeQuery(null, ps);
 		return true;
 	}
 	
@@ -473,10 +467,7 @@ public class DataAccess {
 		} catch (SQLException e) {
 			System.out.println("Error at getRecord(): " + e.getMessage());
 		} finally {
-			try {
-				if (rs != null) { rs.close(); }
-				if (ps != null) { ps.close(); }
-			} catch (Exception e) {}
+			closeQuery(rs, ps);
 		}
 		
 		return result;
@@ -510,10 +501,7 @@ public class DataAccess {
 		} catch (SQLException e) {
 			System.out.println("Exception during Search: " + e.getMessage());
 		} finally {
-			try {
-				if (rs != null) { rs.close(); }
-				if (ps != null) { ps.close(); }
-			} catch (Exception e) {}
+			closeQuery(rs, ps);
 		}
 		
 		return output;
@@ -541,10 +529,7 @@ public class DataAccess {
 		} catch (SQLException e) {
 			System.out.println("Exception during getFields(): " + e.getMessage());
 		} finally {
-			try {
-				if (rs != null) { rs.close(); }
-				if (ps != null) { ps.close(); }
-			} catch (Exception e) {}
+			closeQuery(rs, ps);
 		}
 		
 		return output;
@@ -569,6 +554,11 @@ public class DataAccess {
 		return result;
 	}
 	
+	/**
+	 * Builds a Project object from a valid, successful ResultSet.
+	 * @param rs
+	 * @return
+	 */
 	private Project buildProject (ResultSet rs) throws SQLException {
 		int id = rs.getInt("id");
 		String title = rs.getString("title");
@@ -578,6 +568,11 @@ public class DataAccess {
 		return new Project(id, firstYCoord, fieldHeight, numRows, title);
 	}
 	
+	/**
+	 * Builds a Batch object from a valid, successful ResultSet. 
+	 * @param rs
+	 * @return
+	 */
 	private Batch buildBatch (ResultSet rs) throws SQLException {
 		int id = rs.getInt("id");
 		int projectID = rs.getInt("project_id");
@@ -585,6 +580,11 @@ public class DataAccess {
 		return new Batch(id, projectID, imageFilename);
 	}
 	
+	/**
+	 * Builds a Record object from a valid, successful ResultSet. 
+	 * @param rs
+	 * @return
+	 */
 	private Record buildRecord (ResultSet rs) throws SQLException {
 		if (rs == null) { return null; }
 		int id = rs.getInt("id");
@@ -595,6 +595,11 @@ public class DataAccess {
 		return new Record(id, batchID, fieldID, rowNum, value);
 	}
 	
+	/**
+	 * Builds a Field object from a valid, successful ResultSet. 
+	 * @param rs
+	 * @return
+	 */
 	private Field buildField(ResultSet rs) throws SQLException {
 		if (rs == null) { return null; }
 		int id = rs.getInt("id");
@@ -631,25 +636,22 @@ public class DataAccess {
 	 * @return
 	 */
 	private boolean IDexists(int ID, String table) {
-		String selectStatement = "SELECT * FROM ? WHERE id = ?";
+		String selectStatement = "SELECT * FROM " + table + " WHERE id = ?;";
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		boolean result = false;
 		try {
 			ps = connection.prepareStatement(selectStatement);
 			ps.setInt(1, ID);
-			ps.setString(2, table);
 			
 			rs = ps.executeQuery();
-			result = rs.next();
+			result = (rs != null && rs.next());
 		} catch (SQLException e) {
 			System.out.println("Exception while checking if an element exists with that ID");
-			System.out.println(e.getMessage());
+			System.out.println("\t" + table + " - " + selectStatement);
+			System.out.println("\t" + e.getMessage());
 		} finally {
-			try {
-				if (rs != null) { rs.close(); }
-				if (ps != null) { ps.close(); }
-			} catch (SQLException e) {}
+			closeQuery(rs, ps);
 		}
 		return result;
 	}
@@ -662,8 +664,8 @@ public class DataAccess {
 	 * @return
 	 */
 	private boolean userExists(String username, String email) {
-		String statement = "SELECT username, email FROM users" +
-				"WHERE username = ? OR email = ?";
+		String statement = "SELECT username, email FROM users " +
+				"WHERE username=? OR email=?";
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		boolean result = false;
@@ -676,13 +678,20 @@ public class DataAccess {
 			result = rs.next();
 		} catch (SQLException e) {
 			System.out.println("Exception while checking if a user exists with given username or email");
-			System.out.println(e.getMessage());
+			System.out.println("\t" + e.getMessage());
 		} finally {
-			try {
-				if (rs != null) { rs.close(); }
-				if (ps != null) { ps.close(); }
-			} catch (SQLException e) {}
+			closeQuery(rs, ps);
 		}
 		return result;
+	}
+	
+	private void closeQuery(ResultSet rs, PreparedStatement ps) {
+		try {
+			if (rs != null) { rs.close(); }
+			if (ps != null) { ps.close(); }
+		} catch (SQLException e) {
+			System.out.println("Failed to close. " + e.getMessage());
+			e.printStackTrace();
+		}
 	}
 }

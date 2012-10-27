@@ -8,7 +8,7 @@ public class Field extends DataTransferObject {
 	private String title;
 	private int xCoord;
 	private int width;
-	private String helpHtml;
+	private String helpHtmlLoc;
 	private String knownDataLocation;
 	
 	public Field (int id, int projectID, String title, int xCoord,
@@ -18,7 +18,7 @@ public class Field extends DataTransferObject {
 		this.title = title;
 		this.xCoord = xCoord;
 		this.width = width;
-		this.helpHtml = helpHtml;
+		this.helpHtmlLoc = helpHtml;
 		this.knownDataLocation = knownData;
 	}
 	
@@ -67,8 +67,20 @@ public class Field extends DataTransferObject {
 	 * Gets the help text for this field.
 	 * @return
 	 */
-	public String getHelpText() {
-		return helpHtml;
+	public String getHelpHtmlLoc() {
+		return helpHtmlLoc;
+	}
+
+	public void setHelpHtmlLoc(String helpHtmlLoc) {
+		this.helpHtmlLoc = helpHtmlLoc;
+	}
+
+	public String getKnownDataLoc() {
+		return knownDataLocation;
+	}
+
+	public void setKnownDataLoc(String knownDataLoc) {
+		this.knownDataLocation = knownDataLoc;
 	}
 	
 }

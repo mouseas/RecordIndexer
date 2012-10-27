@@ -50,6 +50,9 @@ public class Database {
 	 */
 	public void startTransaction() throws ServerException {
 		try {
+			if (connection != null) {
+				connection.close();
+			}
 			connection = DriverManager.getConnection("jdbc:sqlite:" + location);
 			connection.setAutoCommit(false);
 		} catch (SQLException e) {
