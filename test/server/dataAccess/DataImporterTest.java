@@ -37,8 +37,15 @@ public class DataImporterTest {
 	public void testTheWholeThing() {
 		di.wipeDatabase();
 		
+		// verify that there are no users. Indicates that the wipe was successful.
+		// The wipeDatabase() function is actually tested in DataAccessTest.
+		da.startTransaction();
+		User user = da.getUser("test1", "test1");
+		assertNull(user);
+		da.endTransaction(false);
+		
 		testImportUsers();
-//		testImportProjects();
+		testImportProjects();
 	}
 
 	private void testImportUsers() {
@@ -57,24 +64,17 @@ public class DataImporterTest {
 	}
 
 	private void testImportProjects() {
-		
-
-		
-		testImportFields();
-		testImportBatches();
-		testImportRecords();
-	}
-
-	private void testImportBatches() {
-		fail("Not yet implemented");
-	}
-
-	private void testImportFields() {
-		fail("Not yet implemented");
-	}
-
-	private void testImportRecords() {
-		fail("Not yet implemented");
+		try {
+			di.importProjectsAndComponents();
+//			da.startTransaction();
+//			
+//			
+//			
+//			da.endTransaction(false);
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("Exception while importing Projects and components thereof");
+		}
 	}
 
 }

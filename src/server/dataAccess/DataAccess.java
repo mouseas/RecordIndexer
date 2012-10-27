@@ -265,7 +265,7 @@ public class DataAccess {
 			return false; // user already exists, or email already in use.
 			// Cannot have two users with the same username and/or email address.
 		}
-		boolean result = false;
+		boolean result = true;
 		if (IDalreadyExists) {
 			statement = "INSERT INTO users (username, password, firstname," +
 					" lastname, email, indexed_records) VALUES (?, ?, ?, ?, ?, ?)";
@@ -284,7 +284,7 @@ public class DataAccess {
 			ps.setString(4, user.getLastName());
 			ps.setString(5, user.getEmail());
 			ps.setInt(6, user.getNumIndexedRecords());
-			result = ps.execute();
+			ps.execute();
 		} catch (SQLException e) {
 			System.out.println("Exception while adding a user.");
 			System.out.println(e.getMessage());
@@ -302,7 +302,7 @@ public class DataAccess {
 	 * has any records attached to it.
 	 * @return
 	 */
-	public boolean addBatch(Batch batch, boolean completed) {
+	public boolean addBatch(Batch batch) {
 		String statement;
 		boolean IDalreadyExists = IDexists(batch.getID(), "batches");
 		boolean result = false;
@@ -320,7 +320,7 @@ public class DataAccess {
 			ps = connection.prepareStatement(statement);
 			ps.setInt(1, batch.getProjectID());
 			ps.setString(2, batch.getImage().getFilename());
-			if (completed) {
+			if (batch.isCompleted()) {
 				ps.setInt(3, 1); // 1 means completed.
 			} else {
 				ps.setInt(3, 0); // 0 means not completed.
@@ -380,7 +380,7 @@ public class DataAccess {
 	 */
 	public boolean addField(Field field) {
 		String statement;
-		boolean IDalreadyExists = IDexists(field.getID(), "users");
+		boolean IDalreadyExists = IDexists(field.getID(), "fields");
 		boolean result = false;
 		if (IDalreadyExists) {
 			statement = "INSERT INTO fields (project_id, title, x_coord," +

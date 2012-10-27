@@ -89,15 +89,15 @@ public class DataAccessTest {
 	}
 
 	private void testAddBatch() {
-		da.addBatch(new Batch(1, 1, "batch001.png"), true);
-		da.addBatch(new Batch(2, 1, "batch002.png"), false);
+		da.addBatch(new Batch(1, 1, "batch001.png", true));
+		da.addBatch(new Batch(2, 1, "batch002.png"));
 		Batch batch2 = null;
 		try {
 			batch2 = da.getNextBatch(1); // marks batch 2 as in-use, and grabs it.
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
-		da.addBatch(new Batch(3, 1, "batch003.png"), false);
+		da.addBatch(new Batch(3, 1, "batch003.png"));
 		assertEquals("batch002.png", batch2.getImage().getFilename());
 		assertEquals(2, batch2.getID());
 	}
