@@ -45,7 +45,10 @@ public class DataImporter {
 	 * @return Whether the wipe was successful.
 	 */
 	public boolean wipeDatabase() {
-		return da.wipeDatabase(true);
+		da.startTransaction();
+		boolean result = da.wipeDatabase(true);
+		da.endTransaction(false); // the wipe was already committed.
+		return result;
 	}
 	
 	/**

@@ -32,9 +32,16 @@ public class DataImporterTest {
 		assertNotNull(di);
 		assertNotNull(da);
 	}
-
+	
 	@Test
-	public void testImportUsers() {
+	public void testTheWholeThing() {
+		di.wipeDatabase();
+		
+		testImportUsers();
+//		testImportProjects();
+	}
+
+	private void testImportUsers() {
 		di.importUsers();
 		User actual = da.getUser("test1", "test1");
 		assertEquals("test1", actual.getUsername());
@@ -43,23 +50,24 @@ public class DataImporterTest {
 		assertEquals("sheila.parker@gmail.com", actual.getEmail());
 	}
 
-	@Test
-	public void testImportProjects() {
+	private void testImportProjects() {
+		
+
+		
+		testImportFields();
+		testImportBatches();
+		testImportRecords();
+	}
+
+	private void testImportBatches() {
 		fail("Not yet implemented");
 	}
 
-	@Test
-	public void testImportBatches() {
+	private void testImportFields() {
 		fail("Not yet implemented");
 	}
 
-	@Test
-	public void testImportFields() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testImportRecords() {
+	private void testImportRecords() {
 		fail("Not yet implemented");
 	}
 

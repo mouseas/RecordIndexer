@@ -40,23 +40,23 @@ public class DataAccessTest {
 		
 		testWipeDatabase();
 
-		da.endTransaction(true);
-		da.startTransaction();
+//		da.endTransaction(true);
+//		da.startTransaction();
 		
 		testAddProject();
 
-		da.endTransaction(true);
-		da.startTransaction();
+//		da.endTransaction(true);
+//		da.startTransaction();
 		
 		testAddUser();
 
-		da.endTransaction(true);
-		da.startTransaction();
+//		da.endTransaction(true);
+//		da.startTransaction();
 		
 		testAddField();
 
-		da.endTransaction(true);
-		da.startTransaction();
+//		da.endTransaction(true);
+//		da.startTransaction();
 		
 		testAddBatch();
 
@@ -332,8 +332,6 @@ public class DataAccessTest {
 		
 		} catch (Exception e) {
 			fail("Exception occured during database wipe.");
-		} finally {
-			da.endTransaction(true);
 		}
 		
 	}

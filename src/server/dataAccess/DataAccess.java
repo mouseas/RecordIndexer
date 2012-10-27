@@ -218,11 +218,10 @@ public class DataAccess {
 	 * Wipes the database's contents, usually in preparation to import data from a
 	 * separate file. Loads the database-schema.txt file and uses it as a SQL
 	 * command to drop and create the tables used by the server.
-	 * @param confirm Will only wipe the database if confirm == true.
+	 * @param commit Whether to automatically commit the wipe.
 	 * @return Whether the wipe was successful. Returns false if confirm is false.
 	 */
-	public boolean wipeDatabase(boolean confirm) {
-		if (!confirm) { return false; }
+	public boolean wipeDatabase(boolean commit) {
 		File schemaFile = new File(databaseSchemaLocation);
 		PreparedStatement ps = null;
 		try { // load in the schema file
@@ -240,10 +239,12 @@ public class DataAccess {
 					sb = new StringBuilder(); // clear the string builder.
 				}
 			}
+			if (commit) { connection.commit(); }
 			
 		} catch (Exception e) {
 			System.out.println("Exception while wiping database.");
 			System.out.println(e.getMessage());
+			e.printStackTrace();
 		} finally {
 			closeQuery(null, ps);
 		}
