@@ -40,6 +40,15 @@ public class DataImporter {
 	}
 	
 	/**
+	 * Wipes the database, loads an XML file, and loads the contents of the XML
+	 * file into the database.
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		
+	}
+	
+	/**
 	 * Wipes the contents of the existing database, to be used prior to
 	 * importing data from an XML file.
 	 * @return Whether the wipe was successful.
@@ -59,7 +68,6 @@ public class DataImporter {
 		if (doc == null || da == null) { return false; }
 		NodeList userList = doc.getElementsByTagName("user");
 		da.startTransaction();
-		System.out.println(userList.getLength());
 		for (int i = 0; i < userList.getLength(); i++) {
 			Element userNode = (Element)userList.item(i);
 			User user = parseUser(userNode, i);
@@ -137,12 +145,12 @@ public class DataImporter {
 	}
 	
 	private User parseUser(Element user, int id) {
-		Element usernameElem = (Element)user.getElementsByTagName("username").item(id);
-		Element firstNameElem = (Element)user.getElementsByTagName("firstname").item(id);
-		Element lastNameElem = (Element)user.getElementsByTagName("lastname").item(id);
-		Element emailElem = (Element)user.getElementsByTagName("email").item(id);
-		Element indexedRecordsElem = (Element)user.getElementsByTagName("indexedrecords").item(id);
-		Element passwordElem = (Element)user.getElementsByTagName("password").item(id);
+		Element usernameElem = (Element)user.getElementsByTagName("username").item(0);
+		Element firstNameElem = (Element)user.getElementsByTagName("firstname").item(0);
+		Element lastNameElem = (Element)user.getElementsByTagName("lastname").item(0);
+		Element emailElem = (Element)user.getElementsByTagName("email").item(0);
+		Element indexedRecordsElem = (Element)user.getElementsByTagName("indexedrecords").item(0);
+		Element passwordElem = (Element)user.getElementsByTagName("password").item(0);
 		
 		try {
 			String username = usernameElem.getTextContent();
@@ -152,7 +160,7 @@ public class DataImporter {
 			int indexedRecords = Integer.parseInt(indexedRecordsElem.getTextContent());
 			String password = passwordElem.getTextContent();
 			
-			System.out.println(username + " " + firstname + " " + email);
+//			System.out.println(username + " " + firstname + " " + email);
 			return new User(id, username, firstname, lastname, email, indexedRecords, password);
 		} catch (NullPointerException e) {
 			System.out.println("Null pointer exception at DataImporter.parseUser.");
