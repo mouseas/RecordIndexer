@@ -43,11 +43,17 @@ public class DataImporterTest {
 
 	private void testImportUsers() {
 		di.importUsers();
+		da.startTransaction();
+		
 		User actual = da.getUser("test1", "test1");
+		assertNotNull("No username/password match! Import failed.", actual);
 		assertEquals("test1", actual.getUsername());
 		actual = da.getUser("sheila", "parker");
+		assertNotNull("No username/password match! Import more than 1 user failed.", actual);
 		assertEquals("Sheila Parker", actual.getFullName());
 		assertEquals("sheila.parker@gmail.com", actual.getEmail());
+		
+		da.endTransaction(false);
 	}
 
 	private void testImportProjects() {

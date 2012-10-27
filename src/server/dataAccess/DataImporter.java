@@ -32,7 +32,7 @@ public class DataImporter {
 			DocumentBuilder builder = DocumentBuilderFactory
 									  .newInstance().newDocumentBuilder();
 			File file = new File(importLocation);
-			doc = builder.parse(file); // does this leave the file open?
+			doc = builder.parse(file);
 		} catch (Exception e) {
 			System.out.println("Exception during Data Importer construction.");
 			System.out.println(e.getMessage());
@@ -59,9 +59,11 @@ public class DataImporter {
 		if (doc == null || da == null) { return false; }
 		NodeList userList = doc.getElementsByTagName("user");
 		da.startTransaction();
+		System.out.println(userList.getLength());
 		for (int i = 0; i < userList.getLength(); i++) {
 			Element userNode = (Element)userList.item(i);
 			User user = parseUser(userNode, i);
+			da.addUser(user);
 			// Add the user to the database, but if it fails, stop and return false.
 //			if (!da.addUser(user)) { return false; } 
 		}
@@ -135,21 +137,27 @@ public class DataImporter {
 	}
 	
 	private User parseUser(Element user, int id) {
-		Element usernameElem = (Element)user.getElementsByTagName("USERNAME");
-		Element firstNameElem = (Element)user.getElementsByTagName("FIRSTNAME");
-		Element lastNameElem = (Element)user.getElementsByTagName("LASTNAME");
-		Element emailElem = (Element)user.getElementsByTagName("EMAIL");
-		Element indexedRecordsElem = (Element)user.getElementsByTagName("INDEXEDRECORDS");
-		Element passwordElem = (Element)user.getElementsByTagName("PASSWORD");
+		Element usernameElem = (Element)user.getElementsByTagName("username").item(id);
+		Element firstNameElem = (Element)user.getElementsByTagName("firstname").item(id);
+		Element lastNameElem = (Element)user.getElementsByTagName("lastname").item(id);
+		Element emailElem = (Element)user.getElementsByTagName("email").item(id);
+		Element indexedRecordsElem = (Element)user.getElementsByTagName("indexedrecords").item(id);
+		Element passwordElem = (Element)user.getElementsByTagName("password").item(id);
 		
-		String username = usernameElem.getTextContent();
-		String firstname = firstNameElem.getTextContent();
-		String lastname = lastNameElem.getTextContent();
-		String email = emailElem.getTextContent();
-		int indexedRecords = Integer.parseInt(indexedRecordsElem.getTextContent());
-		String password = passwordElem.getTextContent();
-		
-		return new User(id, username, firstname, lastname, email, indexedRecords, password);
+		try {
+			String username = usernameElem.getTextContent();
+			String firstname = firstNameElem.getTextContent();
+			String lastname = lastNameElem.getTextContent();
+			String email = emailElem.getTextContent();
+			int indexedRecords = Integer.parseInt(indexedRecordsElem.getTextContent());
+			String password = passwordElem.getTextContent();
+			
+			System.out.println(username + " " + firstname + " " + email);
+			return new User(id, username, firstname, lastname, email, indexedRecords, password);
+		} catch (NullPointerException e) {
+			System.out.println("Null pointer exception at DataImporter.parseUser.");
+		}
+		return null;
 	}
 	
 	private Project parseProject (Element project, int id) {

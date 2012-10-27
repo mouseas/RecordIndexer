@@ -76,7 +76,7 @@ public class DataAccess {
 			ps.setString(1, username);
 			ps.setString(2, password);
 			rs = ps.executeQuery();
-			if (rs.next()) {
+			if (rs != null && rs.next()) {
 				result = buildUser(rs, username, password);
 			} else {
 				result = null; // invalid username/password
@@ -258,6 +258,7 @@ public class DataAccess {
 	 */
 	
 	public boolean addUser(User user) {
+		if (user == null) { return false; }
 		String statement;
 		boolean IDalreadyExists = IDexists(user.getID(), "users");
 		if(userExists(user.getUsername(), user.getEmail())) {
@@ -537,6 +538,14 @@ public class DataAccess {
 	}
 	
 	/**
+	 * Indicates whether an open connection exists.
+	 * @return
+	 */
+	public boolean isConnectionOpen() {
+		return connection != null;
+	}
+	
+	/**
 	 * Builds a User object from a valid, successful ResultSet. 
 	 * Called exclusively by getUser()
 	 * @param rs
@@ -695,4 +704,5 @@ public class DataAccess {
 			e.printStackTrace();
 		}
 	}
+	
 }
