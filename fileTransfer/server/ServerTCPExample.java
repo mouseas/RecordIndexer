@@ -4,16 +4,17 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
+import server.ServerException;
 import server.dataAccess.*;
 
-public class ServerOld {
+public class ServerTCPExample {
 
 	// Need to add functions to send/receive with ServerCommunicator.
 	
 	ServerSocket listenSocket;
 	byte[] buffer;
 
-	private DataAccess database;
+//	private DataAccess database;
 	private int port;
 	
 	private static final String DATABASE_LOCATION = 
@@ -24,9 +25,9 @@ public class ServerOld {
 	 * Constructor. Requires a live DataAccess object in order to access the database.
 	 * @param database
 	 */
-	public ServerOld(DataAccess database) {
+	public ServerTCPExample(DataAccess database) {
 		this.port = -1;
-		this.database = database;
+//		this.database = database;
 		
 		listenSocket = null;
 		buffer = new byte[1024];
@@ -39,11 +40,11 @@ public class ServerOld {
 	public static void main(String[] args) {
 		if (args.length == 1) {
 			int portNum = Integer.parseInt(args[0]);
-			ServerOld s = null;
+			ServerTCPExample s = null;
 			try {
 				portNum = Integer.parseInt(args[0]);
 				if (portNum < 0 || portNum > 65535) { throw new NumberFormatException(); }
-				s = new ServerOld(new DataAccess(DATABASE_LOCATION));
+				s = new ServerTCPExample(new DataAccess(DATABASE_LOCATION));
 				s.run(portNum);
 			} catch (NumberFormatException e) {
 				System.out.println("portNumber must be an integer between 0 and 65535.");
@@ -114,7 +115,7 @@ public class ServerOld {
 	 * @param clientSocket Established socket with a client.
 	 */
 	private void getFile(Socket clientSocket, String firstLine) throws IOException {
-		Scanner input = new Scanner(clientSocket.getInputStream());
+//		Scanner input = new Scanner(clientSocket.getInputStream());
 		PrintWriter output = new PrintWriter(clientSocket.getOutputStream());
 		
 		String filePath = ASSETS_LOCATION + firstLine.substring("get ".length());

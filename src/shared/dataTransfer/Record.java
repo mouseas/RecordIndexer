@@ -1,5 +1,8 @@
 package shared.dataTransfer;
 
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
+
 public class Record extends DataTransferObject {
 
 	private int batchID;
@@ -59,6 +62,16 @@ public class Record extends DataTransferObject {
 	 */
 	public int getFieldID() {
 		return fieldID;
+	}
+	
+	public static String serialize(Record record) {
+		XStream xstream = new XStream(new DomDriver());
+		return xstream.toXML(record);
+	}
+	
+	public static Record deserialize(String xml) {
+		XStream xstream = new XStream(new DomDriver());
+		return (Record)xstream.fromXML(xml);
 	}
 	
 }

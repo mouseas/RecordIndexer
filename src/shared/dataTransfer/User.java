@@ -1,5 +1,8 @@
 package shared.dataTransfer;
 
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
+
 public class User extends DataTransferObject {
 
 	private String username;
@@ -60,4 +63,13 @@ public class User extends DataTransferObject {
 		return indexedRecords;
 	}
 	
+	public static String serialize(User user) {
+		XStream xstream = new XStream(new DomDriver());
+		return xstream.toXML(user);
+	}
+	
+	public static User deserialize(String xml) {
+		XStream xstream = new XStream(new DomDriver());
+		return (User)xstream.fromXML(xml);
+	}
 }

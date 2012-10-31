@@ -107,6 +107,8 @@ public class DataAccess {
 			}
 		} catch (Exception e) {
 			System.out.println("Exception while getting the project list.");
+			System.out.println(e.getMessage());
+			e.printStackTrace();
 		}
 		closeQuery(rs, ps);
 		

@@ -1,6 +1,11 @@
 package shared.dataTransfer;
 
-public class Project extends DataTransferObject {
+import java.io.*;
+import com.thoughtworks.xstream.*;
+import com.thoughtworks.xstream.io.xml.DomDriver;
+
+@SuppressWarnings("serial")
+public class Project extends DataTransferObject implements Serializable {
 	
 	private String title;
 	private int firstYCoord;
@@ -74,4 +79,14 @@ public class Project extends DataTransferObject {
 //	public void setFields (List<Field> fields) {
 //		this.fields = fields;
 //	}
+	
+	public static String serialize(Project project) {
+		XStream xstream = new XStream(new DomDriver());
+		return xstream.toXML(project);
+	}
+	
+	public static Project deserialize(String xml) {
+		XStream xstream = new XStream(new DomDriver());
+		return (Project)xstream.fromXML(xml);
+	}
 }

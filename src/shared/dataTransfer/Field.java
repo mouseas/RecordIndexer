@@ -2,6 +2,9 @@ package shared.dataTransfer;
 
 import java.util.List;
 
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
+
 public class Field extends DataTransferObject {
 	
 	private int projectID;
@@ -81,6 +84,16 @@ public class Field extends DataTransferObject {
 
 	public void setKnownDataLoc(String knownDataLoc) {
 		this.knownDataLocation = knownDataLoc;
+	}
+	
+	public static String serialize(Field field) {
+		XStream xstream = new XStream(new DomDriver());
+		return xstream.toXML(field);
+	}
+	
+	public static Field deserialize(String xml) {
+		XStream xstream = new XStream(new DomDriver());
+		return (Field)xstream.fromXML(xml);
 	}
 	
 }

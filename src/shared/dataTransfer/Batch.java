@@ -1,5 +1,8 @@
 package shared.dataTransfer;
 
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
+
 public class Batch extends DataTransferObject {
 	
 	private int projectID;
@@ -49,6 +52,15 @@ public class Batch extends DataTransferObject {
 		this.completed = completed;
 	}
 	
+	public static String serialize(Batch batch) {
+		XStream xstream = new XStream(new DomDriver());
+		return xstream.toXML(batch);
+	}
+	
+	public static Batch deserialize(String xml) {
+		XStream xstream = new XStream(new DomDriver());
+		return (Batch)xstream.fromXML(xml);
+	}
 	
 }
 //DROP TABLE batches;

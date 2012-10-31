@@ -52,5 +52,19 @@ public class ProjectTest {
 	public void testGetTitle() {
 		assertEquals("1842 Census", p.getTitle());
 	}
+	
+	@Test
+	public void testSerialize() {
+		String result = Project.serialize(p);
+		assertNotNull(result);
+	}
+	
+	@Test
+	public void testDeserialize() {
+		Project result = Project.deserialize(Project.serialize(p));
+		assertNotNull(result);
+		assertEquals(p.getTitle(), result.getTitle());
+		assertEquals(p.getRecordsPerImage(), result.getRecordsPerImage());
+	}
 
 }
