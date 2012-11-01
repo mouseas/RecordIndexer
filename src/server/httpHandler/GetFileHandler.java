@@ -7,6 +7,7 @@ import com.sun.net.httpserver.HttpHandler;
 
 public class GetFileHandler implements HttpHandler {
 
+	private static final String FILE_ROOT = "demo/indexer_data/Records";
 	@Override
 	public void handle(HttpExchange exchange) throws IOException {
 		InputStream fileStream = null;
@@ -16,7 +17,7 @@ public class GetFileHandler implements HttpHandler {
 		int responseCode = 200;
 		String response = null;
 		try {
-			String filePath = "demo/indexer_data/Records" + 
+			String filePath =  FILE_ROOT + 
 							   exchange.getRequestURI().getPath().substring("/get".length());
 			File f = new File(filePath);
 			length = f.length();

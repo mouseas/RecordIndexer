@@ -1,11 +1,13 @@
 package client.serverCommunicator;
 
-//import java.sql.*;
 import java.util.*;
+import java.net.*;
+import java.io.*;
 
-
-import server.dataAccess.*;
 import shared.dataTransfer.*;
+
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
 
 public class ServerCommunicator {
 	
@@ -17,6 +19,27 @@ public class ServerCommunicator {
 	private User currentUser;
 	
 	/**
+	 * The Domain to connect to for this ServerCommunicator
+	 */
+	private String domain;
+	
+	/**
+	 * The port number to connect to for this ServerCommunicator
+	 */
+	private int port;
+	
+	/**
+	 * Constructor for the ServerCommunicator. Takes in a domain and port number
+	 * for use in constructing URLs to request and send information.
+	 * @param domain
+	 * @param port
+	 */
+	public ServerCommunicator(String domain, int port) {
+		this.domain = domain;
+		this.port = port;
+	}
+	
+	/**
 	 * Verifies a username + password combo, and returns the user's info (or null
 	 * if username/password was incorrect.
 	 * @param username Username supplied by the user
@@ -25,6 +48,36 @@ public class ServerCommunicator {
 	 * invalid username or password
 	 */
 	public User verifyUser(String username, String password) {
+		URL url = null;
+		InputStream in = null;
+		HttpURLConnection connection = null;
+		try {
+			url = new URL("http", domain, port, 
+						"/login?username=" + username + "&password=" + password);
+			connection = (HttpURLConnection)url.openConnection();
+			connection.setRequestMethod("GET");
+			connection.connect();
+			int code = connection.getResponseCode();
+			if (code < 200 || code >= 300) {
+				// 200-range codes are successful, everything else is not.
+				return null; // not successful; username/password mismatch, or other error.
+			}
+			in = url.openStream();
+			XStream xstream = new XStream(new DomDriver());
+			return (User)xstream.fromXML(in);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			if (e.getMessage().contains("refused")) {
+				System.out.println("Server is not running!");
+				return null; // no server connection.
+			} else {
+				e.printStackTrace();
+			}
+		} finally {
+			if (in != null) { safeClose(in); }
+			if (connection != null) { connection.disconnect(); }
+		}
 		return null;
 	}
 	
@@ -99,6 +152,14 @@ public class ServerCommunicator {
 	 */
 	public List<Field> requestFieldsList() {
 		return null;
+	}
+	
+	private void safeClose(Closeable obj) {
+		try {
+			obj.close();
+		} catch (Exception e) {
+			// do nothing. Nothing we *can* do.
+		}
 	}
 
 	
