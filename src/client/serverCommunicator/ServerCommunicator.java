@@ -28,6 +28,10 @@ public class ServerCommunicator {
 	 */
 	private int port;
 	
+	private XStream xstream;
+	
+	private static final String HTTP = "http";
+	
 	/**
 	 * Constructor for the ServerCommunicator. Takes in a domain and port number
 	 * for use in constructing URLs to request and send information.
@@ -37,6 +41,7 @@ public class ServerCommunicator {
 	public ServerCommunicator(String domain, int port) {
 		this.domain = domain;
 		this.port = port;
+		xstream = new XStream(new DomDriver());
 	}
 	
 	/**
@@ -49,36 +54,26 @@ public class ServerCommunicator {
 	 */
 	public User verifyUser(String username, String password) {
 		URL url = null;
-		InputStream in = null;
 		HttpURLConnection connection = null;
+		User result = null;
 		try {
-			url = new URL("http", domain, port, 
+			url = new URL(HTTP, domain, port, 
 						"/login?username=" + username + "&password=" + password);
+			// can't use usernameAndPasswordForURLS() because there is no user at this point.
 			connection = (HttpURLConnection)url.openConnection();
-			connection.setRequestMethod("GET");
-			connection.connect();
-			int code = connection.getResponseCode();
+			int code = getResponseCode(connection);
 			if (code < 200 || code >= 300) {
 				// 200-range codes are successful, everything else is not.
 				return null; // not successful; username/password mismatch, or other error.
 			}
-			in = url.openStream();
-			XStream xstream = new XStream(new DomDriver());
-			return (User)xstream.fromXML(in);
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			if (e.getMessage().contains("refused")) {
-				System.out.println("Server is not running!");
-				return null; // no server connection.
-			} else {
-				e.printStackTrace();
-			}
+			String xmlString = readInput(connection.getInputStream());
+			result = (User)xstream.fromXML(xmlString);
+		} catch (Exception e) {
+			handleException(e);
 		} finally {
-			if (in != null) { safeClose(in); }
 			if (connection != null) { connection.disconnect(); }
 		}
-		return null;
+		return result;
 	}
 	
 	/**
@@ -154,12 +149,75 @@ public class ServerCommunicator {
 		return null;
 	}
 	
+	/**
+	 * Handles closing a closeable object, such as a stream.
+	 * @param obj
+	 */
 	private void safeClose(Closeable obj) {
-		try {
-			obj.close();
-		} catch (Exception e) {
-			// do nothing. Nothing we *can* do.
+		if (obj != null) {
+			try {
+				obj.close();
+			} catch (Exception e) {
+				// do nothing. Nothing we *can* do.
+			}
 		}
+	}
+	
+	/**
+	 * Takes a HttpURLConnection, connects to it, and gets the response code.
+	 * @param url
+	 * @return
+	 */
+	private int getResponseCode(HttpURLConnection connection) {
+		int code = -1;
+		try {
+			connection.setRequestMethod("GET");
+			code = connection.getResponseCode();
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+		return code;
+	}
+	
+	/**
+	 * General-use exception handler for ServerCommunicator. If the server is 
+	 * inaccessible, prints out a message to that effect. Otherwise it prints
+	 * a stack trace.
+	 * @param e
+	 */
+	private void handleException(Exception e) {
+		if (e.getMessage().contains("refused")) {
+			System.out.println("Unable to connect to server.");
+		} else {
+			e.printStackTrace();
+		}
+	}
+	
+	private String readInput(InputStream is) {
+		StringBuilder sb = new StringBuilder();
+		Scanner in = new Scanner(is);
+		while (in.hasNext()) {
+			sb.append(in.nextLine());
+			if (in.hasNext()) {
+				sb.append("\n");
+			}
+		}
+		return sb.toString();
+	}
+	
+	/**
+	 * Generates the username and password part of url query strings, used in most
+	 * of the server requests that require a user for verification.
+	 * @return String fragment to be used in a URL path, containing the beginning
+	 * 			of the query with the username and password.
+	 */
+	private String usernameAndPasswordForURLS() {
+		if (currentUser != null) {
+			String result = "?username=" + currentUser.getUsername()
+						+ "&password=" + currentUser.getPassword();
+			return result;
+		}
+		return null;
 	}
 
 	

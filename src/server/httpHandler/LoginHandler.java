@@ -23,7 +23,7 @@ public class LoginHandler implements HttpHandler {
 	 * and returns either mismatch or the XML of the user object matching the query.
 	 */
 	public void handle(HttpExchange exchange) throws IOException {
-//		System.out.println(exchange.getRequestURI().toString());
+		System.out.println(exchange.getRequestURI().toString());
 		String username = getQueryItem(exchange, "username=");
 		String password = getQueryItem(exchange, "password=");
 		User user = null;
