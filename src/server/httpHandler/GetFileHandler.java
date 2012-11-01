@@ -16,7 +16,7 @@ public class GetFileHandler implements HttpHandler {
 		int responseCode = 200;
 		String response = null;
 		try {
-			String filePath = "demo/Records" + 
+			String filePath = "demo/indexer_data/Records" + 
 							   exchange.getRequestURI().getPath().substring("/get".length());
 			File f = new File(filePath);
 			length = f.length();
@@ -28,6 +28,7 @@ public class GetFileHandler implements HttpHandler {
 			while ((bytes = fileStream.read(buffer)) >= 0) {
 				responseBody.write(buffer, 0, bytes);
 			}
+			fileStream.close();
 		} catch (IOException e) { // file not found; send a 404 response.
 			responseCode = 404;
 			response = "404, file not found.";
