@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
+import server.ServerHelper;
 import server.dataAccess.DataAccess;
 import shared.dataTransfer.Project;
+import shared.dataTransfer.User;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -21,10 +23,18 @@ public class ProjectListHandler implements HttpHandler {
 	}
 	
 	public void handle(HttpExchange exchange) throws IOException {
-		System.out.println(exchange.getRequestURI().toString());
-		String response = buildProjectList();
-		exchange.sendResponseHeaders(200, response.length());
-		OutputStream os = exchange.getResponseBody();
+		User user = ServerHelper.verifyUser(database, exchange);
+		OutputStream os = null;
+		String response = null;
+		if (user != null) {
+			response = buildProjectList();
+			exchange.sendResponseHeaders(200, response.length());
+		} else {
+			response = "Forbidden: Invalid user credentials.";
+			exchange.sendResponseHeaders(403, response.length());
+			System.out.println(exchange.getRequestURI().toString());
+		}
+		os = exchange.getResponseBody();
 		os.write(response.getBytes());
 		os.close();
 	}

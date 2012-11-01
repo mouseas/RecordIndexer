@@ -6,6 +6,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.*;
+
 import shared.dataTransfer.*;
 
 public class ServerCommunicatorTest {
@@ -14,6 +16,7 @@ public class ServerCommunicatorTest {
 	@Before
 	public void setUp() throws Exception {
 		sc = new ServerCommunicator("localhost", 8080);
+		sc.verifyUser("test1", "test1"); // verifies a user, and logs in.
 	}
 
 	@After
@@ -28,6 +31,7 @@ public class ServerCommunicatorTest {
 
 	@Test
 	public void testVerifyUser() {
+		sc.logout();
 		User expected = new User(2, "sheila", "Sheila", "Parker",
 				"sheila.parker@gmail.com", 0, "parker");
 		User actual = sc.verifyUser("sheila", "parker");
@@ -38,11 +42,17 @@ public class ServerCommunicatorTest {
 		actual = sc.verifyUser("fail", "fail2");
 	}
 
-//	@Test
-//	public void testRequestProjectsList() {
-//		fail("Not yet implemented");
-//	}
-//
+	@Test
+	public void testRequestProjectsList() {
+		sc.verifyUser("sheila", "parker");
+		List<Project> actual = sc.requestProjectsList();
+		assertNotNull("No results!", actual);
+		assertTrue("Empty project list!", actual.size() > 0);
+		for (Project p: actual) {
+			System.out.println(p.getTitle() + " ID:" + p.getID());
+		}
+	}
+
 //	@Test
 //	public void testRequestSampleImage() {
 //		fail("Not yet implemented");

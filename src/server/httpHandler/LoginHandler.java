@@ -7,8 +7,8 @@ import com.sun.net.httpserver.*;
 
 import server.dataAccess.DataAccess;
 import shared.dataTransfer.User;
+import server.ServerHelper;
 
-import com.sun.net.httpserver.HttpExchange;
 
 public class LoginHandler implements HttpHandler {
 
@@ -24,16 +24,9 @@ public class LoginHandler implements HttpHandler {
 	 */
 	public void handle(HttpExchange exchange) throws IOException {
 		System.out.println(exchange.getRequestURI().toString());
-		String username = getQueryItem(exchange, "username=");
-		String password = getQueryItem(exchange, "password=");
-		User user = null;
+		User user = ServerHelper.verifyUser(database, exchange);
 		String response = null;
 		int responseCode = 200;
-		if (username != null && password != null) {
-			database.startTransaction();
-			user = database.getUser(username, password);
-			database.endTransaction(false);
-		}
 		if (user == null) {
 			responseCode = 400;
 			response = "username/password missmatch";
@@ -45,21 +38,5 @@ public class LoginHandler implements HttpHandler {
 		os.write(response.getBytes());
 		os.close();
 	}
-	
-	private String getQueryItem(HttpExchange ex, String u) {
-		String query = ex.getRequestURI().getQuery();
-		if (query.contains(u)) {
-			int start = query.indexOf(u) + u.length();
-			int end = query.indexOf("&", start);
-			String result = null;
-			if (end < 0) {
-				result = query.substring(start);
-			} else {
-				result = query.substring(start, end);
-			}
-//			System.out.println(result);
-			return result;
-		}
-		return null;
-	}
+
 }

@@ -49,39 +49,56 @@ public class ServerCommunicator {
 	 * if username/password was incorrect.
 	 * @param username Username supplied by the user
 	 * @param password Password supplied by the user
+	 * @param setCurrentUser Whether to set currentUser to the result of this 
+	 * method. Only changes currentUser if the result is not null.
+	 * @return A user object with the validated user's information, or null for an
+	 * invalid username or password
+	 */
+	public User verifyUser(String username, String password, boolean setCurrentUser) {
+		try {
+			URL url = new URL(HTTP, domain, port, 
+					"/login?username=" + username + "&password=" + password);
+			Object xstreamResult = processRequest(url);
+			User result = (User)xstreamResult;
+			if (setCurrentUser) { currentUser = result; }
+			return result;
+		} catch (MalformedURLException e) {
+			System.out.println("Something wrong with the Project List url.");
+			System.out.println(e.getMessage());
+		}
+		return null; // if there was an error.
+		
+	}
+	
+	/**
+	 * Verifies a username + password combo, and returns the user's info (or null
+	 * if username/password was incorrect. Also sets the current user to the result
+	 * if not null.
+	 * @param username Username supplied by the user
+	 * @param password Password supplied by the user
 	 * @return A user object with the validated user's information, or null for an
 	 * invalid username or password
 	 */
 	public User verifyUser(String username, String password) {
-		URL url = null;
-		HttpURLConnection connection = null;
-		User result = null;
-		try {
-			url = new URL(HTTP, domain, port, 
-						"/login?username=" + username + "&password=" + password);
-			// can't use usernameAndPasswordForURLS() because there is no user at this point.
-			connection = (HttpURLConnection)url.openConnection();
-			int code = getResponseCode(connection);
-			if (code < 200 || code >= 300) {
-				// 200-range codes are successful, everything else is not.
-				return null; // not successful; username/password mismatch, or other error.
-			}
-			String xmlString = readInput(connection.getInputStream());
-			result = (User)xstream.fromXML(xmlString);
-		} catch (Exception e) {
-			handleException(e);
-		} finally {
-			if (connection != null) { connection.disconnect(); }
-		}
-		return result;
+		return verifyUser(username, password, true);
 	}
 	
 	/**
 	 * Requests a list of all the Projects available for indexing
 	 * @return All projects currently available to the user for indexing.
 	 */
+	@SuppressWarnings("unchecked")
 	public List<Project> requestProjectsList() {
-		return null;
+		try {
+			URL url = new URL(HTTP, domain, port, 
+					"/project-list" + usernameAndPasswordForURLS());
+			Object xstreamResult = processRequest(url);
+			return (List<Project>)xstreamResult;
+		} catch (MalformedURLException e) {
+			System.out.println("Something wrong with the Project List url.");
+			System.out.println(e.getMessage());
+		}
+		return null; // if there was an error.
 	}
 	
 	/**
@@ -91,7 +108,18 @@ public class ServerCommunicator {
 	 * @return An image from the project.
 	 */
 	public Image requestSampleImage(Project p) {
-		return null;
+		try {
+			URL url = new URL(HTTP, domain, port, 
+					"/sample-image" + usernameAndPasswordForURLS() + 
+					"&project=" + p.getID());
+			Object xstreamResult = processRequest(url);
+			Batch b = (Batch)xstreamResult;
+			return b.getImage();
+		} catch (MalformedURLException e) {
+			System.out.println("Something wrong with the Sample Image url.");
+			System.out.println(e.getMessage());
+		}
+		return null; // if there was an error.
 	}
 	
 	/**
@@ -101,19 +129,28 @@ public class ServerCommunicator {
 	 * @return The batch received, or null if no batch received.
 	 */
 	public Batch requestBatch(Project p) {
-		return null;
+		try {
+			URL url = new URL(HTTP, domain, port, 
+					"/next-next-batch" + usernameAndPasswordForURLS() + 
+					"&project=" + p.getID());
+			Object xstreamResult = processRequest(url);
+			return (Batch)xstreamResult;
+		} catch (MalformedURLException e) {
+			System.out.println("Something wrong with the Batch url.");
+			System.out.println(e.getMessage());
+		}
+		return null; // if there was an error.
 	}
 
 	/**
 	 * Submits a batch to the server, along with associated data.
 	 * @param b Batch to submit. Records are attached to this batch.
-	 * @param completed Whether the batch is "complete", as defined by the user.
-	 * An incomplete batch will be assigned to another user later. A complete batch
-	 * will not be submitted to a user to index, but may be searched.
 	 * @return Whether the submission was accepted by the server.
 	 */
-	public boolean submitBatch(Batch b, boolean completed) {
+	public boolean submitBatch(Batch b) {
 		return false;
+		// This one will be more complicated than the requests; I will
+		// need to POST and send over XML data in the connection body.
 	}
 	
 	/**
@@ -141,12 +178,49 @@ public class ServerCommunicator {
 	}
 	
 	/**
-	 * Gets a list of all the fields in the database, used for populating the fields
-	 * menu in the search tool.
+	 * Gets a list of all the fields in a project, used when downloading a batch.
 	 * @return A list containing one of every field in the database.
 	 */
-	public List<Field> requestFieldsList() {
-		return null;
+	@SuppressWarnings("unchecked")
+	public List<Field> requestFieldsList(Project p) {
+		try {
+			URL url = new URL(HTTP, domain, port, 
+					"/field-list" + usernameAndPasswordForURLS() + 
+					"&project=" + p.getID());
+			Object xstreamResult = processRequest(url);
+			return (List<Field>)xstreamResult;
+		} catch (MalformedURLException e) {
+			System.out.println("Something wrong with the Field List url.");
+			System.out.println(e.getMessage());
+		}
+		return null; // if there was an error.
+	}
+	
+	/**
+	 * Sends a request with the provided URL, and returns the XStream output created
+	 * from an XML response.
+	 * @param url
+	 * @return
+	 */
+	private Object processRequest(URL url) {
+		HttpURLConnection connection = null;
+		Object result = null;
+		
+		try {
+			connection = (HttpURLConnection)url.openConnection();
+			int code = getResponseCode(connection);
+			if (code < 200 || code >= 300) {
+				// 200-range codes are successful, everything else is not.
+				return null; // not successful; username/password mismatch, or other error.
+			}
+			String xmlString = readInput(connection.getInputStream());
+			result = xstream.fromXML(xmlString);
+		} catch (Exception e) {
+			handleException(e);
+		} finally {
+			if (connection != null) { connection.disconnect(); }
+		}
+		return result;
 	}
 	
 	/**
@@ -193,6 +267,11 @@ public class ServerCommunicator {
 		}
 	}
 	
+	/**
+	 * Reads an input stream to a single string.
+	 * @param is
+	 * @return
+	 */
 	private String readInput(InputStream is) {
 		StringBuilder sb = new StringBuilder();
 		Scanner in = new Scanner(is);
