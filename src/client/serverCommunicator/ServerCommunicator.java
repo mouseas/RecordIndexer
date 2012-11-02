@@ -128,11 +128,12 @@ public class ServerCommunicator {
 	 * @param p The project to request a batch from
 	 * @return The batch received, or null if no batch received.
 	 */
-	public Batch requestBatch(Project p) {
+	public Batch requestBatch(int projectID) {
 		try {
 			URL url = new URL(HTTP, domain, port, 
-					"/next-next-batch" + usernameAndPasswordForURLS() + 
-					"&project=" + p.getID());
+					"/get-next-batch" + usernameAndPasswordForURLS() + 
+					"&project=" + projectID);
+			System.out.println(url.toString());
 			Object xstreamResult = processRequest(url);
 			return (Batch)xstreamResult;
 		} catch (MalformedURLException e) {
