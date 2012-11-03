@@ -2,11 +2,16 @@ package servertester.controllers;
 
 import java.util.*;
 
+import client.serverCommunicator.ServerCommunicator;
+import shared.dataTransfer.*;
+
 import servertester.views.*;
 
 public class Controller implements IController {
 
 	private IView _view;
+	
+	private ServerCommunicator sc;
 	
 	public Controller() {
 		return;
@@ -28,6 +33,8 @@ public class Controller implements IController {
 		getView().setHost("localhost");
 		getView().setPort("39640");
 		operationSelected();
+		sc = new ServerCommunicator(getView().getHost(), 
+				Integer.parseInt(getView().getPort()));
 	}
 
 	@Override
@@ -97,26 +104,68 @@ public class Controller implements IController {
 			break;
 		}
 	}
+
+	
+	private void setHostAndPort() {
+		sc.setHost(getView().getHost());
+		sc.setPort(Integer.parseInt(getView().getPort()));
+	}
 	
 	private void validateUser() {
+		setHostAndPort();
+		String username = getView().getParameterValues()[0];
+		String password = getView().getParameterValues()[1];
+		getView().setRequest(username + "\n" 
+				+ password + "\n");
+		
+		User user = sc.verifyUser(username, password);
+		if (user == null) {
+			getView().setResponse("FALIED\n");
+		} else if (user.getID() < 0) {
+			getView().setResponse("FALSE\n");
+		} else {
+			getView().setResponse("TRUE\n" 
+					+ user.getFirstName() + "\n"
+					+ user.getLastName() + "\n" 
+					+ user.getNumIndexedRecords() + "\n");
+		}
 	}
 	
 	private void getProjects() {
+		setHostAndPort();
+		String username = getView().getParameterValues()[0];
+		String password = getView().getParameterValues()[1];
+		getView().setRequest(username + "\n" + password + "\n");
 	}
 	
 	private void getSampleImage() {
+		setHostAndPort();
+		String username = getView().getParameterValues()[0];
+		String password = getView().getParameterValues()[1];
 	}
 	
 	private void downloadBatch() {
+		setHostAndPort();
+		String username = getView().getParameterValues()[0];
+		String password = getView().getParameterValues()[1];
 	}
 	
 	private void getFields() {
+		setHostAndPort();
+		String username = getView().getParameterValues()[0];
+		String password = getView().getParameterValues()[1];
 	}
 	
 	private void submitBatch() {
+		setHostAndPort();
+		String username = getView().getParameterValues()[0];
+		String password = getView().getParameterValues()[1];
 	}
 	
 	private void search() {
+		setHostAndPort();
+		String username = getView().getParameterValues()[0];
+		String password = getView().getParameterValues()[1];
 	}
 
 }

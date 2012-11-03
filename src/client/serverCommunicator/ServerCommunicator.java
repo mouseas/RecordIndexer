@@ -22,12 +22,18 @@ public class ServerCommunicator {
 	/**
 	 * The Domain to connect to for this ServerCommunicator
 	 */
-	private String domain;
+	private String host;
+	public void setHost(String newHost) {
+		host = newHost;
+	}
 	
 	/**
 	 * The port number to connect to for this ServerCommunicator
 	 */
 	private int port;
+	public void setPort(int newPort) {
+		port = newPort;
+	}
 	
 	private XStream xstream;
 	
@@ -40,7 +46,7 @@ public class ServerCommunicator {
 	 * @param port
 	 */
 	public ServerCommunicator(String domain, int port) {
-		this.domain = domain;
+		this.host = domain;
 		this.port = port;
 		xstream = new XStream(new DomDriver());
 	}
@@ -57,11 +63,15 @@ public class ServerCommunicator {
 	 */
 	public User verifyUser(String username, String password, boolean setCurrentUser) {
 		try {
-			URL url = new URL(HTTP, domain, port, 
+			URL url = new URL(HTTP, host, port, 
 					"/login?username=" + username + "&password=" + password);
 			Object xstreamResult = processRequest(url);
 			User result = (User)xstreamResult;
-			if (setCurrentUser) { currentUser = result; }
+			if (result == null || result.getID() < 0) {
+				if (setCurrentUser) { currentUser = null; } // invalid user
+			} else {
+				if (setCurrentUser) { currentUser = result; }
+			}
 			return result;
 		} catch (MalformedURLException e) {
 			System.out.println("Something wrong with the Project List url.");
@@ -91,7 +101,7 @@ public class ServerCommunicator {
 	@SuppressWarnings("unchecked")
 	public List<Project> requestProjectsList() {
 		try {
-			URL url = new URL(HTTP, domain, port, 
+			URL url = new URL(HTTP, host, port, 
 					"/project-list" + usernameAndPasswordForURLS());
 			Object xstreamResult = processRequest(url);
 			return (List<Project>)xstreamResult;
@@ -110,7 +120,7 @@ public class ServerCommunicator {
 	 */
 	public Image requestSampleImage(Project p) {
 		try {
-			URL url = new URL(HTTP, domain, port, 
+			URL url = new URL(HTTP, host, port, 
 					"/sample-image" + usernameAndPasswordForURLS() + 
 					"&project=" + p.getID());
 			Object xstreamResult = processRequest(url);
@@ -133,7 +143,7 @@ public class ServerCommunicator {
 	 */
 	public Batch requestBatch(int projectID) {
 		try {
-			URL url = new URL(HTTP, domain, port, 
+			URL url = new URL(HTTP, host, port, 
 					"/get-next-batch" + usernameAndPasswordForURLS() + 
 					"&project=" + projectID);
 //			System.out.println(url.toString());
@@ -157,7 +167,7 @@ public class ServerCommunicator {
 		int responseCode = -1;
 		try {
 			String xml = FinishedBatch.serialize(batch);
-			url = new URL(HTTP, domain, port, 
+			url = new URL(HTTP, host, port, 
 						"/submit-batch" + usernameAndPasswordForURLS());
 			responseCode = processPost(url, xml);
 		} catch (Exception e) {
@@ -189,7 +199,7 @@ public class ServerCommunicator {
 	@SuppressWarnings("unchecked")
 	public List<Record> searchRecords(List<Field> fields, List<String> searchValues) {
 		try {
-			URL url = new URL(HTTP, domain, port, 
+			URL url = new URL(HTTP, host, port, 
 					"/search" + usernameAndPasswordForURLS() + 
 					buildSearchString(fields, searchValues));
 //			System.out.println(url.toString());
@@ -210,7 +220,7 @@ public class ServerCommunicator {
 	@SuppressWarnings("unchecked")
 	public List<Field> requestFieldsList(Project p) {
 		try {
-			URL url = new URL(HTTP, domain, port, 
+			URL url = new URL(HTTP, host, port, 
 					"/field-list" + usernameAndPasswordForURLS() + 
 					"&project=" + p.getID());
 			Object xstreamResult = processRequest(url);

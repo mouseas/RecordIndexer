@@ -49,6 +49,9 @@ public class ServerCommunicatorTest {
 		assertEquals(expected.getEmail(), actual.getEmail());
 		
 		actual = sc.verifyUser("fail", "fail2");
+		assertNotNull("Expected a user with invalid info", actual);
+		assertEquals("Returned a valid user when invalid credentials were provided.",
+				-1, actual.getID());
 	}
 
 	@Test

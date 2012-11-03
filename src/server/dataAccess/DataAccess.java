@@ -90,7 +90,8 @@ public class DataAccess {
 			if (rs != null && rs.next()) {
 				result = buildUser(rs, username, password);
 			} else {
-				result = null; // invalid username/password
+				String na = "invalid";
+				result = new User(-1, na, na, na, na, 0, na); // invalid username/password
 			}
 		} catch (Exception e) {
 			System.out.println("Exception while trying to get a user.");

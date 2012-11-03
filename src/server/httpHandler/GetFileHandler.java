@@ -2,6 +2,8 @@ package server.httpHandler;
 
 import java.io.*;
 
+import server.ServerHelper;
+
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
@@ -30,7 +32,6 @@ public class GetFileHandler implements HttpHandler {
 			while ((bytes = fileStream.read(buffer)) >= 0) {
 				responseBody.write(buffer, 0, bytes);
 			}
-			fileStream.close();
 		} catch (IOException e) { // file not found; send a 404 response.
 			responseCode = 404;
 			response = "404, file not found.";
@@ -38,7 +39,8 @@ public class GetFileHandler implements HttpHandler {
 			responseBody = exchange.getResponseBody();
 			responseBody.write(response.getBytes());
 		} finally {
-			responseBody.close();
+			ServerHelper.safeClose(fileStream);
+			ServerHelper.safeClose(responseBody);
 		}
 		
 	}
