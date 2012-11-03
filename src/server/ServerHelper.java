@@ -1,5 +1,6 @@
 package server;
 
+import java.io.Closeable;
 import java.util.*;
 
 import server.dataAccess.DataAccess;
@@ -95,5 +96,19 @@ public class ServerHelper {
 		}
 		return user;
 	}
-
+	
+	/**
+	 * Handles closing a closeable object, such as a stream.
+	 * @param obj
+	 */
+	public static void safeClose(Closeable obj) {
+		if (obj != null) {
+			try {
+				obj.close();
+			} catch (Exception e) {
+				// do nothing. Nothing we *can* do.
+			}
+		}
+	}
+	
 }

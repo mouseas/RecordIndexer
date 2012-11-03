@@ -79,24 +79,42 @@ public class ServerCommunicatorTest {
 		actual = sc.requestBatch(2);
 		assertNull("Batch returned from project 2 " +
 					"(all batches should be completed)", actual);
-		System.out.println("BATCH: " + actual.getID() + " PID:" + actual.getProjectID()
-				+ " " + actual.getImage().getFilename());
 	}
 
 //	@Test
 //	public void testSubmitBatch() {
 //		fail("Not yet implemented");
 //	}
-//
-//	@Test
-//	public void testLogout() {
-//		fail("Not yet implemented");
-//	}
-//
-//	@Test
-//	public void testSearchRecords() {
-//		fail("Not yet implemented");
-//	}
+
+	@Test
+	public void testLogout() {
+		sc.logout();
+		assertNull("Failed to log out!", sc.getCurrentUser());
+	}
+
+	@Test
+	public void testSearchRecords() {
+		List<Field> fields = new ArrayList<Field>();
+		Field f = new Field(9, 2, "", 0, 0, "", "");
+		fields.add(f);
+		f = new Field(10, 2, "", 0, 0, "", "");
+		fields.add(f);
+		List<String> searchValues = new ArrayList<String>();
+		searchValues.add("russ");
+		searchValues.add("fox");
+		
+		List<Record> actual = sc.searchRecords(fields, searchValues);
+		assertNotNull("Null search result!", actual);
+		assertTrue("Empty search results!", actual.size() > 0);
+		
+		Record r = actual.get(0);
+		assertEquals("FOX", r.getValue());
+		assertEquals(1, r.getID());
+		
+		for (Record record : actual) {
+			System.out.println("RECORD: " + record.getID() + " " + record.getValue());
+		}
+	}
 
 	@Test
 	public void testRequestFieldsList() {

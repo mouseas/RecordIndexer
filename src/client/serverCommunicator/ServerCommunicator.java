@@ -17,6 +17,7 @@ public class ServerCommunicator {
 	 * in subsequent SQL requests.
 	 */
 	private User currentUser;
+	public User getCurrentUser() { return currentUser; }
 	
 	/**
 	 * The Domain to connect to for this ServerCommunicator
@@ -133,7 +134,7 @@ public class ServerCommunicator {
 			URL url = new URL(HTTP, domain, port, 
 					"/get-next-batch" + usernameAndPasswordForURLS() + 
 					"&project=" + projectID);
-			System.out.println(url.toString());
+//			System.out.println(url.toString());
 			Object xstreamResult = processRequest(url);
 			return (Batch)xstreamResult;
 		} catch (MalformedURLException e) {
@@ -174,7 +175,20 @@ public class ServerCommunicator {
 	 * @param searchValues One or more search terms to check for in all of the fields
 	 * @return All records with a field-value match.
 	 */
+	@SuppressWarnings("unchecked")
 	public List<Record> searchRecords(List<Field> fields, List<String> searchValues) {
+		try {
+			URL url = new URL(HTTP, domain, port, 
+					"/search" + usernameAndPasswordForURLS() + 
+					buildSearchString(fields, searchValues));
+//			System.out.println(url.toString());
+			Object xstreamResult = processRequest(url);
+			return (List<Record>)xstreamResult;
+		} catch (MalformedURLException e) {
+			System.out.println("Something wrong with the Batch url.");
+			System.out.println(e.getMessage());
+		}
+		
 		return null;
 	}
 	
@@ -195,6 +209,31 @@ public class ServerCommunicator {
 			System.out.println(e.getMessage());
 		}
 		return null; // if there was an error.
+	}
+	
+	/**
+	 * Builds the semi-complicated string used for the search query.
+	 * @param fields
+	 * @param searchValues
+	 * @return Finished search query string, to be used in a URL.
+	 */
+	private String buildSearchString(List<Field> fields, List<String> searchValues) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("&field=");
+		for (int i = 0; i < fields.size(); i++) {
+			if (i > 0) {
+				sb.append(",");
+			}
+			sb.append(fields.get(i).getID());
+		}
+		sb.append("&search=");
+		for (int i = 0; i < searchValues.size(); i++) {
+			if (i > 0) {
+				sb.append(",");
+			}
+			sb.append(searchValues.get(i));
+		}
+		return sb.toString();
 	}
 	
 	/**
@@ -222,20 +261,6 @@ public class ServerCommunicator {
 			if (connection != null) { connection.disconnect(); }
 		}
 		return result;
-	}
-	
-	/**
-	 * Handles closing a closeable object, such as a stream.
-	 * @param obj
-	 */
-	private void safeClose(Closeable obj) {
-		if (obj != null) {
-			try {
-				obj.close();
-			} catch (Exception e) {
-				// do nothing. Nothing we *can* do.
-			}
-		}
 	}
 	
 	/**
