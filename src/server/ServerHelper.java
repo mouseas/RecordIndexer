@@ -86,8 +86,13 @@ public class ServerHelper {
 	 * @return
 	 */
 	public static User verifyUser(DataAccess database, HttpExchange exchange) {
-		String username = getQueryItem(exchange, "username=");
-		String password = getQueryItem(exchange, "password=");
+		String username, password = null;
+		try {
+			username = getQueryItem(exchange, "username=");
+			password = getQueryItem(exchange, "password=");
+		} catch (NullPointerException e) {
+			return null; // no username or password provided.
+		}
 		User user = null;
 		if (username != null && password != null) {
 			database.startTransaction();

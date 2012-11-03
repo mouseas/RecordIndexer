@@ -2,6 +2,9 @@ package shared.dataTransfer;
 
 import java.awt.image.*;
 
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
+
 public class Image {
 	
 	private String filename;
@@ -22,6 +25,11 @@ public class Image {
 	
 	public String getFilename() {
 		return filename;
+	}
+	
+	public static String serialize(Image image) {
+		XStream xstream = new XStream(new DomDriver());
+		return xstream.toXML(image);
 	}
 	
 	

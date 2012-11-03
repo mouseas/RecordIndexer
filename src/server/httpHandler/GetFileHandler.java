@@ -8,6 +8,7 @@ import com.sun.net.httpserver.HttpHandler;
 public class GetFileHandler implements HttpHandler {
 
 	private static final String FILE_ROOT = "demo/indexer_data/Records";
+	
 	@Override
 	public void handle(HttpExchange exchange) throws IOException {
 		InputStream fileStream = null;

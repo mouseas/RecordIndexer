@@ -131,9 +131,9 @@ public class DataAccess {
 	 * @param projectID
 	 * @return URL string of the image of the first batch in the project
 	 */
-	public String getSampleImageLocation(int projectID) 
+	public Image getSampleImage(int projectID) 
 			throws SQLException, ServerException {
-		String result = null;
+		Image result = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		String statement = "SELECT * FROM batches WHERE project_id = ?";
@@ -147,7 +147,7 @@ public class DataAccess {
 		rs = ps.executeQuery();
 		
 		if (rs != null && rs.next()) {
-			result = rs.getString("filename");
+			result = new Image(projectID, rs.getString("filename"));
 		} else {
 			result = null; // no sample image available
 			// Either no batches in project, or invalid project id

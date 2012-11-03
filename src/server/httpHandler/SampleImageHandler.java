@@ -39,7 +39,7 @@ public class SampleImageHandler implements HttpHandler {
 			if (projectID >= 0) {
 				try {
 					database.startTransaction();
-					response = database.getSampleImageLocation(projectID);
+					response = Image.serialize(database.getSampleImage(projectID));
 					database.endTransaction(false);
 //					System.out.println("success: " + response);
 				} catch (Exception e) {

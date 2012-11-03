@@ -212,7 +212,7 @@ public class DataAccessTest {
 		
 		try {
 			String expected = "batch001.png";
-			String actual = da.getSampleImageLocation(1);
+			String actual = da.getSampleImage(1).getFilename();
 			assertEquals(actual, expected, actual);
 		} catch (Exception e) {
 			e.printStackTrace();

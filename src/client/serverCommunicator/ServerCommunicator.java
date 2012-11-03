@@ -114,11 +114,13 @@ public class ServerCommunicator {
 					"/sample-image" + usernameAndPasswordForURLS() + 
 					"&project=" + p.getID());
 			Object xstreamResult = processRequest(url);
-			Batch b = (Batch)xstreamResult;
-			return b.getImage();
+			Image image = (Image)xstreamResult;
+			return image;
 		} catch (MalformedURLException e) {
 			System.out.println("Something wrong with the Sample Image url.");
 			System.out.println(e.getMessage());
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return null; // if there was an error.
 	}
@@ -149,10 +151,19 @@ public class ServerCommunicator {
 	 * @param b Batch to submit. Records are attached to this batch.
 	 * @return Whether the submission was accepted by the server.
 	 */
-	public boolean submitBatch(Batch b) {
-		return false;
-		// This one will be more complicated than the requests; I will
-		// need to POST and send over XML data in the connection body.
+	public boolean submitBatch(FinishedBatch batch) {
+		URL url = null;
+		HttpURLConnection connection = null;
+		int responseCode = -1;
+		try {
+			String xml = FinishedBatch.serialize(batch);
+			url = new URL(HTTP, domain, port, 
+						"/submit-batch" + usernameAndPasswordForURLS());
+			responseCode = processPost(url, xml);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return responseCode == 200;
 	}
 	
 	/**
@@ -243,8 +254,25 @@ public class ServerCommunicator {
 	 * @return
 	 */
 	private Object processRequest(URL url) {
+		String xml = processRequestToString(url);
+		if (xml != null) {
+			Object result = null;
+			result = xstream.fromXML(xml);
+			return result;
+		} else {
+			return null;
+		}
+	}
+	
+	/**
+	 * Sends a request with the provided URL, and returns the String output created
+	 * from a response.
+	 * @param url
+	 * @return
+	 */
+	private String processRequestToString(URL url) {
 		HttpURLConnection connection = null;
-		Object result = null;
+		String result = null;
 		
 		try {
 			connection = (HttpURLConnection)url.openConnection();
@@ -253,14 +281,40 @@ public class ServerCommunicator {
 				// 200-range codes are successful, everything else is not.
 				return null; // not successful; username/password mismatch, or other error.
 			}
-			String xmlString = readInput(connection.getInputStream());
-			result = xstream.fromXML(xmlString);
+			result = readInput(connection.getInputStream());
+//			System.out.println(result);
 		} catch (Exception e) {
 			handleException(e);
 		} finally {
 			if (connection != null) { connection.disconnect(); }
 		}
 		return result;
+	}
+	
+	private int processPost(URL url, String body) {
+		HttpURLConnection connection = null;
+		int responseCode = -1;
+		try {
+			connection = (HttpURLConnection)url.openConnection();
+			connection.setDoOutput(true);
+			connection.setDoInput(true);
+			connection.setRequestMethod("POST");
+			connection.setUseCaches(false);
+	
+			connection.setRequestProperty("Content-Length", "" + body.getBytes().length);
+			DataOutputStream output = new DataOutputStream(connection.getOutputStream());
+			output.writeBytes(body);
+			output.flush();
+			output.close();
+			
+			responseCode = connection.getResponseCode(); // grabs the response code,
+			// and also ensures that the exchange is processed.
+		} catch (Exception e) {
+			return -1;
+		} finally {
+			if (connection != null) { connection.disconnect(); }
+		}
+		return responseCode;
 	}
 	
 	/**

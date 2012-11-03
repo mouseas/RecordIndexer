@@ -65,6 +65,7 @@ public class Server {
 			httpServer.createContext("/field-list", new GetFieldsHandler(database));
 			httpServer.createContext("/search", new SearchHandler(database));
 			httpServer.createContext("/get", new GetFileHandler());
+			httpServer.createContext("/submit-batch", new SubmitBatchHandler(database));
 			httpServer.setExecutor(null); // creates default executor
 		} catch (IOException e) {
 			e.printStackTrace();
