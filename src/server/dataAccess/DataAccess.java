@@ -16,6 +16,14 @@ public class DataAccess {
 	
 	private Connection connection;
 	
+	private Connection getConnection() throws IOException {
+		if (connection != null) {
+			return connection;
+		} else {
+			throw new IOException("No open connection!");
+		}
+	}
+	
 	private static final String databaseSchemaLocation = "database-schema.txt";
 	
 	/**
@@ -24,6 +32,9 @@ public class DataAccess {
 	 * @throws ServerException
 	 */
 	public DataAccess(String databaseName) throws ServerException {
+		if (!Database.isInitialized()) {
+			Database.initialize();
+		}
 		this.dbName = databaseName;
 		db = new Database(dbName); // may throw a ServerException
 	}
@@ -72,7 +83,7 @@ public class DataAccess {
 		ResultSet rs = null;
 		String statement = "SELECT * FROM users WHERE username = ? AND password = ?";
 		try {
-			ps = connection.prepareStatement(statement);
+			ps = getConnection().prepareStatement(statement);
 			ps.setString(1, username);
 			ps.setString(2, password);
 			rs = ps.executeQuery();
@@ -100,7 +111,7 @@ public class DataAccess {
 		ResultSet rs = null;
 		String statement = "SELECT * FROM projects";
 		try {
-			ps = connection.prepareStatement(statement);
+			ps = getConnection().prepareStatement(statement);
 			rs = ps.executeQuery();
 			while (rs.next()) {
 				result.add(buildProject(rs));
@@ -126,10 +137,15 @@ public class DataAccess {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		String statement = "SELECT * FROM batches WHERE project_id = ?";
-		
-		ps = connection.prepareStatement(statement);
+		try {
+			ps = getConnection().prepareStatement(statement);
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println(e.getMessage() + " - " + connection);
+		}
 		ps.setInt(1, projectID);
 		rs = ps.executeQuery();
+		
 		if (rs != null && rs.next()) {
 			result = rs.getString("filename");
 		} else {
@@ -182,8 +198,11 @@ public class DataAccess {
 		PreparedStatement ps = null;
 		String statement = "UPDATE batches SET completed = ?, in_use = 0" +
 				" WHERE id = ?";
-		
-		ps = connection.prepareStatement(statement);
+		try {
+			ps = getConnection().prepareStatement(statement);
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+		}
 		if (completed) { ps.setInt(1, 1); } // completed
 		else { ps.setInt(1, 0); } // not completed
 		ps.setInt(2, input.getID());
@@ -234,14 +253,14 @@ public class DataAccess {
 				sb.append(" ");
 				if (sb.toString().contains(";")) {
 					// convert the string to a prepared SQL statement
-					ps = connection.prepareStatement(sb.toString());
+					ps = getConnection().prepareStatement(sb.toString());
 					ps.execute(); // execute it.
 					ps.close();
 					ps = null;
 					sb = new StringBuilder(); // clear the string builder.
 				}
 			}
-			if (commit) { connection.commit(); }
+			if (commit) { getConnection().commit(); }
 			
 		} catch (Exception e) {
 			System.out.println("Exception while wiping database.");
@@ -279,7 +298,7 @@ public class DataAccess {
 		
 		PreparedStatement ps = null;
 		try {
-			ps = connection.prepareStatement(statement);
+			ps = getConnection().prepareStatement(statement);
 			ps.setString(1, user.getUsername());
 			ps.setString(2, user.getPassword());
 			ps.setString(3, user.getFirstName());
@@ -287,7 +306,7 @@ public class DataAccess {
 			ps.setString(5, user.getEmail());
 			ps.setInt(6, user.getNumIndexedRecords());
 			ps.execute();
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			System.out.println("Exception while adding a user.");
 			System.out.println(e.getMessage());
 		} finally {
@@ -319,7 +338,7 @@ public class DataAccess {
 		
 		PreparedStatement ps = null;
 		try {
-			ps = connection.prepareStatement(statement);
+			ps = getConnection().prepareStatement(statement);
 			ps.setInt(1, batch.getProjectID());
 			ps.setString(2, batch.getImage().getFilename());
 			if (batch.isCompleted()) {
@@ -328,7 +347,7 @@ public class DataAccess {
 				ps.setInt(3, 0); // 0 means not completed.
 			}
 			result = ps.execute();
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			System.out.println("Exception while adding a batch.");
 			System.out.println(e.getMessage());
 		} finally {
@@ -359,13 +378,13 @@ public class DataAccess {
 		
 		PreparedStatement ps = null;
 		try {
-			ps = connection.prepareStatement(statement);
+			ps = getConnection().prepareStatement(statement);
 			ps.setString(1, project.getTitle());
 			ps.setInt(2, project.getRecordsPerImage());
 			ps.setInt(3, project.getY(0));
 			ps.setInt(4, project.getRowHeight());
 			result = ps.execute();
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			System.out.println("Exception while adding a project.");
 			System.out.println(e.getMessage());
 		} finally {
@@ -395,7 +414,7 @@ public class DataAccess {
 		
 		PreparedStatement ps = null;
 		try {
-			ps = connection.prepareStatement(statement);
+			ps = getConnection().prepareStatement(statement);
 			ps.setInt(1, field.getProjectID());
 			ps.setString(2, field.getTitle());
 			ps.setInt(3, field.getXCoord());
@@ -403,7 +422,7 @@ public class DataAccess {
 			ps.setString(5, field.getHelpHtmlLoc());
 			ps.setString(6, field.getKnownDataLoc());
 			result = ps.execute();
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			System.out.println("Exception while adding a field.");
 			System.out.println("\t" + statement);
 			System.out.println("\t" + e.getMessage());
@@ -431,7 +450,11 @@ public class DataAccess {
 			statement = "INSERT INTO records (value, batch_id," +
 				"field_id, row_number) VALUES (?, ?, ?, ?);";
 		}
-		ps = connection.prepareStatement(statement);
+		try {
+			ps = getConnection().prepareStatement(statement);
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+		}
 		
 		ps.setString(1, input.getValue());
 		ps.setInt(2, input.getBatchID());
@@ -460,7 +483,7 @@ public class DataAccess {
 		Record result = null;
 		
 		try {
-			ps = connection.prepareStatement(statement);
+			ps = getConnection().prepareStatement(statement);
 			ps.setInt(1, batchID);
 			ps.setInt(2, fieldID);
 			ps.setInt(3, rowNumber);
@@ -468,7 +491,7 @@ public class DataAccess {
 			if (rs.next()) {
 				result = buildRecord(rs);
 			} // else result is null; no matching record found.
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			System.out.println("Error at getRecord(): " + e.getMessage());
 		} finally {
 			closeQuery(rs, ps);
@@ -491,7 +514,7 @@ public class DataAccess {
 		List<Record> output = new ArrayList<Record>();
 		
 		try {
-			ps = connection.prepareStatement(statement);
+			ps = getConnection().prepareStatement(statement);
 			ps.setInt(1, fieldID);
 			rs = ps.executeQuery();
 			while (rs != null && rs.next()) {
@@ -502,7 +525,7 @@ public class DataAccess {
 					output.add(r);
 				}
 			}
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			System.out.println("Exception during Search: " + e.getMessage());
 		} finally {
 			closeQuery(rs, ps);
@@ -523,14 +546,14 @@ public class DataAccess {
 		List<Field> output = new ArrayList<Field>();
 		
 		try {
-			ps = connection.prepareStatement(statement);
+			ps = getConnection().prepareStatement(statement);
 			ps.setInt(1, projectID);
 			rs = ps.executeQuery();
 			while (rs != null && rs.next()) {
 				Field f = buildField(rs);
 				output.add(f);
 			}
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			System.out.println("Exception during getFields(): " + e.getMessage());
 		} finally {
 			closeQuery(rs, ps);
@@ -624,17 +647,30 @@ public class DataAccess {
 		return new Field(id, projectID, title, xCoord, width, helpHtmlLoc, knownData);
 	}
 	
+	/**
+	 * Checks whether a Record exists in the database.
+	 * @param input
+	 * @return
+	 * @throws SQLException
+	 */
 	private boolean recordExists(Record input) throws SQLException {
 		String selectStatement = "SELECT * FROM records " +
 				"WHERE batch_id = ? AND field_id = ? AND row_number = ?";
 		
-		PreparedStatement ps = connection.prepareStatement(selectStatement);
-		ps.setInt(1, input.getBatchID());
-		ps.setInt(2, input.getFieldID());
-		ps.setInt(3, input.getRowNumber());
-		
-		ResultSet rs = ps.executeQuery();
-		boolean result = rs.next();
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		boolean result = false;
+		try { 
+			ps = getConnection().prepareStatement(selectStatement);
+			ps.setInt(1, input.getBatchID());
+			ps.setInt(2, input.getFieldID());
+			ps.setInt(3, input.getRowNumber());
+			
+			rs = ps.executeQuery();
+			result = rs.next();
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+		}
 		
 		if (rs != null) { rs.close(); }
 		if (ps != null) { ps.close(); }
@@ -653,12 +689,12 @@ public class DataAccess {
 		ResultSet rs = null;
 		boolean result = false;
 		try {
-			ps = connection.prepareStatement(selectStatement);
+			ps = getConnection().prepareStatement(selectStatement);
 			ps.setInt(1, ID);
 			
 			rs = ps.executeQuery();
 			result = (rs != null && rs.next());
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			System.out.println("Exception while checking if an element exists with that ID");
 			System.out.println("\t" + table + " - " + selectStatement);
 			System.out.println("\t" + e.getMessage());
@@ -682,13 +718,13 @@ public class DataAccess {
 		ResultSet rs = null;
 		boolean result = false;
 		try {
-			ps = connection.prepareStatement(statement);
+			ps = getConnection().prepareStatement(statement);
 			ps.setString(1, username);
 			ps.setString(2, email);
 			
 			rs = ps.executeQuery();
 			result = rs.next();
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			System.out.println("Exception while checking if a user exists with given username or email");
 			System.out.println("\t" + e.getMessage());
 		} finally {
@@ -697,6 +733,12 @@ public class DataAccess {
 		return result;
 	}
 	
+	/**
+	 * Closes a ResultSet and a PreparedStatement, which most of the queries
+	 * have at least one of.
+	 * @param rs
+	 * @param ps
+	 */
 	private void closeQuery(ResultSet rs, PreparedStatement ps) {
 		try {
 			if (rs != null) { rs.close(); }
@@ -705,6 +747,27 @@ public class DataAccess {
 			System.out.println("Failed to close. " + e.getMessage());
 			e.printStackTrace();
 		}
+	}
+	
+	/**
+	 * Marks every batch in the database as in_use = 0 (false), used to
+	 * reset batches that have been marked as in-use.
+	 */
+	public void markBatchesNotInUse() {
+		if (connection != null) {
+			endTransaction(false);
+			System.out.println("WARNING: Had to close an open connection while marking" +
+					"all batches as in-use = false.");
+		}
+		startTransaction();
+		String statement = "UPDATE batches SET in_use = 0";
+		try {
+			getConnection().prepareStatement(statement).execute();
+		} catch (Exception e) {
+			System.out.println("Error while marking batchs as not in use:");
+			System.out.println(e.getMessage());
+		}
+		endTransaction(true);
 	}
 	
 }

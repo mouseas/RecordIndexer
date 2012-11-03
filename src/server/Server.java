@@ -21,6 +21,8 @@ public class Server {
 	public Server(DataAccess database, int port) {
 		httpServer = null;
 		this.database = database;
+		database.markBatchesNotInUse(); // mark all batches as not in use.
+		// No batches should be in use when the server starts.
 		createHttpServerAndContexts(port);
 	}
 	

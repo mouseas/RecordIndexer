@@ -42,14 +42,14 @@ public class GetBatchHandler implements HttpHandler {
 		os = exchange.getResponseBody();
 		os.write(response.getBytes());
 		os.close();
-		System.out.println(response);
+//		System.out.println(response);
 	}
 
 	private String buildBatch(int projectID) {
 		try {
 			database.startTransaction();
 			Batch batch = database.getNextBatch(projectID);
-			database.endTransaction(false);
+			database.endTransaction(true);
 			XStream xstream = new XStream(new DomDriver());
 			return xstream.toXML(batch);
 		} catch (Exception e) {

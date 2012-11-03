@@ -1,5 +1,7 @@
 package server;
 
+import java.util.*;
+
 import server.dataAccess.DataAccess;
 import shared.dataTransfer.User;
 
@@ -36,6 +38,44 @@ public class ServerHelper {
 				return result;
 			}
 			return null;
+		}
+		
+		/**
+		 * Similar to getQueryItem, but gets a list of items as Strings instead
+		 * of just one item.
+		 * @param exchange HttpExchange object received by a handle() method
+		 * @param itemName Name of the item to get from the exchange's query.
+		 * This should usually end with an = sign, such as "username=".
+		 * @return List<String> of all the entries matching the item name.
+		 * An empty List (size = 0) indicates itemName was not found.
+		 */
+		public static List<String> getMultipleQueryItems(
+								HttpExchange exchange, String itemName) {
+			List<String> result = new ArrayList<String>();
+			String query = exchange.getRequestURI().getQuery();
+			if (query.contains(itemName)) {
+				int start = query.indexOf(itemName) + itemName.length();
+				int end = -1;
+				if (query.indexOf("&", start) > 0) {
+					//trim to just the part of the query matching the item name.
+					query = query.substring(start, query.indexOf("&", start));
+				} else {
+					query = query.substring(start);
+				}
+				start = 0; // start of the now-trimmed string
+				do {
+					if (query.indexOf(",", start) > 0) { // another entry exists
+						end = query.indexOf(",", start);
+					} else {
+						end = query.length(); // last entry
+					}
+					String str = query.substring(start, end);
+					result.add(str);
+					start = end + 1;
+					end = -1;
+				} while (start < query.length() && query.indexOf(",", start - 1) > 0);
+			}
+			return result;
 		}
 
 	/**

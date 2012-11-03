@@ -13,11 +13,6 @@ public class DataAccessTest {
 
 	private DataAccess da;
 	
-	@BeforeClass
-	public static void initialize() throws Exception {
-		Database.initialize();
-	}
-	
 	@Before
 	public void setUp() throws Exception {
 		da = new DataAccess("database" + File.separator +  "indexer-app.sqlite");
@@ -218,7 +213,7 @@ public class DataAccessTest {
 		try {
 			String expected = "batch001.png";
 			String actual = da.getSampleImageLocation(1);
-			assertEquals(expected, actual);
+			assertEquals(actual, expected, actual);
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail("Exception thrown: " + e.getMessage());
