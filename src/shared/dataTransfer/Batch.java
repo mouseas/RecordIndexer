@@ -10,17 +10,19 @@ public class Batch extends DataTransferObject {
 	private Image image;
 	
 	private boolean completed;
+	private String username;
 	
-	public Batch(int id, int projectID, String imageFilename) {
+	public Batch(int id, int projectID, String imageFilename, String username) {
 		setID(id);
 		this.projectID = projectID;
 		this.imageFilename = imageFilename;
+		this.username = username;
 		getImage(); // initializes the Image object.
 		completed = false;
 	}
 	
-	public Batch (int id, int projectID, String imageFilename, boolean completed) {
-		this(id, projectID, imageFilename);
+	public Batch (int id, int projectID, String imageFilename, String username, boolean completed) {
+		this(id, projectID, imageFilename, username);
 		this.completed = completed;
 	}
 	
@@ -42,6 +44,14 @@ public class Batch extends DataTransferObject {
 	 */
 	public int getProjectID() {
 		return projectID;
+	}
+	
+	public String getUsername() {
+		return username;
+	}
+	
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	public boolean isCompleted() {

@@ -10,9 +10,11 @@ public class FinishedBatch {
 	public Batch batch;
 	protected List<Record> records;
 	public List<Record> getRecords() { return records; }
+	public void setRecords(List<Record> records) { this.records = records; }
 	
 	protected List<Field> fields;
 	public List<Field> getFields() { return fields; }
+	public void setFields(List<Field> fields) { this.fields = fields; }
 	
 	public FinishedBatch(Batch batch) {
 		this.batch = batch;

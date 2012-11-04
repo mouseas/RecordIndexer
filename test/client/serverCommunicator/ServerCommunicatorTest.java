@@ -75,24 +75,18 @@ public class ServerCommunicatorTest {
 	}
 
 	@Test
-	public void testRequestBatch() {
-		Batch actual = sc.requestNextBatch(1);
-		assertNotNull("No batch from project 1", actual);
-		System.out.println("BATCH: " + actual.getID() + " PID:" + actual.getProjectID()
-				+ " " + actual.getImage().getFilename());
-		actual = sc.requestNextBatch(0);
-		assertNotNull("No batch from project 0", actual);
-		System.out.println("BATCH: " + actual.getID() + " PID:" + actual.getProjectID()
-				+ " " + actual.getImage().getFilename());
-		actual = sc.requestNextBatch(2);
+	public void testRequestAndSubmitBatch() {
+		// request a couple batches.
+		Batch actualBatch = sc.requestNextBatch(0);
+		assertNotNull("No batch from project 0", actualBatch);
+		System.out.println("BATCH: " + actualBatch.getID() + " PID:" + actualBatch.getProjectID()
+				+ " " + actualBatch.getImage().getFilename());
+		Batch actualBatch2 = sc.requestNextBatch(2);
 		assertNull("Batch returned from project 2 " +
-					"(all batches should be completed)", actual);
-	}
-
-	@Test
-	public void testSubmitBatch() {
-		FinishedBatch finishedBatch = new FinishedBatch(
-				new Batch(0, 0, "images/1890_image0.png", true));
+					"(all batches should be completed)", actualBatch2);
+		
+		// submit that batch, now finished.
+		FinishedBatch finishedBatch = new FinishedBatch(actualBatch);
 		Field f = new Field(0, 0, "Last Name", 60, 300, 
 				"fieldhelp/last_name.html", "knowndata/1890_last_names.txt");
 		finishedBatch.add(f);
@@ -158,7 +152,7 @@ public class ServerCommunicatorTest {
 	
 	@Test
 	public void testRequestSpecificBatch() {
-		Batch expected = new Batch(40, 2, "images/draft_image0.png");
+		Batch expected = new Batch(40, 2, "images/draft_image0.png", "0");
 		Batch actual = sc.requestSpecificBatch(40);
 		assertNotNull("Null result, expected a batch.", actual);
 		assertEquals(expected.getID(), actual.getID());

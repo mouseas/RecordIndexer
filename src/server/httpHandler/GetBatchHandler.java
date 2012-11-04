@@ -29,8 +29,9 @@ public class GetBatchHandler implements HttpHandler {
 		User user = ServerHelper.verifyUser(database, exchange);
 		int projectID = Integer.parseInt(ServerHelper.getQueryItem(exchange, "project="));
 		OutputStream os = null;
-		String response = buildBatch(projectID);
+		String response = buildBatch(projectID, user.getUsername());
 		int responseCode = 200;
+		
 		if (user == null){ // invalid user credentials
 			response = "Forbidden: Invalid user credentials.";
 			responseCode = 403;
@@ -38,6 +39,7 @@ public class GetBatchHandler implements HttpHandler {
 			response = "Not found: No batch available or SQL error.";
 			responseCode = 404;
 		} // if no problems, send the xml.
+		
 		exchange.sendResponseHeaders(responseCode, response.length());
 		os = exchange.getResponseBody();
 		os.write(response.getBytes());
@@ -45,10 +47,10 @@ public class GetBatchHandler implements HttpHandler {
 //		System.out.println(response);
 	}
 
-	private String buildBatch(int projectID) {
+	private String buildBatch(int projectID, String username) {
 		try {
 			database.startTransaction();
-			Batch batch = database.getNextBatch(projectID);
+			Batch batch = database.getNextBatch(projectID, username);
 			database.endTransaction(true);
 			XStream xstream = new XStream(new DomDriver());
 			return xstream.toXML(batch);

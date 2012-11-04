@@ -12,7 +12,7 @@ public class BatchTest {
 	
 	@Before
 	public void setUp() throws Exception {
-		b = new Batch(17, 3, "test.png");
+		b = new Batch(17, 3, "test.png", "0");
 	}
 
 	@After

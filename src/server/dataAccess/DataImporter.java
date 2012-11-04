@@ -279,7 +279,7 @@ public class DataImporter {
 		
 		try {
 			String filename = getStringFromElement(batch, "file");
-			return new Batch(batchList.size(), projectList.size(), filename, completed);
+			return new Batch(batchList.size(), projectList.size(), filename, "0", completed);
 		} catch (NullPointerException e) {
 			System.out.println("Null pointer exception at DataImporter.parseBatch.");
 		}

@@ -194,7 +194,68 @@ public class Controller implements IController {
 	
 	private void downloadBatch() {
 		setHostAndPort();
-		String request = setUsernameAndPassword();
+		String projectIDString = getView().getParameterValues()[2];
+		String request = setUsernameAndPassword() + projectIDString + "\n";
+		getView().setRequest(request);
+		try {
+			User user = sc.verifyUser(username, password);
+			if (user == null || user.getID() < 0) {
+				getView().setResponse(FAIL);
+			} else {
+				Batch batch = sc.requestNextBatch(Integer.parseInt(projectIDString));
+				List<Field> fields = sc.requestFieldsList(new Project(
+									Integer.parseInt(projectIDString), 0, 0, 0, ""));
+				List<Project> projects = sc.requestProjectsList();
+				if (batch != null && fields != null && fields.size() > 0 
+								&& projects != null && projects.size() > 0) {
+					Project p = projects.get(batch.getProjectID());
+					StringBuilder sb = new StringBuilder();
+					outputBatch(sb, batch, p, fields);
+					outputFields(sb, fields);
+					getView().setResponse(sb.toString());
+				} else {
+					failedResponse();
+				}
+			}
+		} catch (NumberFormatException e) {
+			failedResponse();
+		}
+	}
+	
+	/**
+	 * Appends the strings needed to represent a downloaded batch to a StringBuilder.
+	 * @param sb
+	 * @param batch
+	 * @param p
+	 * @param fields
+	 */
+	private void outputBatch(StringBuilder sb, Batch batch, Project p, List<Field> fields) {
+		sb.append(batch.getID() + "\n");
+		sb.append(batch.getProjectID() + "\n");
+		sb.append(filenameHeader() + batch.getImage().getFilename() + "\n");
+		sb.append(p.getY(0) + "\n");
+		sb.append(p.getRowHeight() + "\n");
+		sb.append(p.getRecordsPerImage() + "\n");
+		sb.append(fields.size() + "\n");
+		sb.append(batch.getID() + "\n");
+	}
+	
+	/**
+	 * Appends the strings needed to represent a list of Fields to a StringBuilder.
+	 * @param sb
+	 * @param fields
+	 */
+	private void outputFields (StringBuilder sb, List<Field> fields) {
+		for (int i = 0; i < fields.size(); i++) {
+			Field f = fields.get(i);
+			sb.append(f.getID() + "\n");
+			sb.append((i + 1) + "\n");
+			sb.append(f.getTitle() + "\n");
+			sb.append(filenameHeader() + f.getHelpHtmlLoc() + "\n");
+			sb.append(f.getXCoord() + "\n");
+			sb.append(f.getWidth() + "\n");
+			sb.append(filenameHeader() + f.getKnownDataLoc() + "\n");
+		}
 	}
 	
 	private void getFields() {
@@ -229,9 +290,55 @@ public class Controller implements IController {
 	
 	private void submitBatch() {
 		setHostAndPort();
-		String request = setUsernameAndPassword();
+		String batchIDString = getView().getParameterValues()[2];
+		String recordValuesString = getView().getParameterValues()[3];
+		List<String> recordValues = convertToList(recordValuesString.split(","));
+		String request = setUsernameAndPassword() + batchIDString + "\n"
+						+ recordValuesString + "\n";
+		getView().setRequest(request);
+		
+		try {
+			User user = sc.verifyUser(username, password);
+			FinishedBatch fb = buildFinishedBatch(batchIDString, recordValues);
+			if (user != null && user.getID() >= 0 && fb != null) {
+				boolean success = sc.submitBatch(fb);
+				if (success) {
+					getView().setResponse("TRUE\n");
+				} else {
+					failedResponse();
+				}
+			} else {
+				failedResponse();
+			}
+		} catch (Exception e) {
+			failedResponse();
+		}
 	}
 	
+	private FinishedBatch buildFinishedBatch(String batchIDString,
+			List<String> recordValues) {
+		try {
+			Batch b = sc.requestSpecificBatch(Integer.parseInt(batchIDString));
+			FinishedBatch result = new FinishedBatch(b);
+			result.setFields(sc.requestFieldsList(
+									new Project(b.getProjectID(), 0, 0, 0, "")));
+			List<Record> records = result.getRecords();
+			if (result.getFields() != null && result.getFields().size() > 0 
+					&& b != null && b.getUsername().equals(username)) {
+				for (int i = 0; i < recordValues.size(); i++) {
+					int fieldID = result.getFields().get(i % result.getFields().size()).getID();
+					int rowNumber = (int)i / result.getFields().size();
+					Record r = new Record(i, b.getID(), fieldID, rowNumber, recordValues.get(i));
+					records.add(r);
+				}
+				return result;
+			} else {
+				return null;
+			}
+		} catch (Exception e) { /* return null below */ }
+		return null;
+	}
+
 	private void search() {
 		setHostAndPort();
 		String request = setUsernameAndPassword() 
@@ -245,15 +352,20 @@ public class Controller implements IController {
 			List<String> searchTerms = 
 							convertToList(getView().getParameterValues()[3].split(","));
 			List<Record> records = sc.searchRecords(fields, searchTerms);
-			if (fields != null && searchTerms != null && records != null) {
+			if (fields != null && searchTerms != null 
+							&& records != null && records.size() > 0) {
 				StringBuilder sb = new StringBuilder();
 				for (Record r : records) {
 					sb.append(r.getBatchID() + "\n");
 					Batch b = sc.requestSpecificBatch(r.getBatchID());
 					// it would be more efficient for many searches to put these in a
 					// hash table and only request them the first time that ID is needed.
-					String filename = b.getImage().getFilename();
-					sb.append(filenameHeader() + filename + "\n");
+					if (b != null) {
+						String filename = b.getImage().getFilename();
+						sb.append(filenameHeader() + filename + "\n");
+					} else {
+						sb.append("File name error\n");
+					}
 					sb.append(r.getID() + "\n");
 					sb.append(r.getFieldID() + "\n");
 				}

@@ -41,7 +41,7 @@ public class DataImporterTest {
 		// The wipeDatabase() function is actually tested in DataAccessTest.
 		da.startTransaction();
 		User user = da.getUser("test1", "test1");
-		assertNull(user);
+		assertEquals(-1, user.getID());
 		da.endTransaction(false);
 		
 		testImportUsers();

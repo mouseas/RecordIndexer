@@ -42,7 +42,7 @@ CREATE TABLE batches
 	project_id integer not null,
 	filename varchar(255),
 	completed integer not null,
-	in_use integer not null,
+	in_use varchar(255) not null,
 	foreign key(project_id) references projects(id)
 );
 

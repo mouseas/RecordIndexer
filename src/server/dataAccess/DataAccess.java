@@ -163,7 +163,7 @@ public class DataAccess {
 	 * @param projectID
 	 * @return
 	 */
-	public Batch getNextBatch(int projectID) throws SQLException, ServerException {
+	public Batch getNextBatch(int projectID, String username) throws SQLException, ServerException {
 		Batch result = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -177,9 +177,10 @@ public class DataAccess {
 			result = buildBatch(rs); // get first available batch
 			rs.close();
 			// then mark that batch as in_use.
-			statement = "UPDATE batches SET in_use = 1 WHERE id = ?";
+			statement = "UPDATE batches SET in_use = ? WHERE id = ?";
 			ps = db.getConnection().prepareStatement(statement);
-			ps.setInt(1, result.getID());
+			ps.setString(1, username);
+			ps.setInt(2, result.getID());
 			ps.executeUpdate();
 		} else {
 			result = null; // no batches available
@@ -355,11 +356,11 @@ public class DataAccess {
 		boolean result = false;
 		if (IDalreadyExists) {
 			statement = "INSERT INTO batches (project_id, filename, " +
-					"completed, in_use) VALUES (?, ?, ?, 0)";
+					"completed, in_use) VALUES (?, ?, ?, ?)";
 		} else {
 			statement = "INSERT INTO batches" +
 				"(id, project_id, filename, completed, in_use) " +
-				"VALUES (" + batch.getID() + ", ?, ?, ?, 0)";
+				"VALUES (" + batch.getID() + ", ?, ?, ?, ?)";
 		}
 		
 		PreparedStatement ps = null;
@@ -372,6 +373,7 @@ public class DataAccess {
 			} else {
 				ps.setInt(3, 0); // 0 means not completed.
 			}
+			ps.setString(4, batch.getUsername());
 			result = ps.execute();
 		} catch (Exception e) {
 			System.out.println("Exception while adding a batch.");
@@ -636,9 +638,10 @@ public class DataAccess {
 	 */
 	private Batch buildBatch (ResultSet rs) throws SQLException {
 		int id = rs.getInt("id");
+		String username = rs.getString("in_use");
 		int projectID = rs.getInt("project_id");
 		String imageFilename = rs.getString("filename");
-		return new Batch(id, projectID, imageFilename);
+		return new Batch(id, projectID, imageFilename, username);
 	}
 	
 	/**

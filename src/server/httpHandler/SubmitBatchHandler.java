@@ -1,7 +1,6 @@
 package server.httpHandler;
 
 import java.io.*;
-import java.net.*;
 import java.util.*;
 
 import server.ServerHelper;
@@ -39,7 +38,7 @@ public class SubmitBatchHandler implements HttpHandler {
 			if (user == null) { responseCode = 403; }
 			body = exchange.getRequestBody();
 			FinishedBatch finishedBatch = readBatch(body);
-			if (finishedBatch != null) {
+			if (finishedBatch != null && finishedBatch.getRecords().size() > 0) {
 				boolean commit = true;
 				database.startTransaction();
 				if (!saveRecords(finishedBatch)) { commit = false; }
@@ -134,55 +133,55 @@ public class SubmitBatchHandler implements HttpHandler {
 		}
 	}
 	
-	/**
-	 * A quick early test of a post operation.
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		String HTTP = "http";
-		String domain = "localhost";
-		int port = 8080;
-		URL url = null;
-		HttpURLConnection connection = null;
-		try {
-			url = new URL(HTTP, domain, port, "/submit-batch?username=test1&password=test1");
-			connection = (HttpURLConnection)url.openConnection();
-			connection.setDoOutput(true);
-			connection.setDoInput(true);
-			connection.setRequestMethod("POST");
-			connection.setUseCaches(false);
-			
-			FinishedBatch batch = new FinishedBatch(new Batch(0, 0, "images/1890_image0.png", true));
-			Field f = new Field(0, 0, "Last Name", 60, 300, "fieldhelp/last_name.html", "knowndata/1890_last_names.txt");
-			batch.add(f);
-			f = new Field(0, 0, "First Name", 360, 280, "fieldhelp/last_name.html", "knowndata/1890_last_names.txt");
-			batch.add(f);
-			f = new Field(0, 0, "Gender", 640, 205, "fieldhelp/last_name.html", "knowndata/1890_last_names.txt");
-			batch.add(f);
-			f = new Field(0, 0, "Age", 845, 120, "fieldhelp/last_name.html", "");
-			batch.add(f);
-			for (int i = 0; i < 8; i++) {
-				for (int j = 0; j < batch.getFields().size(); j++) {
-					Record r = new Record(i * batch.getFields().size() + j, 0, j, i, "testValue new " + i + " " + j);
-					batch.add(r);
-				}
-			}
-			String xml = FinishedBatch.serialize(batch);
-
-			connection.setRequestProperty("Content-Length", "" + xml.getBytes().length);
-			DataOutputStream output = new DataOutputStream(connection.getOutputStream());
-			output.writeBytes(xml);
-			output.flush();
-			output.close();
-			
-			System.out.println(connection.getResponseCode());
-			System.out.println(connection.getResponseMessage());
-			
-			connection.disconnect();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-	}
+//	/**
+//	 * A quick early test of a post operation.
+//	 * @param args
+//	 */
+//	public static void main(String[] args) {
+//		String HTTP = "http";
+//		String domain = "localhost";
+//		int port = 8080;
+//		URL url = null;
+//		HttpURLConnection connection = null;
+//		try {
+//			url = new URL(HTTP, domain, port, "/submit-batch?username=test1&password=test1");
+//			connection = (HttpURLConnection)url.openConnection();
+//			connection.setDoOutput(true);
+//			connection.setDoInput(true);
+//			connection.setRequestMethod("POST");
+//			connection.setUseCaches(false);
+//			
+//			FinishedBatch batch = new FinishedBatch(new Batch(0, 0, "images/1890_image0.png", true));
+//			Field f = new Field(0, 0, "Last Name", 60, 300, "fieldhelp/last_name.html", "knowndata/1890_last_names.txt");
+//			batch.add(f);
+//			f = new Field(0, 0, "First Name", 360, 280, "fieldhelp/last_name.html", "knowndata/1890_last_names.txt");
+//			batch.add(f);
+//			f = new Field(0, 0, "Gender", 640, 205, "fieldhelp/last_name.html", "knowndata/1890_last_names.txt");
+//			batch.add(f);
+//			f = new Field(0, 0, "Age", 845, 120, "fieldhelp/last_name.html", "");
+//			batch.add(f);
+//			for (int i = 0; i < 8; i++) {
+//				for (int j = 0; j < batch.getFields().size(); j++) {
+//					Record r = new Record(i * batch.getFields().size() + j, 0, j, i, "testValue new " + i + " " + j);
+//					batch.add(r);
+//				}
+//			}
+//			String xml = FinishedBatch.serialize(batch);
+//
+//			connection.setRequestProperty("Content-Length", "" + xml.getBytes().length);
+//			DataOutputStream output = new DataOutputStream(connection.getOutputStream());
+//			output.writeBytes(xml);
+//			output.flush();
+//			output.close();
+//			
+//			System.out.println(connection.getResponseCode());
+//			System.out.println(connection.getResponseMessage());
+//			
+//			connection.disconnect();
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		
+//	}
 
 }
