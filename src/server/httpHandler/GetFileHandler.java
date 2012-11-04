@@ -21,7 +21,7 @@ public class GetFileHandler implements HttpHandler {
 		String response = null;
 		try {
 			String filePath =  FILE_ROOT + 
-							   exchange.getRequestURI().getPath().substring("/get".length());
+							   exchange.getRequestURI().getPath().substring("get/".length());
 			File f = new File(filePath);
 			length = f.length();
 			// file found, send it!

@@ -26,6 +26,9 @@ public class ServerCommunicator {
 	public void setHost(String newHost) {
 		host = newHost;
 	}
+	public String getHost() {
+		return host;
+	}
 	
 	/**
 	 * The port number to connect to for this ServerCommunicator
@@ -33,6 +36,9 @@ public class ServerCommunicator {
 	private int port;
 	public void setPort(int newPort) {
 		port = newPort;
+	}
+	public int getPort() {
+		return port;
 	}
 	
 	private XStream xstream;
@@ -141,11 +147,32 @@ public class ServerCommunicator {
 	 * @param p The project to request a batch from
 	 * @return The batch received, or null if no batch received.
 	 */
-	public Batch requestBatch(int projectID) {
+	public Batch requestNextBatch(int projectID) {
 		try {
 			URL url = new URL(HTTP, host, port, 
 					"/get-next-batch" + usernameAndPasswordForURLS() + 
 					"&project=" + projectID);
+//			System.out.println(url.toString());
+			Object xstreamResult = processRequest(url);
+			return (Batch)xstreamResult;
+		} catch (MalformedURLException e) {
+			System.out.println("Something wrong with the Batch url.");
+			System.out.println(e.getMessage());
+		}
+		return null; // if there was an error.
+	}
+	
+	/**
+	 * Requests a batch for a given project. The batch data from the server 
+	 * should include an image url and record information, if any.
+	 * @param p The project to request a batch from
+	 * @return The batch received, or null if no batch received.
+	 */
+	public Batch requestSpecificBatch(int batchID) {
+		try {
+			URL url = new URL(HTTP, host, port, 
+					"/get-specific-batch" + usernameAndPasswordForURLS() + 
+					"&batch=" + batchID);
 //			System.out.println(url.toString());
 			Object xstreamResult = processRequest(url);
 			return (Batch)xstreamResult;

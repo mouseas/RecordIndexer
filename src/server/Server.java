@@ -62,6 +62,7 @@ public class Server {
 			httpServer.createContext("/kill-process", new KillServerHandler(httpServer));
 			httpServer.createContext("/sample-image", new SampleImageHandler(database));
 			httpServer.createContext("/get-next-batch", new GetBatchHandler(database));
+			httpServer.createContext("/get-specific-batch", new GetSpecificBatchHandler(database));
 			httpServer.createContext("/field-list", new GetFieldsHandler(database));
 			httpServer.createContext("/search", new SearchHandler(database));
 			httpServer.createContext("/get", new GetFileHandler());

@@ -189,6 +189,31 @@ public class DataAccess {
 	}
 	
 	/**
+	 * Gets a specific batch from the database, usually for use in a search.
+	 * @param batchID
+	 * @return
+	 * @throws SQLException
+	 * @throws ServerException
+	 */
+	public Batch getSpecificBatch(int batchID) throws SQLException, ServerException {
+		Batch result = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		String statement = "SELECT * FROM batches WHERE id = ?";
+
+		ps = connection.prepareStatement(statement);
+		ps.setInt(1, batchID);
+		rs = ps.executeQuery();
+		if (rs.next()) {
+			result = buildBatch(rs); // get first available batch
+		} else {
+			result = null; // no batches available
+		}
+		closeQuery(rs, ps);
+		return result;
+	}
+	
+	/**
 	 * Takes in a Batch and saves it to the database.
 	 * @param input
 	 * @param completed Whether to mark the batch as completed.
