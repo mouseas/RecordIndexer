@@ -45,6 +45,7 @@ public class Controller implements IController {
 
 	@Override
 	public void operationSelected() {
+	
 		ArrayList<String> paramNames = new ArrayList<String>();
 		paramNames.add("User");
 		paramNames.add("Password");
@@ -83,6 +84,7 @@ public class Controller implements IController {
 
 	@Override
 	public void executeOperation() {
+		sc.logout();
 		switch (getView().getOperation()) {
 		case VALIDATE_USER:
 			validateUser();
@@ -139,7 +141,6 @@ public class Controller implements IController {
 					+ user.getLastName() + "\n" 
 					+ user.getNumIndexedRecords() + "\n");
 		}
-		sc.logout();
 	}
 	
 	private void getProjects() {
@@ -163,7 +164,6 @@ public class Controller implements IController {
 				getView().setResponse(sb.toString());
 			}
 		}
-		sc.logout();
 	}
 	
 	private void getSampleImage() {
@@ -251,10 +251,16 @@ public class Controller implements IController {
 			sb.append(f.getID() + "\n");
 			sb.append((i + 1) + "\n");
 			sb.append(f.getTitle() + "\n");
-			sb.append(filenameHeader() + f.getHelpHtmlLoc() + "\n");
+			if (f.getHelpHtmlLoc().length() > 0) {
+				sb.append(filenameHeader() + f.getHelpHtmlLoc());
+			}
+			sb.append("\n");
 			sb.append(f.getXCoord() + "\n");
 			sb.append(f.getWidth() + "\n");
-			sb.append(filenameHeader() + f.getKnownDataLoc() + "\n");
+			if (f.getKnownDataLoc().length() > 0) {
+				sb.append(filenameHeader() + f.getKnownDataLoc());
+			}
+			sb.append("\n");
 		}
 	}
 	
@@ -263,28 +269,57 @@ public class Controller implements IController {
 		String projectIDString = getView().getParameterValues()[2];
 		String request = setUsernameAndPassword() + projectIDString + "\n";
 		getView().setRequest(request);
+		String response = null;
 		
 		try {
 			User user = sc.verifyUser(username, password);
 			if (user != null && user.getID() >= 0) {
-				Project p = new Project(Integer.parseInt(projectIDString), 0, 0, 0, "n/a");
-				List<Field> fields = sc.requestFieldsList(p);
-				if (fields == null || fields.size() < 1) {
-					failedResponse();
-				} else {
-					StringBuilder sb = new StringBuilder();
-					for (Field f : fields) {
-						sb.append(f.getProjectID() + "\n");
-						sb.append(f.getID() + "\n");
-						sb.append(f.getTitle() + "\n");
-					}
-					getView().setResponse(sb.toString());
+				if (projectIDString != null && projectIDString.length() > 0) {
+					response = getProjectFields(Integer.parseInt(projectIDString));
+				} else { // no project given; return ALL fields.
+					response = getAllFields();
 				}
+				getView().setResponse(response);
 			} else {
 				failedResponse();
 			}
 		} catch (Exception e) {
 			failedResponse();
+		}
+	}
+	
+	/**
+	 * Used by getFields(), gets all the fields when no project is specified.
+	 * @return
+	 */
+	private String getAllFields() {
+		StringBuilder sb = new StringBuilder();
+		List<Project> projects = sc.requestProjectsList();
+		for (Project p : projects) {
+			sb.append(getProjectFields(p.getID()));
+		}
+		return sb.toString();
+	}
+	
+	/**
+	 * Used by getFields(), gets just the fields for the specified project.
+	 * getAllFields() also uses this to get all fields project-by-project.
+	 * @param projectID
+	 * @return
+	 */
+	private String getProjectFields(int projectID) {
+		Project p = new Project(projectID, 0, 0, 0, "n/a");
+		List<Field> fields = sc.requestFieldsList(p);
+		if (fields == null || fields.size() < 1) {
+			return FAIL;
+		} else {
+			StringBuilder sb = new StringBuilder();
+			for (Field f : fields) {
+				sb.append(f.getProjectID() + "\n");
+				sb.append(f.getID() + "\n");
+				sb.append(f.getTitle() + "\n");
+			}
+			return sb.toString();
 		}
 	}
 	
@@ -296,6 +331,11 @@ public class Controller implements IController {
 		String request = setUsernameAndPassword() + batchIDString + "\n"
 						+ recordValuesString + "\n";
 		getView().setRequest(request);
+		
+		if (recordValuesString.length() < 1) {
+			failedResponse(); // no values to submit. Failed.
+			return;
+		}
 		
 		try {
 			User user = sc.verifyUser(username, password);
@@ -347,6 +387,7 @@ public class Controller implements IController {
 		getView().setRequest(request);
 		
 		User user = sc.verifyUser(username, password);
+		System.out.println("\t" + user.getUsername() + " " + user.getID());
 		if (user != null && user.getID() >= 0) {
 			List<Field> fields = buildDummyFieldList(getView().getParameterValues()[2]);
 			List<String> searchTerms = 

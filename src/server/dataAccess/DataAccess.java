@@ -548,7 +548,7 @@ public class DataAccess {
 			while (rs != null && rs.next()) {
 				String value = rs.getString("value");
 				value = value.toLowerCase();
-				if (value.contains(searchValue)) {
+				if (value.equalsIgnoreCase(searchValue)) { // value.contains(searchCalue)
 					Record r = buildRecord(rs);
 					output.add(r);
 				}
