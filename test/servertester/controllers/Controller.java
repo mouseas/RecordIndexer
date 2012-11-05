@@ -460,7 +460,7 @@ public class Controller implements IController {
 	private List<String> convertToList(String[] input) {
 		List<String> result = new ArrayList<String>();
 		for (int i = 0; i < input.length; i++) {
-			result.add(input[i]);
+			result.add(input[i].replace(" ", "%20"));
 		}
 		return result;
 	}
