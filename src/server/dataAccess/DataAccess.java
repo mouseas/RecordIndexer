@@ -194,8 +194,9 @@ public class DataAccess {
 		ResultSet rs = null;
 		boolean result = false;
 		try {
-			String statement = "SELECT * FROM batches WHERE in_use = " + username;
+			String statement = "SELECT * FROM batches WHERE in_use = ?";
 			ps = connection.prepareStatement(statement);
+			ps.setString(1, username);
 			rs = ps.executeQuery();
 			if (rs.next()) {
 				result = true; // user already has a batch.
@@ -205,6 +206,7 @@ public class DataAccess {
 			
 		} catch (Exception e) {
 			System.out.println("Error while verifying that user does not have a batch already");
+			e.printStackTrace();
 		} finally {
 			closeQuery(rs, ps);
 		}
