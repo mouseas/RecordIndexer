@@ -387,7 +387,7 @@ public class Controller implements IController {
 		getView().setRequest(request);
 		
 		User user = sc.verifyUser(username, password);
-		System.out.println("\t" + user.getUsername() + " " + user.getID());
+//		System.out.println("\t" + user.getUsername() + " " + user.getID());
 		if (user != null && user.getID() >= 0) {
 			List<Field> fields = buildDummyFieldList(getView().getParameterValues()[2]);
 			List<String> searchTerms = 
@@ -460,7 +460,7 @@ public class Controller implements IController {
 	private List<String> convertToList(String[] input) {
 		List<String> result = new ArrayList<String>();
 		for (int i = 0; i < input.length; i++) {
-			result.add(input[i]);
+			result.add(input[i].replace(" ", "%20"));
 		}
 		return result;
 	}

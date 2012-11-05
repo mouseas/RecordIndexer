@@ -279,8 +279,11 @@ public class ServerCommunicator {
 			if (i > 0) {
 				sb.append(",");
 			}
-			sb.append(searchValues.get(i));
+			String searchVal = searchValues.get(i);
+			searchVal.replace(" ", "%20");
+			sb.append(searchVal);
 		}
+		System.out.println(sb.toString());
 		return sb.toString();
 	}
 	

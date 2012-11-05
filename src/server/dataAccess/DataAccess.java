@@ -169,7 +169,7 @@ public class DataAccess {
 		ResultSet rs = null;
 		String statement = "SELECT * FROM batches WHERE project_id = ? AND " +
 				"completed = 0 AND in_use = 0";
-
+		if (userHasBatchAlready(username)) { return null; }
 		ps = connection.prepareStatement(statement);
 		ps.setInt(1, projectID);
 		rs = ps.executeQuery();
@@ -186,6 +186,30 @@ public class DataAccess {
 			result = null; // no batches available
 		}
 		closeQuery(rs, ps);
+		return result;
+	}
+	
+	private boolean userHasBatchAlready(String username) {
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		boolean result = false;
+		try {
+			String statement = "SELECT * FROM batches WHERE in_use = ?";
+			ps = connection.prepareStatement(statement);
+			ps.setString(1, username);
+			rs = ps.executeQuery();
+			if (rs.next()) {
+				result = true; // user already has a batch.
+			} else {
+				result = false; // user has no batch and may receive a new one.
+			}
+			
+		} catch (Exception e) {
+			System.out.println("Error while verifying that user does not have a batch already");
+			e.printStackTrace();
+		} finally {
+			closeQuery(rs, ps);
+		}
 		return result;
 	}
 	
@@ -272,8 +296,9 @@ public class DataAccess {
 	public boolean wipeDatabase(boolean commit) {
 		File schemaFile = new File(databaseSchemaLocation);
 		PreparedStatement ps = null;
+		Scanner in = null;
 		try { // load in the schema file
-			Scanner in = new Scanner(schemaFile);
+			in = new Scanner(schemaFile);
 			StringBuilder sb = new StringBuilder();
 			while (in.hasNext()) { // convert it all into one string
 				sb.append(in.nextLine());
@@ -295,6 +320,7 @@ public class DataAccess {
 			e.printStackTrace();
 		} finally {
 			closeQuery(null, ps);
+			in.close();
 		}
 		return true;
 	}
