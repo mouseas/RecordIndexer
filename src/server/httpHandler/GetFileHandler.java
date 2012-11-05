@@ -1,6 +1,7 @@
 package server.httpHandler;
 
 import java.io.*;
+import java.util.Scanner;
 
 import server.ServerHelper;
 
@@ -9,7 +10,12 @@ import com.sun.net.httpserver.HttpHandler;
 
 public class GetFileHandler implements HttpHandler {
 
-	private static final String FILE_ROOT = "demo/indexer_data/Records";
+	private String fileRoot;
+	
+	public GetFileHandler() {
+		fileRoot = "demo/indexer_data/Records"; // default
+		setFileLocation(); // load file root from file if available.
+	}
 	
 	@Override
 	public void handle(HttpExchange exchange) throws IOException {
@@ -20,7 +26,7 @@ public class GetFileHandler implements HttpHandler {
 		int responseCode = 200;
 		String response = null;
 		try {
-			String filePath =  FILE_ROOT + 
+			String filePath =  fileRoot + 
 							   exchange.getRequestURI().getPath().substring("get/".length());
 			File f = new File(filePath);
 			length = f.length();
@@ -43,6 +49,24 @@ public class GetFileHandler implements HttpHandler {
 			ServerHelper.safeClose(responseBody);
 		}
 		
+	}
+	
+	public void setFileLocation() {
+		File locFile = new File("filesLocation.txt");
+		Scanner in = null;
+		if (locFile.exists()) {
+			try {
+				in = new Scanner(locFile);
+				String result = in.nextLine();
+				if (result != null && result.length() > 0) {
+					fileRoot = result;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				ServerHelper.safeClose(in);
+			}
+		} // otherwise use the default still.
 	}
 
 }

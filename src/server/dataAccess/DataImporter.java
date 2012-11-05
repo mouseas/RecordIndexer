@@ -9,6 +9,7 @@ import org.w3c.dom.*;
 
 import shared.dataTransfer.*;
 import server.ServerException;
+import server.ServerHelper;
 
 
 public class DataImporter {
@@ -37,6 +38,7 @@ public class DataImporter {
 			DocumentBuilder builder = DocumentBuilderFactory
 									  .newInstance().newDocumentBuilder();
 			File file = new File(importLocation);
+			saveFileLocation(file);
 			doc = builder.parse(file);
 		} catch (Exception e) {
 			System.out.println("Exception during Data Importer construction.");
@@ -144,6 +146,28 @@ public class DataImporter {
 	 */
 	public DataAccess getDataAccess() {
 		return da;
+	}
+	
+	/**
+	 * Saves the location of imported files so the server can access them.
+	 * @param xmlFile
+	 */
+	private void saveFileLocation(File xmlFile) {
+		String fullPath = xmlFile.getAbsolutePath();
+		String fileName = xmlFile.getName();
+		String resultString = fullPath.substring(0, 
+						fullPath.length() - fileName.length());
+//		System.out.println("[" + resultString + "]");
+		PrintWriter output = null;
+		try {
+			output = new PrintWriter(new File("filesLocation.txt"));
+			output.println(resultString);
+			output.flush();
+		} catch (Exception e) {
+			System.out.println("Error while saving the files location.");
+		} finally {
+			ServerHelper.safeClose(output);
+		}
 	}
 	
 	/**

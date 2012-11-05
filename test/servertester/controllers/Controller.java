@@ -387,7 +387,7 @@ public class Controller implements IController {
 		getView().setRequest(request);
 		
 		User user = sc.verifyUser(username, password);
-		System.out.println("\t" + user.getUsername() + " " + user.getID());
+//		System.out.println("\t" + user.getUsername() + " " + user.getID());
 		if (user != null && user.getID() >= 0) {
 			List<Field> fields = buildDummyFieldList(getView().getParameterValues()[2]);
 			List<String> searchTerms = 
