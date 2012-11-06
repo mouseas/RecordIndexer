@@ -3,6 +3,12 @@ package shared.dataTransfer;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
+/**
+ * A Record object. Holds a single value, as well as where it comes from;
+ * which batch, which field (column), and which row the value corresponds to.
+ * @author Martin
+ *
+ */
 public class Record extends DataTransferObject {
 
 	private int batchID;
@@ -69,20 +75,4 @@ public class Record extends DataTransferObject {
 		return xstream.toXML(record);
 	}
 	
-	public static Record deserialize(String xml) {
-		XStream xstream = new XStream(new DomDriver());
-		return (Record)xstream.fromXML(xml);
-	}
-	
 }
-//DROP TABLE record_values;
-//CREATE TABLE record_values
-//(
-//	id integer not null primary key autoincrement,
-//	batch_id integer not null,
-//	field_id integer not null,
-//	row_number integer not null,
-//	value varchar(255),
-//	foreign key(batch_id) references batches(id),
-//	foreign key(field_id) references fields(id)
-//);

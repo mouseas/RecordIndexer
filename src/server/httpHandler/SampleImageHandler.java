@@ -3,8 +3,8 @@ package server.httpHandler;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import server.ServerHelper;
 import server.dataAccess.DataAccess;
+import shared.HelperFunction;
 import shared.dataTransfer.*;
 
 import com.sun.net.httpserver.HttpExchange;
@@ -18,23 +18,44 @@ import com.sun.net.httpserver.HttpHandler;
 public class SampleImageHandler implements HttpHandler {
 
 	private DataAccess database;
+	private int responseCode;
 	
 	public SampleImageHandler(DataAccess database) {
 		this.database = database;
+		responseCode = 200;
 	}
 
 	@Override
 	public void handle(HttpExchange exchange) throws IOException {
 		System.out.println(exchange.getRequestURI().toString());
-		User user = ServerHelper.verifyUser(database, exchange);
-		int responseCode = 200;
+		User user = HelperFunction.verifyUser(database, exchange);
+		responseCode = 200;
 		OutputStream os = null;
 		String response = null;
-		String projectIDString = ServerHelper.getQueryItem(exchange, "project=");
+		String projectIDString = HelperFunction.getQueryItem(exchange, "project=");
 		int projectID = -1;
 		if (projectIDString != null) {
 			projectID = Integer.parseInt(projectIDString);
 		}
+		
+		response = determineResponse(user, projectID);
+		
+//		System.out.println(response + " " + responseCode);
+		exchange.sendResponseHeaders(responseCode, response.length());
+		os = exchange.getResponseBody();
+		os.write(response.getBytes());
+		os.close();
+	}
+	
+	/**
+	 * Attempts to get the file location, and produces whichever response
+	 * is applicable.
+	 * @param user
+	 * @param projectID
+	 * @return
+	 */
+	private String determineResponse(User user, int projectID) {
+		String response = null;
 		if (user != null) {
 			if (projectID >= 0) {
 				try {
@@ -62,11 +83,7 @@ public class SampleImageHandler implements HttpHandler {
 			response = "Forbidden: Invalid user credentials.";
 			responseCode = 403;
 		}
-//		System.out.println(response + " " + responseCode);
-		exchange.sendResponseHeaders(responseCode, response.length());
-		os = exchange.getResponseBody();
-		os.write(response.getBytes());
-		os.close();
+		return response;
 	}
 
 }

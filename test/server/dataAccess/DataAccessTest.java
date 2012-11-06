@@ -9,6 +9,14 @@ import org.junit.*;
 
 import shared.dataTransfer.*;
 
+/**
+ * #### Heads-Up ####
+ * This test class is a bit outdated. If you run testWipeAndRepopulateDatabase() first,
+ * then run the test, it should work. It is based off data that existed only before
+ * DataImporter was written.
+ * @author Martin
+ *
+ */
 public class DataAccessTest {
 
 	private DataAccess da;
@@ -28,6 +36,7 @@ public class DataAccessTest {
 		// no real test here, as long as no exceptions occur.
 	}
 	
+	// This test needs to happen first; then the others will work.
 	@Test
 	public void testWipeAndRepopulateDatabase() {
 		System.out.println("wipe and repopulate ################");
@@ -174,7 +183,8 @@ public class DataAccessTest {
 		assertEquals(expected.getPassword(), actual.getPassword());
 		
 		actual = da.getUser("invalid", "hjsdbfgkefgn");
-		assertNull(actual);
+		assertNotNull(actual); // should return a user with ID -1 and username "invalid".
+		assertEquals(-1, actual.getID()); // invalid user
 		
 		expected = new User(2, "test", "Mister", "Test",
 				"mouse_asw@yahoo.com", 0, "password");
@@ -241,7 +251,7 @@ public class DataAccessTest {
 		
 		try {
 			Batch expected = new Batch(3, 1, "batch003.png", "0");
-			Batch actual = da.getNextBatch(1, "test1");
+			Batch actual = da.getNextBatch(1, "test");
 			assertNotNull("No batch returned!", actual);
 			assertEquals(expected.getID(), actual.getID());
 			assertEquals(expected.getImage().getFilename(), 
@@ -323,7 +333,8 @@ public class DataAccessTest {
 		Batch actualBatch = da.getNextBatch(1, "test1");
 		assertNull("Batches exist", actualBatch);
 		User actualUser = da.getUser("mouseasw", "password");
-		assertNull("User exists", actualUser);
+		assertNotNull("Null user instead of invalid user.", actualUser);
+		assertEquals("Returned a valid user.", -1, actualUser.getID());
 		
 		} catch (Exception e) {
 			fail("Exception occured during database wipe.");

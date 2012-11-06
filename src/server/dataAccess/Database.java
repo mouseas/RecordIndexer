@@ -4,6 +4,13 @@ import java.sql.*;
 
 import server.*;
 
+/**
+ * Holds a database reference and allows queries to it.
+ * If I were to re-write this program from scratch, I would merge this with
+ * the functionality of DataAccess.
+ * @author Martin
+ *
+ */
 public class Database {
 	
 	private static boolean initialized = false;
@@ -114,10 +121,18 @@ public class Database {
 		}
 	}
 
+	/**
+	 * Determines if the class has been initialized yet.
+	 * @return
+	 */
 	public static boolean isInitialized() {
 		return initialized;
 	}
 
+	/**
+	 * Returns the location of the database.
+	 * @return
+	 */
 	public String getLocation() {
 		return location;
 	}

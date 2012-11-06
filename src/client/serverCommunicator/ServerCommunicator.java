@@ -190,7 +190,6 @@ public class ServerCommunicator {
 	 */
 	public boolean submitBatch(FinishedBatch batch) {
 		URL url = null;
-		HttpURLConnection connection = null;
 		int responseCode = -1;
 		try {
 			String xml = FinishedBatch.serialize(batch);

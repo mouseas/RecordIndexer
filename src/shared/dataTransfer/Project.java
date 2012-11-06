@@ -4,6 +4,12 @@ import java.io.*;
 import com.thoughtworks.xstream.*;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
+/**
+ * A Project object. Holds information about what each batch is like, and
+ * is referenced by fields, batches, etc.
+ * @author Martin
+ *
+ */
 @SuppressWarnings("serial")
 public class Project extends DataTransferObject implements Serializable {
 	

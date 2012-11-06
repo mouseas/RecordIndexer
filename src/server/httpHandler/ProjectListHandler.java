@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
-import server.ServerHelper;
 import server.dataAccess.DataAccess;
+import shared.HelperFunction;
 import shared.dataTransfer.Project;
 import shared.dataTransfer.User;
 
@@ -14,6 +14,11 @@ import com.sun.net.httpserver.HttpHandler;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
+/**
+ * Handles getting a list of projects.
+ * @author Martin
+ *
+ */
 public class ProjectListHandler implements HttpHandler {
 
 	private DataAccess database;
@@ -23,7 +28,7 @@ public class ProjectListHandler implements HttpHandler {
 	}
 	
 	public void handle(HttpExchange exchange) throws IOException {
-		User user = ServerHelper.verifyUser(database, exchange);
+		User user = HelperFunction.verifyUser(database, exchange);
 		OutputStream os = null;
 		String response = null;
 		if (user != null) {

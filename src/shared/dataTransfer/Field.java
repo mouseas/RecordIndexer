@@ -5,6 +5,11 @@ import java.util.List;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
+/**
+ * A field object, holds information about a column
+ * @author Martin
+ *
+ */
 public class Field extends DataTransferObject {
 	
 	private int projectID;

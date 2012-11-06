@@ -2,13 +2,18 @@ package server;
 
 import java.io.*;
 import java.net.*;
-import java.util.Scanner;
 
 import com.sun.net.httpserver.*;
 
 import server.dataAccess.*;
 import server.httpHandler.*;
 
+/**
+ * Runnable indexing server, able to receive certain inputs, process them with the
+ * database (actually a DataAccess object), and return appropriate outputs.
+ * @author Martin
+ *
+ */
 public class Server {
 
 	

@@ -8,6 +8,16 @@ import java.util.*;
 import shared.dataTransfer.*;
 import server.dataAccess.*;
 
+/**
+ * FYI: There is no ServerTest class because my Server and ServerCommunicator 
+ * classes were written in parallel; when I got something working in both, I 
+ * would test it in ServerCommunicatorTest.
+ * 
+ * #### Also, a Server must be running on localhost, port 8080. ####
+ * 
+ * @author Martin
+ *
+ */
 public class ServerCommunicatorTest {
 
 	private ServerCommunicator sc;
@@ -32,11 +42,6 @@ public class ServerCommunicatorTest {
 	public void tearDown() throws Exception {
 		sc = null;
 	}
-
-//	@Test
-//	public void testServerCommunicator() {
-//		fail("Not yet implemented");
-//	}
 
 	@Test
 	public void testVerifyUser() {

@@ -5,6 +5,12 @@ import java.awt.image.*;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
+/**
+ * The image from a batch. Currently only holds the file name, but in the finished
+ * app this will be able to download and return the actual image data. Maybe.
+ * @author Martin
+ *
+ */
 public class Image {
 	
 	private String filename;

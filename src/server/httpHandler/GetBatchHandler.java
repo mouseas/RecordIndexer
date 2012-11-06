@@ -2,8 +2,8 @@ package server.httpHandler;
 
 import java.io.*;
 
-import server.ServerHelper;
 import server.dataAccess.DataAccess;
+import shared.HelperFunction;
 import shared.dataTransfer.*;
 
 import com.sun.net.httpserver.*;
@@ -26,8 +26,8 @@ public class GetBatchHandler implements HttpHandler {
 	@Override
 	public void handle(HttpExchange exchange) throws IOException {
 		System.out.println(exchange.getRequestURI().toString());
-		User user = ServerHelper.verifyUser(database, exchange);
-		int projectID = Integer.parseInt(ServerHelper.getQueryItem(exchange, "project="));
+		User user = HelperFunction.verifyUser(database, exchange);
+		int projectID = Integer.parseInt(HelperFunction.getQueryItem(exchange, "project="));
 		OutputStream os = null;
 		String response = buildBatch(projectID, user.getUsername());
 		int responseCode = 200;

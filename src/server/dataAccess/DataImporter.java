@@ -7,11 +7,16 @@ import java.sql.SQLException;
 
 import org.w3c.dom.*;
 
+import shared.HelperFunction;
 import shared.dataTransfer.*;
 import server.ServerException;
-import server.ServerHelper;
 
-
+/**
+ * Imports data from an XML file into the database. By default, it will wipe
+ * the existing data before importing new data.
+ * @author Martin
+ *
+ */
 public class DataImporter {
 
 	private static final String databaseLoc = 
@@ -68,10 +73,6 @@ public class DataImporter {
 			usage();
 		}
 		
-	}
-	
-	protected static void usage() {
-		System.out.println("USAGE: java DataImporter inputXmlFileLocation");
 	}
 	
 	/**
@@ -149,6 +150,13 @@ public class DataImporter {
 	}
 	
 	/**
+	 * Prints a usage statement.
+	 */
+	protected static void usage() {
+		System.out.println("USAGE: java DataImporter inputXmlFileLocation");
+	}
+	
+	/**
 	 * Saves the location of imported files so the server can access them.
 	 * @param xmlFile
 	 */
@@ -166,7 +174,7 @@ public class DataImporter {
 		} catch (Exception e) {
 			System.out.println("Error while saving the files location.");
 		} finally {
-			ServerHelper.safeClose(output);
+			HelperFunction.safeClose(output);
 		}
 	}
 	

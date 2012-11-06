@@ -6,6 +6,13 @@ import java.sql.*;
 import java.util.*;
 import java.io.*;
 
+/**
+ * Accesses a database object, drawing data from and inserting data into it.
+ * If I were to re-write the program from scratch, I would merge it with
+ * Database's functionality.
+ * @author Martin
+ *
+ */
 public class DataAccess {
 	
 	// Directly accesses the SQL database.
@@ -16,7 +23,7 @@ public class DataAccess {
 	
 	private Connection connection;
 	
-	private Connection getConnection() throws IOException {
+	public Connection getConnection() throws IOException {
 		if (connection != null) {
 			return connection;
 		} else {
@@ -24,7 +31,7 @@ public class DataAccess {
 		}
 	}
 	
-	private static final String databaseSchemaLocation = "database-schema.txt";
+	private static final String DATABASE_SCHEMA_LOCATION = "database-schema.txt";
 	
 	/**
 	 * Constructor
@@ -189,28 +196,25 @@ public class DataAccess {
 		return result;
 	}
 	
-	private boolean userHasBatchAlready(String username) {
-		PreparedStatement ps = null;
-		ResultSet rs = null;
-		boolean result = false;
-		try {
-			String statement = "SELECT * FROM batches WHERE in_use = ?";
-			ps = connection.prepareStatement(statement);
-			ps.setString(1, username);
-			rs = ps.executeQuery();
-			if (rs.next()) {
-				result = true; // user already has a batch.
-			} else {
-				result = false; // user has no batch and may receive a new one.
-			}
-			
-		} catch (Exception e) {
-			System.out.println("Error while verifying that user does not have a batch already");
-			e.printStackTrace();
-		} finally {
-			closeQuery(rs, ps);
+	/**
+	 * Marks every batch in the database as in_use = 0 (false), used to
+	 * reset batches that have been marked as in-use.
+	 */
+	public void markBatchesNotInUse() {
+		if (connection != null) {
+			endTransaction(false);
+			System.out.println("WARNING: Had to close an open connection while marking" +
+					"all batches as in-use = false.");
 		}
-		return result;
+		startTransaction();
+		String statement = "UPDATE batches SET in_use = 0";
+		try {
+			getConnection().prepareStatement(statement).execute();
+		} catch (Exception e) {
+			System.out.println("Error while marking batchs as not in use:");
+			System.out.println(e.getMessage());
+		}
+		endTransaction(true);
 	}
 	
 	/**
@@ -294,7 +298,7 @@ public class DataAccess {
 	 * @return Whether the wipe was successful. Returns false if confirm is false.
 	 */
 	public boolean wipeDatabase(boolean commit) {
-		File schemaFile = new File(databaseSchemaLocation);
+		File schemaFile = new File(DATABASE_SCHEMA_LOCATION);
 		PreparedStatement ps = null;
 		Scanner in = null;
 		try { // load in the schema file
@@ -488,40 +492,6 @@ public class DataAccess {
 	}
 	
 	/**
-	 * Takes in a Record and saves it to the database. Called exclusively by 
-	 * saveSeveralRecords().
-	 * @param input Individual Record to be saved to the database
-	 * @return
-	 */
-	private boolean saveRecord(Record input) throws SQLException {
-		PreparedStatement ps = null;
-		String statement = null;
-		
-		if (recordExists(input)) { // Update it
-			statement = "UPDATE records SET value = ? " +
-				"WHERE batch_id = ? AND field_id = ? AND row_number = ?";
-		} else { // Create it
-			statement = "INSERT INTO records (value, batch_id," +
-				"field_id, row_number) VALUES (?, ?, ?, ?);";
-		}
-		try {
-			ps = getConnection().prepareStatement(statement);
-		} catch (IOException e) {
-			System.out.println(e.getMessage());
-		}
-		
-		ps.setString(1, input.getValue());
-		ps.setInt(2, input.getBatchID());
-		ps.setInt(3, input.getFieldID());
-		ps.setInt(4, input.getRowNumber());
-		
-		ps.execute();
-		
-		closeQuery(null, ps);
-		return true;
-	}
-	
-	/**
 	 * Gets a Record if one was in the database, or creates a new, empty
 	 * one if none was found in the database.
 	 * @param batch
@@ -622,6 +592,64 @@ public class DataAccess {
 	 */
 	public boolean isConnectionOpen() {
 		return connection != null;
+	}
+	
+	private boolean userHasBatchAlready(String username) {
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		boolean result = false;
+		try {
+			String statement = "SELECT * FROM batches WHERE in_use = ?";
+			ps = connection.prepareStatement(statement);
+			ps.setString(1, username);
+			rs = ps.executeQuery();
+			if (rs.next()) {
+				result = true; // user already has a batch.
+			} else {
+				result = false; // user has no batch and may receive a new one.
+			}
+			
+		} catch (Exception e) {
+			System.out.println("Error while verifying that user does not have a batch already");
+			e.printStackTrace();
+		} finally {
+			closeQuery(rs, ps);
+		}
+		return result;
+	}
+	
+	/**
+	 * Takes in a Record and saves it to the database. Called exclusively by 
+	 * saveSeveralRecords().
+	 * @param input Individual Record to be saved to the database
+	 * @return
+	 */
+	private boolean saveRecord(Record input) throws SQLException {
+		PreparedStatement ps = null;
+		String statement = null;
+		
+		if (recordExists(input)) { // Update it
+			statement = "UPDATE records SET value = ? " +
+				"WHERE batch_id = ? AND field_id = ? AND row_number = ?";
+		} else { // Create it
+			statement = "INSERT INTO records (value, batch_id," +
+				"field_id, row_number) VALUES (?, ?, ?, ?);";
+		}
+		try {
+			ps = getConnection().prepareStatement(statement);
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+		}
+		
+		ps.setString(1, input.getValue());
+		ps.setInt(2, input.getBatchID());
+		ps.setInt(3, input.getFieldID());
+		ps.setInt(4, input.getRowNumber());
+		
+		ps.execute();
+		
+		closeQuery(null, ps);
+		return true;
 	}
 	
 	/**
@@ -802,27 +830,6 @@ public class DataAccess {
 			System.out.println("Failed to close. " + e.getMessage());
 			e.printStackTrace();
 		}
-	}
-	
-	/**
-	 * Marks every batch in the database as in_use = 0 (false), used to
-	 * reset batches that have been marked as in-use.
-	 */
-	public void markBatchesNotInUse() {
-		if (connection != null) {
-			endTransaction(false);
-			System.out.println("WARNING: Had to close an open connection while marking" +
-					"all batches as in-use = false.");
-		}
-		startTransaction();
-		String statement = "UPDATE batches SET in_use = 0";
-		try {
-			getConnection().prepareStatement(statement).execute();
-		} catch (Exception e) {
-			System.out.println("Error while marking batchs as not in use:");
-			System.out.println(e.getMessage());
-		}
-		endTransaction(true);
 	}
 	
 }

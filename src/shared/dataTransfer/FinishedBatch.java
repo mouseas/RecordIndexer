@@ -5,6 +5,12 @@ import java.util.*;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
+/**
+ * Collection of a Batch, its Fields, and the Records that have been created from it.
+ * Used to transfer a finished batch from client to server.
+ * @author Martin
+ *
+ */
 public class FinishedBatch {
 	
 	public Batch batch;

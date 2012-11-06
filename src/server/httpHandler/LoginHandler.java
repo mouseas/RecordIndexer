@@ -6,10 +6,15 @@ import java.io.OutputStream;
 import com.sun.net.httpserver.*;
 
 import server.dataAccess.DataAccess;
+import shared.HelperFunction;
 import shared.dataTransfer.User;
-import server.ServerHelper;
 
-
+/**
+ * Handles a user verification; returns a user object if the username and password
+ * given to it are valid, or a 400 if the username/password was invalid.
+ * @author Martin
+ *
+ */
 public class LoginHandler implements HttpHandler {
 
 	private DataAccess database;
@@ -24,7 +29,7 @@ public class LoginHandler implements HttpHandler {
 	 */
 	public void handle(HttpExchange exchange) throws IOException {
 		System.out.println(exchange.getRequestURI().toString());
-		User user = ServerHelper.verifyUser(database, exchange);
+		User user = HelperFunction.verifyUser(database, exchange);
 		String response = null;
 		int responseCode = 200;
 		if (user == null) {

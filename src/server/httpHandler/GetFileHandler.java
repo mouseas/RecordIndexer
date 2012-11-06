@@ -3,11 +3,19 @@ package server.httpHandler;
 import java.io.*;
 import java.util.Scanner;
 
-import server.ServerHelper;
+import shared.HelperFunction;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
+/**
+ * Gets a file from a specified folder. This folder is set by DataImporter
+ * to be the same directory the Records XML file was imported from.
+ * This can be overriden by modifying the filesLocation.txt file, but the
+ * file is overwritten each time DataImporter is run.
+ * @author Martin
+ *
+ */
 public class GetFileHandler implements HttpHandler {
 
 	private String fileRoot;
@@ -45,8 +53,8 @@ public class GetFileHandler implements HttpHandler {
 			responseBody = exchange.getResponseBody();
 			responseBody.write(response.getBytes());
 		} finally {
-			ServerHelper.safeClose(fileStream);
-			ServerHelper.safeClose(responseBody);
+			HelperFunction.safeClose(fileStream);
+			HelperFunction.safeClose(responseBody);
 		}
 		
 	}
@@ -64,7 +72,7 @@ public class GetFileHandler implements HttpHandler {
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
-				ServerHelper.safeClose(in);
+				HelperFunction.safeClose(in);
 			}
 		} // otherwise use the default still.
 	}

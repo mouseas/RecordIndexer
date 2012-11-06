@@ -3,6 +3,11 @@ package shared.dataTransfer;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
+/**
+ * Batch object, holds information about one image in need of indexing.
+ * @author Martin
+ *
+ */
 public class Batch extends DataTransferObject {
 	
 	private int projectID;
@@ -21,6 +26,14 @@ public class Batch extends DataTransferObject {
 		completed = false;
 	}
 	
+	/**
+	 * Additional constructor that allows the batch to be created as completed = true.
+	 * @param id
+	 * @param projectID
+	 * @param imageFilename
+	 * @param username
+	 * @param completed
+	 */
 	public Batch (int id, int projectID, String imageFilename, String username, boolean completed) {
 		this(id, projectID, imageFilename, username);
 		this.completed = completed;
@@ -67,17 +80,4 @@ public class Batch extends DataTransferObject {
 		return xstream.toXML(batch);
 	}
 	
-	public static Batch deserialize(String xml) {
-		XStream xstream = new XStream(new DomDriver());
-		return (Batch)xstream.fromXML(xml);
-	}
-	
 }
-//DROP TABLE batches;
-//CREATE TABLE batches
-//(
-//	id integer not null primary key autoincrement,
-//	project_id integer not null,
-//	filename blob,
-//	foreign key(project_id) references projects(id)
-//);

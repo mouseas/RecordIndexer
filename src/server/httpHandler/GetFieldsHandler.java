@@ -3,8 +3,8 @@ package server.httpHandler;
 import java.io.*;
 import java.util.List;
 
-import server.ServerHelper;
 import server.dataAccess.DataAccess;
+import shared.HelperFunction;
 import shared.dataTransfer.*;
 
 import com.sun.net.httpserver.HttpExchange;
@@ -12,6 +12,13 @@ import com.sun.net.httpserver.HttpHandler;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
+/**
+ * Handles getting a list of fields from the database. Given a project ID,
+ * it will return just that project's fields. Given no project ID, it will
+ * return a list of ALL the fields, useful for populating a search list.
+ * @author Martin
+ *
+ */
 public class GetFieldsHandler implements HttpHandler {
 
 	private DataAccess database;
@@ -22,8 +29,8 @@ public class GetFieldsHandler implements HttpHandler {
 
 	@Override
 	public void handle(HttpExchange exchange) throws IOException {
-		User user = ServerHelper.verifyUser(database, exchange);
-		int projectID = Integer.parseInt(ServerHelper.getQueryItem(exchange, "project="));
+		User user = HelperFunction.verifyUser(database, exchange);
+		int projectID = Integer.parseInt(HelperFunction.getQueryItem(exchange, "project="));
 		OutputStream os = null;
 		String response = null;
 		if (user != null) {

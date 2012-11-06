@@ -3,8 +3,8 @@ package server.httpHandler;
 import java.io.*;
 import java.util.*;
 
-import server.ServerHelper;
 import server.dataAccess.DataAccess;
+import shared.HelperFunction;
 import shared.dataTransfer.*;
 
 import com.sun.net.httpserver.HttpExchange;
@@ -31,7 +31,7 @@ public class SubmitBatchHandler implements HttpHandler {
 	public void handle(HttpExchange exchange) throws IOException {
 		try {
 			System.out.println(exchange.getRequestURI().toString());
-			User user = ServerHelper.verifyUser(database, exchange);
+			User user = HelperFunction.verifyUser(database, exchange);
 			responseCode = 200;
 			InputStream body = null;
 			
@@ -48,11 +48,6 @@ public class SubmitBatchHandler implements HttpHandler {
 			} else {
 				responseCode = 404; // error of some sort.
 			}
-			
-//			Scanner scan = new Scanner(body); // debug
-//			while (scan.hasNext()) {
-//				System.out.println(scan.nextLine());
-//			}
 			
 			sendResponse(exchange);
 		} catch (Exception e) {
@@ -129,7 +124,7 @@ public class SubmitBatchHandler implements HttpHandler {
 		} catch(Exception e) {
 			System.out.println("Error sending a response while handling a submitted batch.");
 		} finally {
-			ServerHelper.safeClose(os);
+			HelperFunction.safeClose(os);
 		}
 	}
 	

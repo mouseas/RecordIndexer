@@ -3,8 +3,8 @@ package server.httpHandler;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import server.ServerHelper;
 import server.dataAccess.DataAccess;
+import shared.HelperFunction;
 import shared.dataTransfer.Batch;
 import shared.dataTransfer.User;
 
@@ -13,6 +13,12 @@ import com.sun.net.httpserver.HttpHandler;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
+/**
+ * Gets a specified batch from the server, regardless of its completion
+ * or if a user has checked it out for indexing. Usually used during searches.
+ * @author Martin
+ *
+ */
 public class GetSpecificBatchHandler implements HttpHandler {
 
 private DataAccess database;
@@ -24,8 +30,8 @@ private DataAccess database;
 	@Override
 	public void handle(HttpExchange exchange) throws IOException {
 		System.out.println(exchange.getRequestURI().toString());
-		User user = ServerHelper.verifyUser(database, exchange);
-		int batchID = Integer.parseInt(ServerHelper.getQueryItem(exchange, "batch="));
+		User user = HelperFunction.verifyUser(database, exchange);
+		int batchID = Integer.parseInt(HelperFunction.getQueryItem(exchange, "batch="));
 		OutputStream os = null;
 		String response = buildBatch(batchID);
 		int responseCode = 200;

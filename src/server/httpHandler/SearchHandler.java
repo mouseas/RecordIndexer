@@ -3,8 +3,8 @@ package server.httpHandler;
 import java.io.*;
 import java.util.*;
 
-import server.ServerHelper;
 import server.dataAccess.DataAccess;
+import shared.HelperFunction;
 import shared.dataTransfer.*;
 
 import com.sun.net.httpserver.HttpExchange;
@@ -30,10 +30,10 @@ public class SearchHandler implements HttpHandler {
 		System.out.println(exchange.getRequestURI().toString());
 		
 		// initialize variables
-		User user = ServerHelper.verifyUser(database, exchange);
+		User user = HelperFunction.verifyUser(database, exchange);
 		int[] fieldIDs = StringListToIntArray(
-				ServerHelper.getMultipleQueryItems(exchange, "field="));
-		List<String> searchTerms = ServerHelper.getMultipleQueryItems(exchange, "search=");
+				HelperFunction.getMultipleQueryItems(exchange, "field="));
+		List<String> searchTerms = HelperFunction.getMultipleQueryItems(exchange, "search=");
 		StringBuilder response = new StringBuilder();
 		int responseCode = 200;
 		
