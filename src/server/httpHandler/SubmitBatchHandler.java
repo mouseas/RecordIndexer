@@ -37,7 +37,7 @@ public class SubmitBatchHandler implements HttpHandler {
 			
 			if (user == null) { responseCode = 403; }
 			body = exchange.getRequestBody();
-			FinishedBatch finishedBatch = readBatch(body);
+			Batch finishedBatch = readBatch(body);
 			if (finishedBatch != null && finishedBatch.getRecords().size() > 0) {
 				boolean commit = true;
 				database.startTransaction();
@@ -60,11 +60,11 @@ public class SubmitBatchHandler implements HttpHandler {
 	 * @param body
 	 * @return
 	 */
-	private FinishedBatch readBatch(InputStream body) {
-		FinishedBatch result = null;
+	private Batch readBatch(InputStream body) {
+		Batch result = null;
 		try {
 			XStream xstream = new XStream(new DomDriver());
-			result = (FinishedBatch)xstream.fromXML(body);
+			result = (Batch)xstream.fromXML(body);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -75,7 +75,7 @@ public class SubmitBatchHandler implements HttpHandler {
 	 * Saves the records as they were received.
 	 * @param batch
 	 */
-	private boolean saveRecords(FinishedBatch batch) {
+	private boolean saveRecords(Batch batch) {
 		if (batch == null) { return false; }
 		List<Record> records = batch.getRecords();
 		boolean commit = true;
@@ -91,7 +91,7 @@ public class SubmitBatchHandler implements HttpHandler {
 	 * Mark the finished Batch as completed = true (1).
 	 * @param batch
 	 */
-	private boolean saveBatch(Batch batch) {
+	private boolean saveBatch(Image batch) {
 		if (batch == null) { return false; }
 		boolean commit = true;
 		try {

@@ -1,83 +1,48 @@
 package shared.dataTransfer;
 
+import java.util.*;
+
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
 /**
- * Batch object, holds information about one image in need of indexing.
+ * Collection of a Batch, its Fields, and the Records that have been created from it.
+ * Used to transfer a finished batch from client to server.
  * @author Martin
  *
  */
-public class Batch extends DataTransferObject {
+public class Batch {
 	
-	private int projectID;
-	private String imageFilename;
-	private Image image;
+	public Image batch;
+	protected List<Record> records;
+	public List<Record> getRecords() { return records; }
+	public void setRecords(List<Record> records) { this.records = records; }
 	
-	private boolean completed;
-	private String username;
+	protected List<Field> fields;
+	public List<Field> getFields() { return fields; }
+	public void setFields(List<Field> fields) { this.fields = fields; }
 	
-	public Batch(int id, int projectID, String imageFilename, String username) {
-		setID(id);
-		this.projectID = projectID;
-		this.imageFilename = imageFilename;
-		this.username = username;
-		getImage(); // initializes the Image object.
-		completed = false;
+	public Batch(Image batch) {
+		this.batch = batch;
+		records = new ArrayList<Record>();
+		fields = new ArrayList<Field>();
 	}
 	
-	/**
-	 * Additional constructor that allows the batch to be created as completed = true.
-	 * @param id
-	 * @param projectID
-	 * @param imageFilename
-	 * @param username
-	 * @param completed
-	 */
-	public Batch (int id, int projectID, String imageFilename, String username, boolean completed) {
-		this(id, projectID, imageFilename, username);
-		this.completed = completed;
-	}
-	
-	/**
-	 * Gets the image associated with this batch.
-	 * @return
-	 */
-	public Image getImage() {
-		if (image == null) {
-			image = new Image(getProjectID(), imageFilename);
+	public void add(Field field) {
+		if (field != null) {
+			fields.add(field);
 		}
-		
-		return image;
 	}
 	
-	/**
-	 * Gets the project this batch belongs to
-	 * @return
-	 */
-	public int getProjectID() {
-		return projectID;
+	public void add (Record record) {
+		if (record != null) {
+			records.add(record);
+		}
 	}
 	
-	public String getUsername() {
-		return username;
-	}
-	
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	public boolean isCompleted() {
-		return completed;
-	}
-
-	public void setCompleted(boolean completed) {
-		this.completed = completed;
-	}
-	
-	public static String serialize(Batch batch) {
+	public static String serialize(Batch fb) {
 		XStream xstream = new XStream(new DomDriver());
-		return xstream.toXML(batch);
+		return xstream.toXML(fb);
 	}
 	
 }

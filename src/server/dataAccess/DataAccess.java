@@ -139,9 +139,9 @@ public class DataAccess {
 	 * @param projectID
 	 * @return URL string of the image of the first batch in the project
 	 */
-	public Image getSampleImage(int projectID) 
+	public ImageReference getSampleImage(int projectID) 
 			throws SQLException, ServerException {
-		Image result = null;
+		ImageReference result = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		String statement = "SELECT * FROM batches WHERE project_id = ?";
@@ -155,7 +155,7 @@ public class DataAccess {
 		rs = ps.executeQuery();
 		
 		if (rs != null && rs.next()) {
-			result = new Image(projectID, rs.getString("filename"));
+			result = new ImageReference(projectID, rs.getString("filename"));
 		} else {
 			result = null; // no sample image available
 			// Either no batches in project, or invalid project id
@@ -170,8 +170,8 @@ public class DataAccess {
 	 * @param projectID
 	 * @return
 	 */
-	public Batch getNextBatch(int projectID, String username) throws SQLException, ServerException {
-		Batch result = null;
+	public Image getNextBatch(int projectID, String username) throws SQLException, ServerException {
+		Image result = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		String statement = "SELECT * FROM batches WHERE project_id = ? AND " +
@@ -224,8 +224,8 @@ public class DataAccess {
 	 * @throws SQLException
 	 * @throws ServerException
 	 */
-	public Batch getSpecificBatch(int batchID) throws SQLException, ServerException {
-		Batch result = null;
+	public Image getSpecificBatch(int batchID) throws SQLException, ServerException {
+		Image result = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		String statement = "SELECT * FROM batches WHERE id = ?";
@@ -248,7 +248,7 @@ public class DataAccess {
 	 * @param completed Whether to mark the batch as completed.
 	 * @return
 	 */
-	public boolean saveBatch(Batch input, boolean completed) 
+	public boolean saveBatch(Image input, boolean completed) 
 			throws SQLException, ServerException {
 		PreparedStatement ps = null;
 		String statement = "UPDATE batches SET completed = ?, in_use = 0" +
@@ -380,7 +380,7 @@ public class DataAccess {
 	 * has any records attached to it.
 	 * @return
 	 */
-	public boolean addBatch(Batch batch) {
+	public boolean addBatch(Image batch) {
 		String statement;
 		boolean IDalreadyExists = IDexists(batch.getID(), "batches");
 		boolean result = false;
@@ -690,12 +690,12 @@ public class DataAccess {
 	 * @param rs
 	 * @return
 	 */
-	private Batch buildBatch (ResultSet rs) throws SQLException {
+	private Image buildBatch (ResultSet rs) throws SQLException {
 		int id = rs.getInt("id");
 		String username = rs.getString("in_use");
 		int projectID = rs.getInt("project_id");
 		String imageFilename = rs.getString("filename");
-		return new Batch(id, projectID, imageFilename, username);
+		return new Image(id, projectID, imageFilename, username);
 	}
 	
 	/**

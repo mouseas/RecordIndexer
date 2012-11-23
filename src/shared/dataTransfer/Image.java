@@ -1,42 +1,83 @@
 package shared.dataTransfer;
 
-import java.awt.image.*;
-
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
 /**
- * The image from a batch. Currently only holds the file name, but in the finished
- * app this will be able to download and return the actual image data. Maybe.
+ * Batch object, holds information about one image in need of indexing.
  * @author Martin
  *
  */
-public class Image {
+public class Image extends DataTransferObject {
 	
-	private String filename;
 	private int projectID;
+	private String imageFilename;
+	private ImageReference image;
 	
-	public Image(int projectID, String filename) {
+	private boolean completed;
+	private String username;
+	
+	public Image(int id, int projectID, String imageFilename, String username) {
+		setID(id);
 		this.projectID = projectID;
-		this.filename = filename;
+		this.imageFilename = imageFilename;
+		this.username = username;
+		getImage(); // initializes the Image object.
+		completed = false;
 	}
 	
+	/**
+	 * Additional constructor that allows the batch to be created as completed = true.
+	 * @param id
+	 * @param projectID
+	 * @param imageFilename
+	 * @param username
+	 * @param completed
+	 */
+	public Image (int id, int projectID, String imageFilename, String username, boolean completed) {
+		this(id, projectID, imageFilename, username);
+		this.completed = completed;
+	}
+	
+	/**
+	 * Gets the image associated with this batch.
+	 * @return
+	 */
+	public ImageReference getImage() {
+		if (image == null) {
+			image = new ImageReference(getProjectID(), imageFilename);
+		}
+		
+		return image;
+	}
+	
+	/**
+	 * Gets the project this batch belongs to
+	 * @return
+	 */
 	public int getProjectID() {
 		return projectID;
 	}
 	
-	public RenderedImage getImage() {
-		return null;
+	public String getUsername() {
+		return username;
 	}
 	
-	public String getFilename() {
-		return filename;
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public boolean isCompleted() {
+		return completed;
+	}
+
+	public void setCompleted(boolean completed) {
+		this.completed = completed;
 	}
 	
-	public static String serialize(Image image) {
+	public static String serialize(Image batch) {
 		XStream xstream = new XStream(new DomDriver());
-		return xstream.toXML(image);
+		return xstream.toXML(batch);
 	}
-	
 	
 }

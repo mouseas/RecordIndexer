@@ -124,13 +124,13 @@ public class ServerCommunicator {
 	 * @param p The project to request a sample from
 	 * @return An image from the project.
 	 */
-	public Image requestSampleImage(Project p) {
+	public ImageReference requestSampleImage(Project p) {
 		try {
 			URL url = new URL(HTTP, host, port, 
 					"/sample-image" + usernameAndPasswordForURLS() + 
 					"&project=" + p.getID());
 			Object xstreamResult = processRequest(url);
-			Image image = (Image)xstreamResult;
+			ImageReference image = (ImageReference)xstreamResult;
 			return image;
 		} catch (MalformedURLException e) {
 			System.out.println("Something wrong with the Sample Image url.");
@@ -147,14 +147,14 @@ public class ServerCommunicator {
 	 * @param p The project to request a batch from
 	 * @return The batch received, or null if no batch received.
 	 */
-	public Batch requestNextBatch(int projectID) {
+	public Image requestNextBatch(int projectID) {
 		try {
 			URL url = new URL(HTTP, host, port, 
 					"/get-next-batch" + usernameAndPasswordForURLS() + 
 					"&project=" + projectID);
 //			System.out.println(url.toString());
 			Object xstreamResult = processRequest(url);
-			return (Batch)xstreamResult;
+			return (Image)xstreamResult;
 		} catch (MalformedURLException e) {
 			System.out.println("Something wrong with the Batch url.");
 			System.out.println(e.getMessage());
@@ -168,14 +168,14 @@ public class ServerCommunicator {
 	 * @param p The project to request a batch from
 	 * @return The batch received, or null if no batch received.
 	 */
-	public Batch requestSpecificBatch(int batchID) {
+	public Image requestSpecificBatch(int batchID) {
 		try {
 			URL url = new URL(HTTP, host, port, 
 					"/get-specific-batch" + usernameAndPasswordForURLS() + 
 					"&batch=" + batchID);
 //			System.out.println(url.toString());
 			Object xstreamResult = processRequest(url);
-			return (Batch)xstreamResult;
+			return (Image)xstreamResult;
 		} catch (MalformedURLException e) {
 			System.out.println("Something wrong with the Batch url.");
 			System.out.println(e.getMessage());
@@ -188,11 +188,11 @@ public class ServerCommunicator {
 	 * @param b Batch to submit. Records are attached to this batch.
 	 * @return Whether the submission was accepted by the server.
 	 */
-	public boolean submitBatch(FinishedBatch batch) {
+	public boolean submitBatch(Batch batch) {
 		URL url = null;
 		int responseCode = -1;
 		try {
-			String xml = FinishedBatch.serialize(batch);
+			String xml = Batch.serialize(batch);
 			url = new URL(HTTP, host, port, 
 						"/submit-batch" + usernameAndPasswordForURLS());
 			responseCode = processPost(url, xml);

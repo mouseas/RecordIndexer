@@ -50,7 +50,7 @@ public class GetBatchHandler implements HttpHandler {
 	private String buildBatch(int projectID, String username) {
 		try {
 			database.startTransaction();
-			Batch batch = database.getNextBatch(projectID, username);
+			Image batch = database.getNextBatch(projectID, username);
 			database.endTransaction(true);
 			XStream xstream = new XStream(new DomDriver());
 			return xstream.toXML(batch);

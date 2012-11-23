@@ -8,11 +8,11 @@ import org.junit.Test;
 
 public class ImageTest {
 
-	private Image image;
+	private ImageReference image;
 	
 	@Before
 	public void setUp() throws Exception {
-		image = new Image(7, "test.png");
+		image = new ImageReference(7, "test.png");
 	}
 
 	@After

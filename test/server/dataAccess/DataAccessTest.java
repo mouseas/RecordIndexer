@@ -93,15 +93,15 @@ public class DataAccessTest {
 	}
 
 	private void testAddBatch() {
-		da.addBatch(new Batch(1, 1, "batch001.png", "0", true));
-		da.addBatch(new Batch(2, 1, "batch002.png", "0"));
-		Batch batch2 = null;
+		da.addBatch(new Image(1, 1, "batch001.png", "0", true));
+		da.addBatch(new Image(2, 1, "batch002.png", "0"));
+		Image batch2 = null;
 		try {
 			batch2 = da.getNextBatch(1, "test1"); // marks batch 2 as in-use, and grabs it.
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
-		da.addBatch(new Batch(3, 1, "batch003.png", "0"));
+		da.addBatch(new Image(3, 1, "batch003.png", "0"));
 		assertEquals("batch002.png", batch2.getImage().getFilename());
 		assertEquals(2, batch2.getID());
 	}
@@ -250,8 +250,8 @@ public class DataAccessTest {
 		System.out.println("get next batch ################");
 		
 		try {
-			Batch expected = new Batch(3, 1, "batch003.png", "0");
-			Batch actual = da.getNextBatch(1, "test");
+			Image expected = new Image(3, 1, "batch003.png", "0");
+			Image actual = da.getNextBatch(1, "test");
 			assertNotNull("No batch returned!", actual);
 			assertEquals(expected.getID(), actual.getID());
 			assertEquals(expected.getImage().getFilename(), 
@@ -267,7 +267,7 @@ public class DataAccessTest {
 		System.out.println("save batch ################");
 		
 		try {
-			Batch result = new Batch(3, 1, "batch003.png", "test1");
+			Image result = new Image(3, 1, "batch003.png", "test1");
 			assertTrue("Failed with completed.", da.saveBatch(result, true));
 			assertTrue("Failed with not completed.", da.saveBatch(result, false));
 		} catch (Exception e) {
@@ -330,7 +330,7 @@ public class DataAccessTest {
 		assertTrue("Fields were not empty!", actualFields.size() < 1);
 		List<Project> actualProjects = da.getProjectList();
 		assertTrue("Projects were not empty!", actualProjects.size() < 1);
-		Batch actualBatch = da.getNextBatch(1, "test1");
+		Image actualBatch = da.getNextBatch(1, "test1");
 		assertNull("Batches exist", actualBatch);
 		User actualUser = da.getUser("mouseasw", "password");
 		assertNotNull("Null user instead of invalid user.", actualUser);
