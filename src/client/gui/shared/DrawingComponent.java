@@ -18,45 +18,62 @@ public class DrawingComponent extends JComponent {
 	private static Image NULL_IMAGE = new BufferedImage(10, 10, BufferedImage.TYPE_INT_ARGB);
 	
 	private ArrayList<DrawingShape> shapes;
-//	private ArrayList<DrawingShape> dragshapes;
-	private Font font;
 	private Point2D lastPoint;
 	
 	/**
-	 * constructor
+	 * Default constructor
 	 */
 	public DrawingComponent() {
 		shapes = new ArrayList<DrawingShape>();
-		font = new Font("SansSerif", Font.PLAIN, 72);
 		
-		this.setBackground(new Color(178, 223, 210));
+		this.setBackground(new Color(255, 255, 255));
 		this.setPreferredSize(new Dimension(700, 300));
 		this.setMinimumSize(new Dimension(100, 100));
-		this.setMaximumSize(new Dimension(1000, 800));
 		
 		this.addMouseListener(mouseAdapter);
 		this.addMouseMotionListener(mouseAdapter);
 		this.addKeyListener(keyAdapter);
-		
-		shapes.add(new DrawingRect(new Rectangle2D.Double(20, 20, 150, 200), new Color(210, 180, 140, 197)));
-		shapes.add(new DrawingLine(new Line2D.Double(400, 400, 600, 600), new Color(255, 0, 0, 64)));
-		
-		Image mario = loadImage("mario.jpg");
-		shapes.add(new DrawingImage(mario, new Rectangle2D.Double(250, 50, mario.getWidth(null), mario.getHeight(null))));
-		
-		String text1 = "Hello World";
-		shapes.add(new DrawingText(text1, font, Color.BLACK, new Point2D.Float(200,400)));
-		
 	}
 	
-	private Image loadImage(String filename) {
+	/**
+	 * Loads an image file into an Image object.
+	 * @param filename
+	 * @return
+	 */
+	public static Image loadImage(String filename) {
 		try {
 			return ImageIO.read(new File(filename));
 		} catch (IOException e) {
+			System.out.println("Failed to load " + filename);
 			return NULL_IMAGE;
 		}
 	}
+	
+	public void addImage(Image image) {
+		addImage(image, new Point2D.Double(0, 0));
+	}
+	
+	public void addImage(Image image, Point2D offset) {
+		shapes.add(new DrawingImage(image, new Rectangle2D.Double(
+							offset.getX(), offset.getY(), 
+							image.getWidth(null), image.getHeight(null))));
+	}
+	
+	public void removeImage(Image image) {
+		for (int i = 0; i < shapes.size(); i++) {
+			if (shapes.get(i).getClass() == DrawingImage.class) {
+				DrawingImage item = (DrawingImage)shapes.get(i);
+				if (item.getImage().equals(image)) {
+					shapes.remove(i);
+					return;
+				}
+			}
+		}
+	}
 
+	/**
+	 * Draws the DrawingComponent to a Graphics2D object.
+	 */
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
@@ -66,18 +83,40 @@ public class DrawingComponent extends JComponent {
 		drawShapes(g2);
 	}
 	
+	/**
+	 * Fills the component area with the background color.
+	 * @param g2
+	 */
 	private void drawBackground(Graphics2D g2) {
 		g2.setColor(getBackground());
 		g2.fillRect(0, 0, getWidth(), getHeight());
 	}
 	
+	/**
+	 * Draws each shape
+	 * @param g2
+	 */
 	private void drawShapes(Graphics2D g2) {
 		for (DrawingShape shape : shapes) {
 			shape.draw(g2);
 		}
 	}
 	
-	private void adjustShapePositions(double dx, double dy) {
+	/**
+	 * Moves all of the shapes in the DrawingComponent
+	 * @param dx
+	 * @param dy
+	 */
+	public void adjustShapePositions(double dx, double dy) {
+		adjustShapePositions(dx, dy, this.shapes);
+	}
+	
+	/**
+	 * Moves all of the shapes in an ArrayList by a specified amount.
+	 * @param dx
+	 * @param dy
+	 */
+	private void adjustShapePositions(double dx, double dy, ArrayList<DrawingShape> shapes) {
 		for (DrawingShape shape : shapes) {
 			shape.adjustPosition(dx, dy);
 		}
@@ -117,16 +156,16 @@ public class DrawingComponent extends JComponent {
 		@Override
 		public void keyPressed(KeyEvent e) {
 			if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-				adjustShapePositions(-5, 0);
+				adjustShapePositions(-5, 0, shapes);
 			}
 			else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-				adjustShapePositions(5, 0);
+				adjustShapePositions(5, 0, shapes);
 			}
 			else if (e.getKeyCode() == KeyEvent.VK_UP) {
-				adjustShapePositions(0, -5);
+				adjustShapePositions(0, -5, shapes);
 			}
 			else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-				adjustShapePositions(0, 5);
+				adjustShapePositions(0, 5, shapes);
 			}
 		}
 	};
@@ -230,6 +269,10 @@ class DrawingImage implements DrawingShape {
 	public boolean contains(Graphics2D g2, double x, double y) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+	
+	public Image getImage() {
+		return image;
 	}
 }
 

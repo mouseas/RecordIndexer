@@ -8,12 +8,17 @@ import java.awt.event.*;
 import client.gui.mainFrame.buttonBar.ButtonPanel;
 import client.gui.mainFrame.dataArea.DataAreaPanel;
 import client.gui.mainFrame.viewingArea.ViewingAreaPanel;
+import client.gui.shared.*;
 
 @SuppressWarnings("serial")
 public class MainFrame extends JFrame {
 
 //	private Component component;
 	private MainFrameMenubar menubar;
+	
+	private ButtonPanel buttonBar;
+	private DataAreaPanel dataArea;
+	private ViewingAreaPanel viewingArea;
 	
 	public MainFrame() {
 		
@@ -28,14 +33,15 @@ public class MainFrame extends JFrame {
 		this.addWindowFocusListener(windowAdaptor);
 		this.addWindowStateListener(windowAdaptor);
 		
-//		this.add(new JLabel("Hi there"), BorderLayout.WEST);
-//		this.add(new JTextArea(5,40), BorderLayout.CENTER);
-//		this.add(new JButton("Poke Me"), BorderLayout.EAST);
-//		component = new DrawingComponent();
-//		this.add(component, BorderLayout.CENTER);
-		this.add(new ButtonPanel(), BorderLayout.NORTH);
-		this.add(new ViewingAreaPanel(), BorderLayout.CENTER);
-		this.add(new DataAreaPanel(), BorderLayout.SOUTH);
+		buttonBar = new ButtonPanel();
+		dataArea = new DataAreaPanel();
+		viewingArea = new ViewingAreaPanel();
+		Image mario = DrawingComponent.loadImage("mario.jpg");
+		viewingArea.setImage(mario);
+		
+		this.add(buttonBar, BorderLayout.NORTH);
+		this.add(viewingArea, BorderLayout.CENTER);
+		this.add(dataArea, BorderLayout.SOUTH);
 		
 		this.pack();
 	}
