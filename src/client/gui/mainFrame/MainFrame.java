@@ -18,7 +18,7 @@ public class MainFrame extends JFrame {
 	public MainFrame() {
 		
 		menubar = new MainFrameMenubar();
-		this.add(menubar);
+		this.setJMenuBar(menubar);
 		
 		this.setTitle("Record Indexer");
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

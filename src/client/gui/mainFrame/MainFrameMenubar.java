@@ -1,8 +1,9 @@
 package client.gui.mainFrame;
 
-import javax.swing.JMenuBar; // superclass
 import javax.swing.*;
 
+
+@SuppressWarnings("serial")
 public class MainFrameMenubar extends JMenuBar {
 
 	private JMenu file;
