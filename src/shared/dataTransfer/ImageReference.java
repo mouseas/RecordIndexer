@@ -1,7 +1,5 @@
 package shared.dataTransfer;
 
-import java.awt.image.*;
-
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
@@ -23,10 +21,6 @@ public class ImageReference {
 	
 	public int getProjectID() {
 		return projectID;
-	}
-	
-	public RenderedImage getImage() {
-		return null;
 	}
 	
 	public String getFilename() {

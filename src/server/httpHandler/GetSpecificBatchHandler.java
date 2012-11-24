@@ -5,7 +5,7 @@ import java.io.OutputStream;
 
 import server.dataAccess.DataAccess;
 import shared.HelperFunction;
-import shared.dataTransfer.Image;
+import shared.dataTransfer.BatchImage;
 import shared.dataTransfer.User;
 
 import com.sun.net.httpserver.HttpExchange;
@@ -52,7 +52,7 @@ private DataAccess database;
 	private String buildBatch(int batchID) {
 		try {
 			database.startTransaction();
-			Image batch = database.getSpecificBatch(batchID);
+			BatchImage batch = database.getSpecificBatch(batchID);
 			database.endTransaction(false);
 			XStream xstream = new XStream(new DomDriver());
 			return xstream.toXML(batch);

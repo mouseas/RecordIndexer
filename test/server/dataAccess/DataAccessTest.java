@@ -93,15 +93,15 @@ public class DataAccessTest {
 	}
 
 	private void testAddBatch() {
-		da.addBatch(new Image(1, 1, "batch001.png", "0", true));
-		da.addBatch(new Image(2, 1, "batch002.png", "0"));
-		Image batch2 = null;
+		da.addBatch(new BatchImage(1, 1, "batch001.png", "0", true));
+		da.addBatch(new BatchImage(2, 1, "batch002.png", "0"));
+		BatchImage batch2 = null;
 		try {
 			batch2 = da.getNextBatch(1, "test1"); // marks batch 2 as in-use, and grabs it.
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
-		da.addBatch(new Image(3, 1, "batch003.png", "0"));
+		da.addBatch(new BatchImage(3, 1, "batch003.png", "0"));
 		assertEquals("batch002.png", batch2.getImage().getFilename());
 		assertEquals(2, batch2.getID());
 	}
@@ -250,8 +250,8 @@ public class DataAccessTest {
 		System.out.println("get next batch ################");
 		
 		try {
-			Image expected = new Image(3, 1, "batch003.png", "0");
-			Image actual = da.getNextBatch(1, "test");
+			BatchImage expected = new BatchImage(3, 1, "batch003.png", "0");
+			BatchImage actual = da.getNextBatch(1, "test");
 			assertNotNull("No batch returned!", actual);
 			assertEquals(expected.getID(), actual.getID());
 			assertEquals(expected.getImage().getFilename(), 
@@ -267,7 +267,7 @@ public class DataAccessTest {
 		System.out.println("save batch ################");
 		
 		try {
-			Image result = new Image(3, 1, "batch003.png", "test1");
+			BatchImage result = new BatchImage(3, 1, "batch003.png", "test1");
 			assertTrue("Failed with completed.", da.saveBatch(result, true));
 			assertTrue("Failed with not completed.", da.saveBatch(result, false));
 		} catch (Exception e) {
@@ -330,7 +330,7 @@ public class DataAccessTest {
 		assertTrue("Fields were not empty!", actualFields.size() < 1);
 		List<Project> actualProjects = da.getProjectList();
 		assertTrue("Projects were not empty!", actualProjects.size() < 1);
-		Image actualBatch = da.getNextBatch(1, "test1");
+		BatchImage actualBatch = da.getNextBatch(1, "test1");
 		assertNull("Batches exist", actualBatch);
 		User actualUser = da.getUser("mouseasw", "password");
 		assertNotNull("Null user instead of invalid user.", actualUser);

@@ -28,7 +28,7 @@ public class DataImporter {
 	private DataAccess da;
 	
 	private List<Record> recordList;
-	private List<Image> batchList;
+	private List<BatchImage> batchList;
 	private List<Project> projectList;
 	private List<Field> fieldList;
 	
@@ -120,7 +120,7 @@ public class DataImporter {
 		// initialize empty lists to be filled during the import process
 		projectList = new ArrayList<Project>();
 		fieldList = new ArrayList<Field>();
-		batchList = new ArrayList<Image>();
+		batchList = new ArrayList<BatchImage>();
 		recordList = new ArrayList<Record>();
 
 		importProjects(); // will import projects along with their child objects
@@ -203,7 +203,7 @@ public class DataImporter {
 		if (batchNodeList == null || da == null || batchList == null) { return false; }
 		for (int i = 0; i < batchNodeList.getLength(); i++) {
 			Element batchNode = (Element)batchNodeList.item(i);
-			Image batch = parseBatch(batchNode, firstFieldID);
+			BatchImage batch = parseBatch(batchNode, firstFieldID);
 			batchList.add(batch);
 		}
 		return true;
@@ -305,13 +305,13 @@ public class DataImporter {
 	 * @param firstFieldID The id of the first field associated with this batch.
 	 * @return
 	 */
-	private Image parseBatch (Element batch, int firstFieldID) {
+	private BatchImage parseBatch (Element batch, int firstFieldID) {
 		NodeList recordNodeList = batch.getElementsByTagName("record");
 		boolean completed = importRecords(recordNodeList, firstFieldID);
 		
 		try {
 			String filename = getStringFromElement(batch, "file");
-			return new Image(batchList.size(), projectList.size(), filename, "0", completed);
+			return new BatchImage(batchList.size(), projectList.size(), filename, "0", completed);
 		} catch (NullPointerException e) {
 			System.out.println("Null pointer exception at DataImporter.parseBatch.");
 		}

@@ -13,7 +13,8 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
  */
 public class Batch {
 	
-	public Image batch;
+	public BatchImage batchImage;
+	
 	protected List<Record> records;
 	public List<Record> getRecords() { return records; }
 	public void setRecords(List<Record> records) { this.records = records; }
@@ -22,8 +23,8 @@ public class Batch {
 	public List<Field> getFields() { return fields; }
 	public void setFields(List<Field> fields) { this.fields = fields; }
 	
-	public Batch(Image batch) {
-		this.batch = batch;
+	public Batch(BatchImage batch) {
+		this.batchImage = batch;
 		records = new ArrayList<Record>();
 		fields = new ArrayList<Field>();
 	}

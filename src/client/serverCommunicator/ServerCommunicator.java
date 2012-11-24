@@ -147,14 +147,14 @@ public class ServerCommunicator {
 	 * @param p The project to request a batch from
 	 * @return The batch received, or null if no batch received.
 	 */
-	public Image requestNextBatch(int projectID) {
+	public BatchImage requestNextBatch(int projectID) {
 		try {
 			URL url = new URL(HTTP, host, port, 
 					"/get-next-batch" + usernameAndPasswordForURLS() + 
 					"&project=" + projectID);
 //			System.out.println(url.toString());
 			Object xstreamResult = processRequest(url);
-			return (Image)xstreamResult;
+			return (BatchImage)xstreamResult;
 		} catch (MalformedURLException e) {
 			System.out.println("Something wrong with the Batch url.");
 			System.out.println(e.getMessage());
@@ -168,14 +168,14 @@ public class ServerCommunicator {
 	 * @param p The project to request a batch from
 	 * @return The batch received, or null if no batch received.
 	 */
-	public Image requestSpecificBatch(int batchID) {
+	public BatchImage requestSpecificBatch(int batchID) {
 		try {
 			URL url = new URL(HTTP, host, port, 
 					"/get-specific-batch" + usernameAndPasswordForURLS() + 
 					"&batch=" + batchID);
 //			System.out.println(url.toString());
 			Object xstreamResult = processRequest(url);
-			return (Image)xstreamResult;
+			return (BatchImage)xstreamResult;
 		} catch (MalformedURLException e) {
 			System.out.println("Something wrong with the Batch url.");
 			System.out.println(e.getMessage());

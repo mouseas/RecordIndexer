@@ -202,7 +202,7 @@ public class Controller implements IController {
 			if (user == null || user.getID() < 0) {
 				getView().setResponse(FAIL);
 			} else {
-				Image batch = sc.requestNextBatch(Integer.parseInt(projectIDString));
+				BatchImage batch = sc.requestNextBatch(Integer.parseInt(projectIDString));
 				List<Field> fields = sc.requestFieldsList(new Project(
 									Integer.parseInt(projectIDString), 0, 0, 0, ""));
 				List<Project> projects = sc.requestProjectsList();
@@ -229,7 +229,7 @@ public class Controller implements IController {
 	 * @param p
 	 * @param fields
 	 */
-	private void outputBatch(StringBuilder sb, Image batch, Project p, List<Field> fields) {
+	private void outputBatch(StringBuilder sb, BatchImage batch, Project p, List<Field> fields) {
 		sb.append(batch.getID() + "\n");
 		sb.append(batch.getProjectID() + "\n");
 		sb.append(filenameHeader() + batch.getImage().getFilename() + "\n");
@@ -358,7 +358,7 @@ public class Controller implements IController {
 	private Batch buildFinishedBatch(String batchIDString,
 			List<String> recordValues) {
 		try {
-			Image b = sc.requestSpecificBatch(Integer.parseInt(batchIDString));
+			BatchImage b = sc.requestSpecificBatch(Integer.parseInt(batchIDString));
 			Batch result = new Batch(b);
 			result.setFields(sc.requestFieldsList(
 									new Project(b.getProjectID(), 0, 0, 0, "")));
@@ -398,7 +398,7 @@ public class Controller implements IController {
 				StringBuilder sb = new StringBuilder();
 				for (Record r : records) {
 					sb.append(r.getBatchID() + "\n");
-					Image b = sc.requestSpecificBatch(r.getBatchID());
+					BatchImage b = sc.requestSpecificBatch(r.getBatchID());
 					// it would be more efficient for many searches to put these in a
 					// hash table and only request them the first time that ID is needed.
 					if (b != null) {

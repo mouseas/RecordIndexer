@@ -8,7 +8,7 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
  * @author Martin
  *
  */
-public class Image extends DataTransferObject {
+public class BatchImage extends DataTransferObject {
 	
 	private int projectID;
 	private String imageFilename;
@@ -17,7 +17,7 @@ public class Image extends DataTransferObject {
 	private boolean completed;
 	private String username;
 	
-	public Image(int id, int projectID, String imageFilename, String username) {
+	public BatchImage(int id, int projectID, String imageFilename, String username) {
 		setID(id);
 		this.projectID = projectID;
 		this.imageFilename = imageFilename;
@@ -34,7 +34,7 @@ public class Image extends DataTransferObject {
 	 * @param username
 	 * @param completed
 	 */
-	public Image (int id, int projectID, String imageFilename, String username, boolean completed) {
+	public BatchImage (int id, int projectID, String imageFilename, String username, boolean completed) {
 		this(id, projectID, imageFilename, username);
 		this.completed = completed;
 	}
@@ -75,7 +75,7 @@ public class Image extends DataTransferObject {
 		this.completed = completed;
 	}
 	
-	public static String serialize(Image batch) {
+	public static String serialize(BatchImage batch) {
 		XStream xstream = new XStream(new DomDriver());
 		return xstream.toXML(batch);
 	}

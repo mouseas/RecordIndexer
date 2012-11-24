@@ -170,8 +170,8 @@ public class DataAccess {
 	 * @param projectID
 	 * @return
 	 */
-	public Image getNextBatch(int projectID, String username) throws SQLException, ServerException {
-		Image result = null;
+	public BatchImage getNextBatch(int projectID, String username) throws SQLException, ServerException {
+		BatchImage result = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		String statement = "SELECT * FROM batches WHERE project_id = ? AND " +
@@ -224,8 +224,8 @@ public class DataAccess {
 	 * @throws SQLException
 	 * @throws ServerException
 	 */
-	public Image getSpecificBatch(int batchID) throws SQLException, ServerException {
-		Image result = null;
+	public BatchImage getSpecificBatch(int batchID) throws SQLException, ServerException {
+		BatchImage result = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		String statement = "SELECT * FROM batches WHERE id = ?";
@@ -248,7 +248,7 @@ public class DataAccess {
 	 * @param completed Whether to mark the batch as completed.
 	 * @return
 	 */
-	public boolean saveBatch(Image input, boolean completed) 
+	public boolean saveBatch(BatchImage input, boolean completed) 
 			throws SQLException, ServerException {
 		PreparedStatement ps = null;
 		String statement = "UPDATE batches SET completed = ?, in_use = 0" +
@@ -380,7 +380,7 @@ public class DataAccess {
 	 * has any records attached to it.
 	 * @return
 	 */
-	public boolean addBatch(Image batch) {
+	public boolean addBatch(BatchImage batch) {
 		String statement;
 		boolean IDalreadyExists = IDexists(batch.getID(), "batches");
 		boolean result = false;
@@ -494,7 +494,7 @@ public class DataAccess {
 	/**
 	 * Gets a Record if one was in the database, or creates a new, empty
 	 * one if none was found in the database.
-	 * @param batch
+	 * @param batchImage
 	 * @param rowNumber
 	 * @param fieldID
 	 * @return
@@ -690,12 +690,12 @@ public class DataAccess {
 	 * @param rs
 	 * @return
 	 */
-	private Image buildBatch (ResultSet rs) throws SQLException {
+	private BatchImage buildBatch (ResultSet rs) throws SQLException {
 		int id = rs.getInt("id");
 		String username = rs.getString("in_use");
 		int projectID = rs.getInt("project_id");
 		String imageFilename = rs.getString("filename");
-		return new Image(id, projectID, imageFilename, username);
+		return new BatchImage(id, projectID, imageFilename, username);
 	}
 	
 	/**

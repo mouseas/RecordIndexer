@@ -8,11 +8,11 @@ import org.junit.Test;
 
 public class BatchTest {
 
-	private Image b;
+	private BatchImage b;
 	
 	@Before
 	public void setUp() throws Exception {
-		b = new Image(17, 3, "test.png", "0");
+		b = new BatchImage(17, 3, "test.png", "0");
 	}
 
 	@After
