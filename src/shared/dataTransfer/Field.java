@@ -62,14 +62,14 @@ public class Field extends DataTransferObject {
 		return width;
 	}
 	
-	/**
-	 * Gets all the possible entries accepted for this field.
-	 * @return Non-editable list of acceptable entries for the field.
-	 */
-	public List<String> getKnownData() {
-		System.out.println("Not implemented yet!");
-		return null;
-	}
+//	/**
+//	 * Gets all the possible entries accepted for this field.
+//	 * @return Non-editable list of acceptable entries for the field.
+//	 */
+//	public List<String> getKnownData() {
+//		System.out.println("Not implemented yet!");
+//		return null;
+//	}
 	
 	/**
 	 * Gets the help text for this field.

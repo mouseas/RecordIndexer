@@ -29,13 +29,13 @@ public class Batch {
 		fields = new ArrayList<Field>();
 	}
 	
-	public void add(Field field) {
+	public void addField(Field field) {
 		if (field != null) {
 			fields.add(field);
 		}
 	}
 	
-	public void add (Record record) {
+	public void addRecord(Record record) {
 		if (record != null) {
 			records.add(record);
 		}

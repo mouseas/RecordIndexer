@@ -9,18 +9,38 @@ import client.gui.mainFrame.MainFrame;
  *
  */
 public class Client {
-
+	
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				MainFrame frame = new MainFrame();
-				frame.setVisible(true);
+		if (args.length == 2) {
+			try {
+				final String domain = args[0]; // for some reason these must be final.
+				final int port = Integer.parseInt(args[1]);
+				if (port < 0 || port > 65535) {
+					throw new Exception("Port number out of bounds: " + port);
+				}
+				EventQueue.invokeLater(new Runnable() {
+					public void run() {
+						MainFrame frame = new MainFrame(domain, port);
+						frame.setVisible(true);
+					}
+				});
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+				usage();
 			}
-		});
-
+		} else {
+			usage();
+		}
+	}
+	
+	/**
+	 * Prints a usage statement. May later give a pop-up error message.
+	 */
+	private static void usage() {
+		System.out.println("USAGE: java Client domain port");
 	}
 
 }

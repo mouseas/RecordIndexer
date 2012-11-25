@@ -94,20 +94,20 @@ public class ServerCommunicatorTest {
 		Batch finishedBatch = new Batch(actualBatch);
 		Field f = new Field(0, 0, "Last Name", 60, 300, 
 				"fieldhelp/last_name.html", "knowndata/1890_last_names.txt");
-		finishedBatch.add(f);
+		finishedBatch.addField(f);
 		f = new Field(0, 0, "First Name", 360, 280, 
 				"fieldhelp/last_name.html", "knowndata/1890_last_names.txt");
-		finishedBatch.add(f);
+		finishedBatch.addField(f);
 		f = new Field(0, 0, "Gender", 640, 205, 
 				"fieldhelp/last_name.html", "knowndata/1890_last_names.txt");
-		finishedBatch.add(f);
+		finishedBatch.addField(f);
 		f = new Field(0, 0, "Age", 845, 120, "fieldhelp/last_name.html", "");
-		finishedBatch.add(f);
+		finishedBatch.addField(f);
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < finishedBatch.getFields().size(); j++) {
 				Record r = new Record(i * finishedBatch.getFields().size() + j,
 						0, j, i, "testValue new " + i + " " + j);
-				finishedBatch.add(r);
+				finishedBatch.addRecord(r);
 			}
 		}
 		

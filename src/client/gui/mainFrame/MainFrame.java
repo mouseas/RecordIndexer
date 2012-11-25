@@ -10,6 +10,8 @@ import client.gui.mainFrame.dataArea.DataAreaPanel;
 import client.gui.mainFrame.viewingArea.ViewingAreaPanel;
 import client.gui.shared.*;
 
+import client.dataModel.*;
+
 @SuppressWarnings("serial")
 public class MainFrame extends JFrame {
 
@@ -20,7 +22,11 @@ public class MainFrame extends JFrame {
 	private DataAreaPanel dataArea;
 	private ViewingAreaPanel viewingArea;
 	
-	public MainFrame() {
+	private DataModel dataModel;
+	private MainFrameDimensions savedDimensions;
+	
+	public MainFrame(String domain, int port) {
+		dataModel = new DataModel(domain, port);
 		
 		menubar = new MainFrameMenubar();
 		this.setJMenuBar(menubar);
@@ -52,4 +58,33 @@ public class MainFrame extends JFrame {
 //			component.requestFocusInWindow();
 		}
 	};
+
+	public void login(String username, String password) {
+		boolean success = dataModel.login(username, password);
+		if (success) {
+			loadState(username);
+			// TODO anything else on success?
+		} else {
+			// TODO login problem.
+		}
+	}
+	
+	/**
+	 * Loads any saved window state associated with the current user.
+	 * If this is the user's first time logging in, loads the defaults.
+	 */
+	private void loadState(String username) {
+		// TODO load dimensions from file, then adjust window to match.
+	}
+	
+	/**
+	 * Logs out of the current user after saving their window state.
+	 */
+	public void logout() {
+		// TODO save window state.
+		// savedDimensions -> get current window dimensions
+		// savedDimensions.serialize()
+		// saveFile(savedDimensionsSerialized, username + ".config")
+		dataModel.logout();
+	}
 }
