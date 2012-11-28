@@ -1,16 +1,18 @@
-package client.gui.mainFrame;
+package client.view.mainFrame;
 
 import javax.swing.*;
+
+import controller.Controller;
 
 import java.awt.*;
 import java.awt.event.*;
 
-import client.gui.mainFrame.buttonBar.ButtonPanel;
-import client.gui.mainFrame.dataArea.DataAreaPanel;
-import client.gui.mainFrame.viewingArea.ViewingAreaPanel;
-import client.gui.shared.*;
+import client.view.shared.*;
+import client.model.*;
+import client.view.mainFrame.buttonBar.ButtonPanel;
+import client.view.mainFrame.dataArea.DataAreaPanel;
+import client.view.mainFrame.viewingArea.ViewingAreaPanel;
 
-import client.dataModel.*;
 
 @SuppressWarnings("serial")
 public class MainFrame extends JFrame {
@@ -22,11 +24,11 @@ public class MainFrame extends JFrame {
 	private DataAreaPanel dataArea;
 	private ViewingAreaPanel viewingArea;
 	
-	private DataModel dataModel;
-	private MainFrameDimensions savedDimensions;
+	private Controller dataModel;
+//	private MainFrameDimensions savedDimensions;
 	
 	public MainFrame(String domain, int port) {
-		dataModel = new DataModel(domain, port);
+		dataModel = new Controller(domain, port);
 		
 		menubar = new MainFrameMenubar();
 		this.setJMenuBar(menubar);

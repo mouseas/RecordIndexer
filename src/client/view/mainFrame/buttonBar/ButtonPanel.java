@@ -1,4 +1,4 @@
-package client.gui.mainFrame.buttonBar;
+package client.view.mainFrame.buttonBar;
 
 import javax.swing.JPanel; // superclass
 import javax.swing.*;

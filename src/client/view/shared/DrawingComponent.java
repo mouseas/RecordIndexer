@@ -1,4 +1,4 @@
-package client.gui.shared;
+package client.view.shared;
 
 import javax.swing.JComponent; // superclass
 //import javax.swing.*;

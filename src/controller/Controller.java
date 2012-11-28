@@ -1,7 +1,6 @@
-package client.dataModel;
+package controller;
 
 import java.awt.Image;
-import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
@@ -9,8 +8,8 @@ import java.util.*;
 import javax.imageio.ImageIO;
 
 import shared.dataTransfer.*;
+import client.model.DataModel;
 import client.serverCommunicator.*;
-import client.gui.mainFrame.MainFrameDimensions;
 
 /**
  * Holds a model of the data which may be transferred to the server,
@@ -18,19 +17,14 @@ import client.gui.mainFrame.MainFrameDimensions;
  * @author Martin
  *
  */
-public class DataModel {
+public class Controller {
 	
 	private ServerCommunicator sc;
-
-	private List<Project> projectList;
+	private DataModel dm;
 	
-	private Batch currentBatch;
-	private Project currentProject;
-	private Record[][] currentRecordArray;
-	private Image currentBatchImage;
-	
-	public DataModel(String domain, int port) {
+	public Controller(String domain, int port) {
 		sc = new ServerCommunicator(domain, port);
+		dm = new DataModel();
 	}
 	
 	public boolean login(String username, String password) {
@@ -57,8 +51,8 @@ public class DataModel {
 	 */
 	public List<Project> getProjectList() {
 		if (!loggedIn()) { return null; }
-		if (projectList == null) { downloadProjectList(); }
-		return projectList;
+		if (dm.getProjects() == null) { downloadProjectList(); }
+		return dm.getProjects();
 	}
 	
 	/**
@@ -69,7 +63,7 @@ public class DataModel {
 	public boolean downloadNextBatch(Project p) {
 		if (!loggedIn()) { return false; }
 		if (p == null) { return false; }
-		if (currentBatch != null) { return false; } // already have a batch!
+		if (dm.getCurrentBatch() != null) { return false; } // already have a batch!
 		
 		// download the needed parts
 		BatchImage batchImage = sc.requestNextBatch(p.getID());
@@ -95,9 +89,9 @@ public class DataModel {
 		if (p == null || batch == null || fields == null) { return false; } // something went wrong
 		
 		// if no problems along the way, set the current references and return true.
-		currentProject = p;
-		currentBatch = batch;
-		currentRecordArray = records;
+		dm.setCurrentProject(p);
+		dm.setCurrentBatch(batch);
+		dm.setCurrentRecordGrid(records);
 		return true;
 	}
 	
@@ -119,11 +113,11 @@ public class DataModel {
 	 */
 	public void submitBatch() {
 		if (!loggedIn()) { return; }
-		if (currentBatch == null) { return; }
-		sc.submitBatch(currentBatch);
-		currentBatch = null;
-		currentRecordArray = null;
-		currentProject = null;
+		if (dm.getCurrentBatch() == null) { return; }
+		sc.submitBatch(dm.getCurrentBatch());
+		dm.setCurrentBatch(null);
+		dm.setCurrentRecordGrid(null);
+		dm.setCurrentProject(null);
 	}
 
 	/**
@@ -131,7 +125,7 @@ public class DataModel {
 	 * @return
 	 */
 	public Batch getCurrentBatch() {
-		return currentBatch;
+		return dm.getCurrentBatch();
 	}
 
 	/**
@@ -139,7 +133,7 @@ public class DataModel {
 	 * @return
 	 */
 	public Project getCurrentProject() {
-		return currentProject;
+		return dm.getCurrentProject();
 	}
 
 	/**
@@ -147,8 +141,8 @@ public class DataModel {
 	 * @return
 	 */
 	public List<Field> getCurrentFields() {
-		if (currentBatch == null) { return null; }
-		return currentBatch.getFields();
+		if (dm.getCurrentBatch() == null) { return null; }
+		return dm.getCurrentBatch().getFields();
 	}
 	
 	/**
@@ -157,7 +151,7 @@ public class DataModel {
 	 * @return
 	 */
 	public String getFieldHelp(int column) {
-		if (currentBatch == null || // verify inputs
+		if (dm.getCurrentBatch() == null || // verify inputs
 				column < 0 || 
 				column >= getCurrentFields().size()) {
 			return null;
@@ -181,19 +175,23 @@ public class DataModel {
 	 * @return
 	 */
 	public Image getImage() {
-		if (currentBatch == null) { return null; }
-		if (currentBatchImage != null) { return currentBatchImage; }
+		if (dm.getCurrentBatch() == null) {
+			return null;
+		}
+		if (dm.getCurrentBatchImage() != null) {
+			return dm.getCurrentBatchImage(); // already have it.
+		}
 		try {
-			String location = currentBatch.batchImage.getImage().getFilename();
+			String location = dm.getCurrentBatch().batchImage.getImage().getFilename();
 			InputStream stream = getFileFromServer(location);
 			Image result = ImageIO.read(stream);
-			currentBatchImage = result;
+			dm.setCurrentBatchImage(result);
 			return result;
 		} catch (Exception e) {
 			System.out.println("Error while reading image from stream.");
 			System.out.println(e.getMessage());
+			return null;
 		}
-		return null;
 	}
 
 	/**
@@ -203,7 +201,7 @@ public class DataModel {
 	 * @return
 	 */
 	public Record[][] getCurrentRecordArray() {
-		return currentRecordArray;
+		return dm.getCurrentRecordGrid();
 	}
 	
 	/**
@@ -212,8 +210,8 @@ public class DataModel {
 	 * @return
 	 */
 	public List<Record> getCurrentRecordList() {
-		if (currentBatch == null) { return null; }
-		return currentBatch.getRecords();
+		if (dm.getCurrentBatch() == null) { return null; }
+		return dm.getCurrentBatch().getRecords();
 	}
 	
 	/**
@@ -221,7 +219,7 @@ public class DataModel {
 	 */
 	private void downloadProjectList() {
 		if (!loggedIn()) { return; }
-		projectList = sc.requestProjectsList();
+		dm.setProjects(sc.requestProjectsList());
 	}
 	
 	/**

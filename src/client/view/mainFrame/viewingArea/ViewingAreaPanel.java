@@ -1,11 +1,11 @@
-package client.gui.mainFrame.viewingArea;
+package client.view.mainFrame.viewingArea;
 
 import javax.swing.JPanel; // parent class
 
 import java.awt.*;
 import java.awt.geom.*;
 
-import client.gui.shared.DrawingComponent;
+import client.view.shared.DrawingComponent;
 
 @SuppressWarnings("serial")
 public class ViewingAreaPanel extends JPanel {

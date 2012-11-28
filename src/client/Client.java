@@ -1,7 +1,8 @@
 package client;
 
 import java.awt.EventQueue;
-import client.gui.mainFrame.MainFrame;
+
+import client.view.mainFrame.MainFrame;
 
 /**
  * Starts the Client-side program
