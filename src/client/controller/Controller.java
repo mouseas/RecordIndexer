@@ -6,10 +6,12 @@ import java.net.URL;
 import java.util.*;
 
 import javax.imageio.ImageIO;
+import javax.swing.JOptionPane;
 
 import shared.dataTransfer.*;
 import client.model.DataModel;
 import client.serverCommunicator.*;
+import client.views.login.LoginDialog;
 import client.views.mainFrame.MainFrame;
 
 /**
@@ -20,7 +22,8 @@ import client.views.mainFrame.MainFrame;
  */
 public class Controller {
 	
-	private MainFrame view;
+	private MainFrame mainView;
+	private LoginDialog loginView;
 	private ServerCommunicator sc;
 	private DataModel dm;
 	
@@ -35,12 +38,20 @@ public class Controller {
 		dm = new DataModel();
 	}
 	
-	public MainFrame getView() {
-		return view;
+	public MainFrame getMainView() {
+		return mainView;
 	}
 
-	public void setView(MainFrame view) {
-		this.view = view;
+	public void setMainView(MainFrame view) {
+		this.mainView = view;
+	}
+
+	public LoginDialog getLoginView() {
+		return loginView;
+	}
+
+	public void setLoginView(LoginDialog loginView) {
+		this.loginView = loginView;
 	}
 	
 	/**
@@ -151,21 +162,37 @@ public class Controller {
 		
 	}
 	
-	public boolean login(String username, String password) {
+	public void login(String username, String password) {
 		// TODO this should be part of the Login window's MVC system.
 		User user = sc.verifyUser(username, password, true);
-		if (user != null) {
-			return true;
-		} else {
-			return false;
+		if (user != null && user.getID() >= 0) {
+			if (loginView != null) {
+				loginView.dispose();
+			}
+		} else if (user == null) { // probably no server connection
+			JOptionPane.showMessageDialog(mainView,
+				    "Error connection to server.",
+				    "Server Error",
+				    JOptionPane.ERROR_MESSAGE);
+		} else { // invalid credentials
+			JOptionPane.showMessageDialog(mainView,
+				    "That username and/or password are incorrect. Try again.",
+				    "Login Failed",
+				    JOptionPane.ERROR_MESSAGE);
 		}
+	}
+
+	public void exit() {
+		// TODO close the program.
+		System.out.println("Exit.");
+		mainView.dispose();
 	}
 	
 	/**
 	 * Determines if there is a user logged in.
 	 * @return
 	 */
-	private boolean loggedIn() {
+	public boolean loggedIn() {
 		return sc.getCurrentUser() != null;
 	}
 
@@ -261,6 +288,11 @@ public class Controller {
 			System.out.println(e.getMessage());
 			return null;
 		}
+	}
+
+	public void openDownloadWindow() {
+		// TODO Auto-generated method stub
+		
 	}
 
 	

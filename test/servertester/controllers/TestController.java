@@ -7,7 +7,7 @@ import shared.dataTransfer.*;
 
 import servertester.views.*;
 
-public class Controller implements IController {
+public class TestController implements IController {
 
 	private IView _view;
 	
@@ -17,7 +17,7 @@ public class Controller implements IController {
 	
 	private static final String FAIL = "FAILED\n";
 	
-	public Controller() {
+	public TestController() {
 		username = null;
 		password = null;
 		return;

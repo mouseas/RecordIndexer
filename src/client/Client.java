@@ -5,6 +5,7 @@ import java.awt.EventQueue;
 
 import client.controller.Controller;
 import client.views.mainFrame.MainFrame;
+import client.views.login.LoginDialog;
 
 /**
  * Starts the Client-side program
@@ -24,13 +25,21 @@ public class Client {
 				if (port < 0 || port > 65535) {
 					throw new Exception("Port number out of bounds: " + port);
 				}
+				System.out.println("Domain: [" + domain + "]");
+				System.out.println("Port: [" + port + "]");
 				EventQueue.invokeLater(new Runnable() {
 					public void run() {
-						MainFrame frame = new MainFrame();
 						Controller c = new Controller(domain, port);
-						frame.setVisible(true);
-						frame.setController(c);
-						c.setView(frame);
+						// make the main frame
+						MainFrame mainFrame = new MainFrame();
+						mainFrame.setController(c);
+						c.setMainView(mainFrame);
+						// make the login frame
+//						LoginDialog loginFrame = new LoginDialog();
+//						loginFrame.setController(c);
+//						c.setLoginView(loginFrame);
+						// make them both visible, with login screen on top.
+						mainFrame.setVisible(true);
 					}
 				});
 			} catch (Exception e) {

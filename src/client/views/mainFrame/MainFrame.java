@@ -2,12 +2,12 @@ package client.views.mainFrame;
 
 import javax.swing.*;
 
-
 import java.awt.*;
 //import java.awt.event.*;
 
 //import client.model.*;
 import client.controller.Controller;
+import client.views.login.LoginDialog;
 import client.views.mainFrame.buttonBar.ButtonPanel;
 import client.views.mainFrame.dataArea.DataAreaPanel;
 import client.views.mainFrame.viewingArea.ViewingAreaPanel;
@@ -35,13 +35,13 @@ public class MainFrame extends JFrame {
 		super(); // do whatever JFrame does. right?
 		
 		menubar = new MainFrameMenubar();
-		this.setJMenuBar(menubar);
+		setJMenuBar(menubar);
 		
-		this.setTitle("Record Indexer");
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.setLocation(100,20);
+		setTitle("Record Indexer");
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setLocation(100,20);
 
-		this.setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
+		setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
 		
 		buttonBar = new ButtonPanel();
 		dataArea = new DataAreaPanel();
@@ -53,16 +53,18 @@ public class MainFrame extends JFrame {
 		add(viewingArea);
 		add(dataArea);
 		
-		this.pack();
+		pack();
 	}
-
-	public void login(String username, String password) {
-		boolean success = controller.login(username, password);
-		if (success) {
-			loadState(username);
-			// TODO anything else on success?
-		} else {
-			// TODO login problem.
+	
+	/**
+	 * Overrides the normal setVisible method to pop up
+	 * a login dialog when the window is made visible.
+	 */
+	@Override
+	public void setVisible(boolean v) {
+		super.setVisible(v);
+		if (!controller.loggedIn()) {
+			createAndShowLoginDialog();
 		}
 	}
 	
@@ -78,7 +80,7 @@ public class MainFrame extends JFrame {
 	 * Logs out of the current user after saving their window state.
 	 */
 	public void logout() {
-		// TODO save window state.
+		// TODO move this to Controller
 		// savedDimensions -> get current window dimensions
 		// savedDimensions.serialize()
 		// saveFile(savedDimensionsSerialized, username + ".config")
@@ -90,5 +92,12 @@ public class MainFrame extends JFrame {
 		buttonBar.setController(c);
 		dataArea.setController(c);
 		viewingArea.setController(c);
+		menubar.setController(c);
+	}
+
+	private void createAndShowLoginDialog() {
+		LoginDialog loginDialog = new LoginDialog(this, controller);
+		controller.setLoginView(loginDialog);
+		loginDialog.setVisible(true);
 	}
 }

@@ -12,7 +12,7 @@ public class GuiTester {
 				new Runnable() {
 					public void run() {
 						IndexerServerTesterFrame frame = new IndexerServerTesterFrame();			
-						Controller controller = new Controller();
+						TestController controller = new TestController();
 						frame.setController(controller);			
 						controller.setView(frame);
 						controller.initialize();
