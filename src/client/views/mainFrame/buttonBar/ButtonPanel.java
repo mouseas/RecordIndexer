@@ -2,7 +2,8 @@ package client.views.mainFrame.buttonBar;
 
 import javax.swing.*;
 
-import controller.Controller;
+import client.controller.Controller;
+
 
 import java.awt.*;
 import java.awt.event.*;

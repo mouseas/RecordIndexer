@@ -2,18 +2,22 @@ package client.views.mainFrame;
 
 import javax.swing.*;
 
-import controller.Controller;
 
 import java.awt.*;
 //import java.awt.event.*;
 
 //import client.model.*;
+import client.controller.Controller;
 import client.views.mainFrame.buttonBar.ButtonPanel;
 import client.views.mainFrame.dataArea.DataAreaPanel;
 import client.views.mainFrame.viewingArea.ViewingAreaPanel;
 import client.views.shared.*;
 
-
+/**
+ * Main indexing window.
+ * @author Martin Carney
+ *
+ */
 @SuppressWarnings("serial")
 public class MainFrame extends JFrame {
 
@@ -35,8 +39,9 @@ public class MainFrame extends JFrame {
 		
 		this.setTitle("Record Indexer");
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
 		this.setLocation(100,20);
+
+		this.setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
 		
 		buttonBar = new ButtonPanel();
 		dataArea = new DataAreaPanel();

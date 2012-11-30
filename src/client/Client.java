@@ -2,8 +2,8 @@ package client;
 
 import java.awt.EventQueue;
 
-import controller.Controller;
 
+import client.controller.Controller;
 import client.views.mainFrame.MainFrame;
 
 /**

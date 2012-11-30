@@ -2,11 +2,11 @@ package client.views.mainFrame.viewingArea;
 
 import javax.swing.JPanel; // parent class
 
-import controller.Controller;
 
 import java.awt.*;
 import java.awt.geom.*;
 
+import client.controller.Controller;
 import client.views.shared.DrawingComponent;
 
 @SuppressWarnings("serial")
@@ -23,6 +23,7 @@ public class ViewingAreaPanel extends JPanel {
 		this.add(component, BorderLayout.CENTER);
 		currentImage = null;
 		offset = new Point2D.Double(0,0);
+		
 	}
 	
 	/**
