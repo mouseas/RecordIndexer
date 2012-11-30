@@ -38,22 +38,6 @@ public class Controller {
 		dm = new DataModel();
 	}
 	
-	public MainFrame getMainView() {
-		return mainView;
-	}
-
-	public void setMainView(MainFrame view) {
-		this.mainView = view;
-	}
-
-	public LoginDialog getLoginView() {
-		return loginView;
-	}
-
-	public void setLoginView(LoginDialog loginView) {
-		this.loginView = loginView;
-	}
-	
 	/**
 	 * Gets the projectList. Like most functions, requires that a user
 	 * be logged in.
@@ -108,17 +92,42 @@ public class Controller {
 		return true;
 	}
 	
+	public void login(String username, String password) {
+		// TODO this should be part of the Login window's MVC system.
+		User user = sc.verifyUser(username, password, true);
+		if (user != null && user.getID() >= 0) { // correct login
+			if (loginView != null) {
+				loginView.dispose();
+				loginView = null;
+			}
+			loadState(user.getUsername());
+			if (mainView != null) {
+				mainView.setVisible(true);
+			}
+		} else if (user == null) { // probably no server connection
+			JOptionPane.showMessageDialog(loginView,
+				    "Error connection to server.",
+				    "Server Error",
+				    JOptionPane.WARNING_MESSAGE);
+		} else { // invalid credentials
+			JOptionPane.showMessageDialog(loginView,
+				    "That username and/or password are incorrect. Try again.",
+				    "Login Failed",
+				    JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
 	/**
 	 * Saves the current state for that user, then logs out.
 	 * @return Whether the process was successful.
 	 */
-	public boolean logout() {
-		if (!loggedIn()) { return false; }
-		boolean result = true;
-		// TODO save the current batch (if any) to file
-		result &= sc.logout();
+	public void logout() {
+		if (!loggedIn()) { return; } // already logged out
+		saveState(sc.getCurrentUser().getUsername());
+		sc.logout();
+		mainView.setVisible(false);
+		mainView.createAndShowLoginDialog();
 		
-		return result;
 	}
 	
 	/**
@@ -156,32 +165,6 @@ public class Controller {
 		
 	}
 
-	public void saveState() {
-		System.out.println("Save current state");
-		// TODO implement save.
-		
-	}
-	
-	public void login(String username, String password) {
-		// TODO this should be part of the Login window's MVC system.
-		User user = sc.verifyUser(username, password, true);
-		if (user != null && user.getID() >= 0) {
-			if (loginView != null) {
-				loginView.dispose();
-			}
-		} else if (user == null) { // probably no server connection
-			JOptionPane.showMessageDialog(mainView,
-				    "Error connection to server.",
-				    "Server Error",
-				    JOptionPane.ERROR_MESSAGE);
-		} else { // invalid credentials
-			JOptionPane.showMessageDialog(mainView,
-				    "That username and/or password are incorrect. Try again.",
-				    "Login Failed",
-				    JOptionPane.ERROR_MESSAGE);
-		}
-	}
-
 	public void exit() {
 		// TODO close the program.
 		System.out.println("Exit.");
@@ -194,6 +177,43 @@ public class Controller {
 	 */
 	public boolean loggedIn() {
 		return sc.getCurrentUser() != null;
+	}
+	
+	public MainFrame getMainView() {
+		return mainView;
+	}
+
+	public void setMainView(MainFrame view) {
+		this.mainView = view;
+	}
+
+	public LoginDialog getLoginView() {
+		return loginView;
+	}
+
+	public void setLoginView(LoginDialog loginView) {
+		this.loginView = loginView;
+	}
+
+	public void save() {
+		// TODO Auto-generated method stub
+		if (!loggedIn()) { return; }
+		saveState(sc.getCurrentUser().getUsername());
+	}
+
+	public void openDownloadWindow() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * Loads the user's state from local file, if any is on file. If not,
+	 * loads the default settings.
+	 * @param username
+	 */
+	private void loadState(String username) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	/**
@@ -290,8 +310,9 @@ public class Controller {
 		}
 	}
 
-	public void openDownloadWindow() {
-		// TODO Auto-generated method stub
+	private void saveState(String username) {
+		System.out.println("Save current state");
+		// TODO implement save.
 		
 	}
 

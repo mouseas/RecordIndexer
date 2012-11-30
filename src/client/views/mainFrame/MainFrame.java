@@ -3,6 +3,9 @@ package client.views.mainFrame;
 import javax.swing.*;
 
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 //import java.awt.event.*;
 
 //import client.model.*;
@@ -29,6 +32,7 @@ public class MainFrame extends JFrame {
 	private ViewingAreaPanel viewingArea;
 	
 	private Controller controller;
+
 //	private MainFrameDimensions savedDimensions;
 	
 	public MainFrame() {
@@ -39,6 +43,7 @@ public class MainFrame extends JFrame {
 		
 		setTitle("Record Indexer");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.addWindowListener(windowListener);
 		setLocation(100,20);
 
 		setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
@@ -56,26 +61,18 @@ public class MainFrame extends JFrame {
 		pack();
 	}
 	
-	/**
-	 * Overrides the normal setVisible method to pop up
-	 * a login dialog when the window is made visible.
-	 */
-	@Override
-	public void setVisible(boolean v) {
-		super.setVisible(v);
-		if (!controller.loggedIn()) {
-			createAndShowLoginDialog();
-		}
-	}
-	
-	/**
-	 * Loads any saved window state associated with the current user.
-	 * If this is the user's first time logging in, loads the defaults.
-	 */
-	private void loadState(String username) {
-		// TODO load dimensions from file, then adjust window to match.
-	}
-	
+//	/**
+//	 * Overrides the normal setVisible method to pop up
+//	 * a login dialog when the window is made visible.
+//	 */
+//	@Override
+//	public void setVisible(boolean visible) {
+//		super.setVisible(visible);
+//		if (visible && !controller.loggedIn()) {
+//			createAndShowLoginDialog();
+//		}
+//	}
+
 	/**
 	 * Logs out of the current user after saving their window state.
 	 */
@@ -94,10 +91,37 @@ public class MainFrame extends JFrame {
 		viewingArea.setController(c);
 		menubar.setController(c);
 	}
+	
+	public void setMenuEnabled(boolean enable) {
+		menubar.setMenuEnabled(enable);
+	}
+	
+	public void setDownloadEnabled(boolean enable) {
+		menubar.setDownloadEnabled(enable);
+	}
 
-	private void createAndShowLoginDialog() {
+	public void createAndShowLoginDialog() {
 		LoginDialog loginDialog = new LoginDialog(this, controller);
 		controller.setLoginView(loginDialog);
 		loginDialog.setVisible(true);
+	}
+
+	/**
+	 * Adapter to make sure controller.exit() is called on closing the window,
+	 * in order to make sure the current state is saved.
+	 */
+	private WindowAdapter windowListener = new WindowAdapter() {
+		@Override
+		public void windowClosing(WindowEvent arg0) {
+			controller.exit();
+		}	
+	};
+	
+	/**
+	 * Loads any saved window state associated with the current user.
+	 * If this is the user's first time logging in, loads the defaults.
+	 */
+	private void loadState(String username) {
+		// TODO load dimensions from file, then adjust window to match.
 	}
 }

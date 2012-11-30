@@ -95,7 +95,7 @@ public class ButtonPanel extends JPanel {
 	private ActionListener saveListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			controller.saveState();
+			controller.save();
 		}
 	};
 	

@@ -14,17 +14,19 @@ public class MainFrameMenubar extends JMenuBar {
 	private JMenu file;
 	
 	private JMenuItem download;
-	private boolean downloadDisabled;
-	
 	private JMenuItem logout;
 	private JMenuItem exit;
+	
+	private boolean menuEnabled;
+	private boolean downloadEnabled;
 	
 	private Controller controller;
 	
 	public MainFrameMenubar() {
 		super();
 		
-		downloadDisabled = false;
+		menuEnabled = true;
+		downloadEnabled = true;
 		
 		file = new JMenu("File");
 		
@@ -76,7 +78,8 @@ public class MainFrameMenubar extends JMenuBar {
 	 * @param enabled
 	 */
 	public void setMenuEnabled(boolean enabled) {
-		if (downloadDisabled) {
+		menuEnabled = enabled;
+		if (downloadEnabled) { // only change its state if it is enabled.
 			download.setEnabled(enabled);
 		}
 		logout.setEnabled(enabled);
@@ -88,7 +91,9 @@ public class MainFrameMenubar extends JMenuBar {
 	 * @param enabled
 	 */
 	public void setDownloadEnabled(boolean enabled) {
-		downloadDisabled = !enabled;
-		download.setEnabled(enabled);
+		downloadEnabled = enabled;
+		if (menuEnabled) { // only change its state if the whole menu is enabled.
+			download.setEnabled(enabled);
+		}
 	}
 }
