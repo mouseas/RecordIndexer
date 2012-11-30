@@ -6,7 +6,7 @@ import javax.swing.*;
 
 import static servertester.views.Constants.*;
 
-@SuppressWarnings({"serial", "rawtypes", "unchecked"})
+@SuppressWarnings({"serial", "unchecked"})
 public class SettingsPanel extends BasePanel {
 	
 	private JTextField _hostTextField;

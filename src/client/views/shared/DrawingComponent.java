@@ -1,4 +1,4 @@
-package client.view.shared;
+package client.views.shared;
 
 import javax.swing.JComponent; // superclass
 //import javax.swing.*;

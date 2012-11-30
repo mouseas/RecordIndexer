@@ -1,4 +1,4 @@
-package client.view.mainFrame;
+package client.views.mainFrame;
 
 import javax.swing.*;
 

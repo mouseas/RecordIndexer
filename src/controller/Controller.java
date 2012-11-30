@@ -10,38 +10,37 @@ import javax.imageio.ImageIO;
 import shared.dataTransfer.*;
 import client.model.DataModel;
 import client.serverCommunicator.*;
+import client.views.mainFrame.MainFrame;
 
 /**
- * Holds a model of the data which may be transferred to the server,
- * saved, loaded, et cetera.
- * @author Martin
+ * Controls the main view. Event listeners call methods on it, such as download
+ * batch, and it adjusts the view accordingly.
+ * @author Martin Carney
  *
  */
 public class Controller {
 	
+	private MainFrame view;
 	private ServerCommunicator sc;
 	private DataModel dm;
 	
+	/**
+	 * Constructor. Requires the domain and port number of the server to
+	 * connect to.
+	 * @param domain
+	 * @param port
+	 */
 	public Controller(String domain, int port) {
 		sc = new ServerCommunicator(domain, port);
 		dm = new DataModel();
 	}
 	
-	public boolean login(String username, String password) {
-		User user = sc.verifyUser(username, password, true);
-		if (user != null) {
-			return true;
-		} else {
-			return false;
-		}
+	public MainFrame getView() {
+		return view;
 	}
-	
-	/**
-	 * Determines if there is a user logged in.
-	 * @return
-	 */
-	public boolean loggedIn() {
-		return sc.getCurrentUser() != null;
+
+	public void setView(MainFrame view) {
+		this.view = view;
 	}
 	
 	/**
@@ -50,6 +49,7 @@ public class Controller {
 	 * @return
 	 */
 	public List<Project> getProjectList() {
+		// TODO this needs to be part of the Download Batch window's MVC system.
 		if (!loggedIn()) { return null; }
 		if (dm.getProjects() == null) { downloadProjectList(); }
 		return dm.getProjects();
@@ -61,6 +61,8 @@ public class Controller {
 	 * @return Whether the download was successful.
 	 */
 	public boolean downloadNextBatch(Project p) {
+		// TODO this code needs to be somewhere else, and this function
+		// needs to open a Download Batch window.
 		if (!loggedIn()) { return false; }
 		if (p == null) { return false; }
 		if (dm.getCurrentBatch() != null) { return false; } // already have a batch!
@@ -112,35 +114,66 @@ public class Controller {
 	 * Submits a finished batch to the server.
 	 */
 	public void submitBatch() {
+		System.out.println("Submit Batch");
 		if (!loggedIn()) { return; }
 		if (dm.getCurrentBatch() == null) { return; }
-		sc.submitBatch(dm.getCurrentBatch());
-		dm.setCurrentBatch(null);
-		dm.setCurrentRecordGrid(null);
-		dm.setCurrentProject(null);
+//		sc.submitBatch(dm.getCurrentBatch());
+//		dm.setCurrentBatch(null);
+//		dm.setCurrentRecordGrid(null);
+//		dm.setCurrentProject(null);
+	}
+	
+	public void zoomIn() {
+		System.out.println("Zoom in");
+		// TODO implement zoom in
+	}
+	
+	public void zoomOut() {
+		System.out.println("Zoom out");
+		// TODO implement zoom out
 	}
 
-	/**
-	 * Gets the current batch
-	 * @return
-	 */
-	public Batch getCurrentBatch() {
-		return dm.getCurrentBatch();
+	public void invertImage() {
+		System.out.println("Invert image");
+		// TODO implement invertImage
+		
 	}
 
+	public void toggleHilight() {
+		System.out.println("Toggle highlights");
+		// TODO implement toggleHilight
+		
+	}
+
+	public void saveState() {
+		System.out.println("Save current state");
+		// TODO implement save.
+		
+	}
+	
+	public boolean login(String username, String password) {
+		// TODO this should be part of the Login window's MVC system.
+		User user = sc.verifyUser(username, password, true);
+		if (user != null) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 	/**
-	 * Gets the project associated with the current batch.
+	 * Determines if there is a user logged in.
 	 * @return
 	 */
-	public Project getCurrentProject() {
-		return dm.getCurrentProject();
+	private boolean loggedIn() {
+		return sc.getCurrentUser() != null;
 	}
 
 	/**
 	 * Gets the fields (aka columns) for the current batch.
 	 * @return
 	 */
-	public List<Field> getCurrentFields() {
+	private List<Field> getCurrentFields() {
 		if (dm.getCurrentBatch() == null) { return null; }
 		return dm.getCurrentBatch().getFields();
 	}
@@ -150,7 +183,7 @@ public class Controller {
 	 * @param column
 	 * @return
 	 */
-	public String getFieldHelp(int column) {
+	private String getFieldHelp(int column) {
 		if (dm.getCurrentBatch() == null || // verify inputs
 				column < 0 || 
 				column >= getCurrentFields().size()) {
@@ -174,7 +207,7 @@ public class Controller {
 	 * not already been downloaded this session.
 	 * @return
 	 */
-	public Image getImage() {
+	private Image getImage() {
 		if (dm.getCurrentBatch() == null) {
 			return null;
 		}
@@ -193,23 +226,13 @@ public class Controller {
 			return null;
 		}
 	}
-
-	/**
-	 * Gets a 2D array of the records associated with the current batch.
-	 * This is meant for easy, logical access for the GUI table.
-	 * It is organized: records[column][row].
-	 * @return
-	 */
-	public Record[][] getCurrentRecordArray() {
-		return dm.getCurrentRecordGrid();
-	}
 	
 	/**
 	 * Gets a 1D list of records associated with the current batch.
 	 * This is useful for loop processing.
 	 * @return
 	 */
-	public List<Record> getCurrentRecordList() {
+	private List<Record> getCurrentRecordList() {
 		if (dm.getCurrentBatch() == null) { return null; }
 		return dm.getCurrentBatch().getRecords();
 	}
@@ -239,6 +262,7 @@ public class Controller {
 			return null;
 		}
 	}
+
 	
 	
 	

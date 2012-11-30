@@ -1,4 +1,4 @@
-package client.view.mainFrame;
+package client.views.mainFrame;
 
 /**
  * Stores the dimensions for the Main Frame window, used when

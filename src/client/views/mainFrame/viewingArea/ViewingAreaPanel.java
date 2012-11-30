@@ -1,11 +1,13 @@
-package client.view.mainFrame.viewingArea;
+package client.views.mainFrame.viewingArea;
 
 import javax.swing.JPanel; // parent class
+
+import controller.Controller;
 
 import java.awt.*;
 import java.awt.geom.*;
 
-import client.view.shared.DrawingComponent;
+import client.views.shared.DrawingComponent;
 
 @SuppressWarnings("serial")
 public class ViewingAreaPanel extends JPanel {
@@ -13,6 +15,8 @@ public class ViewingAreaPanel extends JPanel {
 	private DrawingComponent component;
 	private Image currentImage;
 	private Point2D offset;
+
+	private Controller controller;
 	
 	public ViewingAreaPanel() {
 		component = new DrawingComponent();
@@ -34,5 +38,9 @@ public class ViewingAreaPanel extends JPanel {
 			component.addImage(currentImage, offset);
 		}
 		
+	}
+
+	public void setController(Controller c) {
+		controller = c;
 	}
 }

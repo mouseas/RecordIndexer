@@ -1,4 +1,4 @@
-package client.view.mainFrame.dataArea;
+package client.views.mainFrame.dataArea;
 
 import javax.swing.JPanel;
 

@@ -4,6 +4,7 @@ import servertester.controllers.*;
 
 public class TestView implements IView {
 
+	@SuppressWarnings("unused")
 	private IController _controller;
 	private String _host;
 	private String _port;

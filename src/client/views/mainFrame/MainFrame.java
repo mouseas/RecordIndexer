@@ -1,17 +1,17 @@
-package client.view.mainFrame;
+package client.views.mainFrame;
 
 import javax.swing.*;
 
 import controller.Controller;
 
 import java.awt.*;
-import java.awt.event.*;
+//import java.awt.event.*;
 
-import client.view.shared.*;
-import client.model.*;
-import client.view.mainFrame.buttonBar.ButtonPanel;
-import client.view.mainFrame.dataArea.DataAreaPanel;
-import client.view.mainFrame.viewingArea.ViewingAreaPanel;
+//import client.model.*;
+import client.views.mainFrame.buttonBar.ButtonPanel;
+import client.views.mainFrame.dataArea.DataAreaPanel;
+import client.views.mainFrame.viewingArea.ViewingAreaPanel;
+import client.views.shared.*;
 
 
 @SuppressWarnings("serial")
@@ -24,22 +24,19 @@ public class MainFrame extends JFrame {
 	private DataAreaPanel dataArea;
 	private ViewingAreaPanel viewingArea;
 	
-	private Controller dataModel;
+	private Controller controller;
 //	private MainFrameDimensions savedDimensions;
 	
-	public MainFrame(String domain, int port) {
-		dataModel = new Controller(domain, port);
+	public MainFrame() {
+		super(); // do whatever JFrame does. right?
 		
 		menubar = new MainFrameMenubar();
 		this.setJMenuBar(menubar);
 		
 		this.setTitle("Record Indexer");
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
 		this.setLocation(100,20);
-		
-		this.addWindowListener(windowAdaptor);
-		this.addWindowFocusListener(windowAdaptor);
-		this.addWindowStateListener(windowAdaptor);
 		
 		buttonBar = new ButtonPanel();
 		dataArea = new DataAreaPanel();
@@ -47,22 +44,15 @@ public class MainFrame extends JFrame {
 		Image mario = DrawingComponent.loadImage("mario.jpg");
 		viewingArea.setImage(mario);
 		
-		this.add(buttonBar, BorderLayout.NORTH);
-		this.add(viewingArea, BorderLayout.CENTER);
-		this.add(dataArea, BorderLayout.SOUTH);
+		add(buttonBar);
+		add(viewingArea);
+		add(dataArea);
 		
 		this.pack();
 	}
-	
-	private WindowAdapter windowAdaptor = new WindowAdapter() {
-		@Override
-		public void windowGainedFocus(WindowEvent e) {
-//			component.requestFocusInWindow();
-		}
-	};
 
 	public void login(String username, String password) {
-		boolean success = dataModel.login(username, password);
+		boolean success = controller.login(username, password);
 		if (success) {
 			loadState(username);
 			// TODO anything else on success?
@@ -87,6 +77,13 @@ public class MainFrame extends JFrame {
 		// savedDimensions -> get current window dimensions
 		// savedDimensions.serialize()
 		// saveFile(savedDimensionsSerialized, username + ".config")
-		dataModel.logout();
+		controller.logout();
+	}
+
+	public void setController(Controller c) {
+		controller = c;
+		buttonBar.setController(c);
+		dataArea.setController(c);
+		viewingArea.setController(c);
 	}
 }

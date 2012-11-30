@@ -2,7 +2,9 @@ package client;
 
 import java.awt.EventQueue;
 
-import client.view.mainFrame.MainFrame;
+import controller.Controller;
+
+import client.views.mainFrame.MainFrame;
 
 /**
  * Starts the Client-side program
@@ -24,8 +26,11 @@ public class Client {
 				}
 				EventQueue.invokeLater(new Runnable() {
 					public void run() {
-						MainFrame frame = new MainFrame(domain, port);
+						MainFrame frame = new MainFrame();
+						Controller c = new Controller(domain, port);
 						frame.setVisible(true);
+						frame.setController(c);
+						c.setView(frame);
 					}
 				});
 			} catch (Exception e) {
