@@ -5,7 +5,6 @@ import java.awt.EventQueue;
 
 import client.controller.Controller;
 import client.views.mainFrame.MainFrame;
-import client.views.login.LoginDialog;
 
 /**
  * Starts the Client-side program
@@ -34,7 +33,7 @@ public class Client {
 						MainFrame mainFrame = new MainFrame();
 						mainFrame.setController(c);
 						c.setMainView(mainFrame);
-						mainFrame.createAndShowLoginDialog();
+						mainFrame.createAndShowLoginDialog(); // open login screen
 					}
 				});
 			} catch (Exception e) {

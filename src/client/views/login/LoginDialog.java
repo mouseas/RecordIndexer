@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 
 import client.controller.Controller;
 
+@SuppressWarnings("serial")
 public class LoginDialog extends JDialog {
 	
 	private Controller controller;
@@ -87,13 +88,18 @@ public class LoginDialog extends JDialog {
 		labels.setLayout(new BoxLayout(labels, BoxLayout.Y_AXIS));
 		boxes.setLayout(new BoxLayout(boxes, BoxLayout.Y_AXIS));
 		
-		labels.add(new JLabel("Username:"));
+		JLabel temp = new JLabel("Username:");
+		temp.setPreferredSize(labelSize);
+		labels.add(temp);
 		labels.add(Box.createRigidArea(spacer));
-		labels.add(new JLabel("Password:"));
+		temp = new JLabel("Password:");
+		temp.setPreferredSize(labelSize);
+		labels.add(temp);
 		
-		fldUsername = new JTextField();
+		// TODO remove username and password from fields once done testing
+		fldUsername = new JTextField("test1"); // debug - put in test1 user info to save me typing it each time.
 		fldUsername.setPreferredSize(fieldSize);
-		fldPassword = new JPasswordField();
+		fldPassword = new JPasswordField("test1"); // debug
 		fldPassword.setPreferredSize(fieldSize);
 		boxes.add(fldUsername);
 		boxes.add(Box.createRigidArea(spacer));

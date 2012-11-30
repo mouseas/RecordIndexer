@@ -25,9 +25,12 @@ public class ButtonPanel extends JPanel {
 	public ButtonPanel() {
 		createButtons();
 		this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+		
+		Dimension spacer = new Dimension(4,3);
+		add(Box.createRigidArea(spacer));
 		for(JButton btn : buttons) {
 			add(btn);
-			add(Box.createRigidArea(new Dimension(4,3)));
+			add(Box.createRigidArea(spacer));
 		}
 		add(Box.createHorizontalGlue());
 	}

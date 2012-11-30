@@ -230,6 +230,7 @@ public class Controller {
 	 * @param column
 	 * @return
 	 */
+	@SuppressWarnings("unused")
 	private String getFieldHelp(int column) {
 		if (dm.getCurrentBatch() == null || // verify inputs
 				column < 0 || 
@@ -254,6 +255,7 @@ public class Controller {
 	 * not already been downloaded this session.
 	 * @return
 	 */
+	@SuppressWarnings("unused")
 	private Image getImage() {
 		if (dm.getCurrentBatch() == null) {
 			return null;
@@ -279,6 +281,7 @@ public class Controller {
 	 * This is useful for loop processing.
 	 * @return
 	 */
+	@SuppressWarnings("unused")
 	private List<Record> getCurrentRecordList() {
 		if (dm.getCurrentBatch() == null) { return null; }
 		return dm.getCurrentBatch().getRecords();

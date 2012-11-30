@@ -16,6 +16,7 @@ public class ViewingAreaPanel extends JPanel {
 	private Image currentImage;
 	private Point2D offset;
 
+	@SuppressWarnings("unused")
 	private Controller controller;
 	
 	public ViewingAreaPanel() {

@@ -3,12 +3,8 @@ package client.views.mainFrame;
 import javax.swing.*;
 
 import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-//import java.awt.event.*;
+import java.awt.event.*;
 
-//import client.model.*;
 import client.controller.Controller;
 import client.views.login.LoginDialog;
 import client.views.mainFrame.buttonBar.ButtonPanel;
@@ -53,7 +49,8 @@ public class MainFrame extends JFrame {
 		viewingArea = new ViewingAreaPanel();
 		Image mario = DrawingComponent.loadImage("mario.jpg");
 		viewingArea.setImage(mario);
-		
+
+		add(Box.createRigidArea(new Dimension(5, 5)));
 		add(buttonBar);
 		add(viewingArea);
 		add(dataArea);
@@ -117,11 +114,11 @@ public class MainFrame extends JFrame {
 		}	
 	};
 	
-	/**
-	 * Loads any saved window state associated with the current user.
-	 * If this is the user's first time logging in, loads the defaults.
-	 */
-	private void loadState(String username) {
-		// TODO load dimensions from file, then adjust window to match.
-	}
+//	/**
+//	 * Loads any saved window state associated with the current user.
+//	 * If this is the user's first time logging in, loads the defaults.
+//	 */
+//	private void loadState(String username) {
+//		// TODO load dimensions from file, then adjust window to match.
+//	}
 }
