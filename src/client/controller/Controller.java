@@ -1,5 +1,6 @@
 package client.controller;
 
+import java.awt.Dimension;
 import java.awt.Image;
 import java.io.InputStream;
 import java.net.URL;
@@ -131,6 +132,14 @@ public class Controller {
 	}
 	
 	/**
+	 * Determines if there is a user logged in.
+	 * @return
+	 */
+	public boolean loggedIn() {
+		return sc.getCurrentUser() != null;
+	}
+	
+	/**
 	 * Submits a finished batch to the server.
 	 */
 	public void submitBatch() {
@@ -145,6 +154,8 @@ public class Controller {
 	
 	public void zoomIn() {
 		System.out.println("Zoom in");
+		Dimension window = mainView.getSize();
+		System.out.println("Width: " + window.width + " Height: " + window.height);
 		// TODO implement zoom in
 	}
 	
@@ -169,14 +180,6 @@ public class Controller {
 		// TODO close the program.
 		System.out.println("Exit.");
 		mainView.dispose();
-	}
-	
-	/**
-	 * Determines if there is a user logged in.
-	 * @return
-	 */
-	public boolean loggedIn() {
-		return sc.getCurrentUser() != null;
 	}
 	
 	public MainFrame getMainView() {

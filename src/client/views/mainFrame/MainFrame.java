@@ -28,6 +28,8 @@ public class MainFrame extends JFrame {
 	private ViewingAreaPanel viewingArea;
 	
 	private Controller controller;
+	
+	private static final Dimension minWindowSize = new Dimension(233, 253);
 
 //	private MainFrameDimensions savedDimensions;
 	
@@ -39,8 +41,11 @@ public class MainFrame extends JFrame {
 		
 		setTitle("Record Indexer");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.addWindowListener(windowListener);
 		setLocation(100,20);
+		setMinimumSize(minWindowSize);
+		
+		getContentPane().addComponentListener(resizeListener);
+		addWindowListener(windowListener);
 
 		setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
 		
@@ -111,7 +116,14 @@ public class MainFrame extends JFrame {
 		@Override
 		public void windowClosing(WindowEvent arg0) {
 			controller.exit();
-		}	
+		}
+	};
+	
+	private ComponentAdapter resizeListener = new ComponentAdapter() {
+		@Override
+		public void componentResized(ComponentEvent e) {
+			// TODO handle window resizing here.
+		}
 	};
 	
 //	/**
