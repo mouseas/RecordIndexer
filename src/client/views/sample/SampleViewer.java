@@ -43,9 +43,7 @@ public class SampleViewer extends JDialog {
 		setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		setModal(true);
-//		setResizable(false); // spec requires this to be true.
-		// TODO Need to determine ideal scale for drawingComponent to prevent it
-		// being too big or too small.
+		setResizable(false); // spec requires this to be set to false.
 		
 		add(Box.createRigidArea(spacer));
 		buildTop();
@@ -53,9 +51,6 @@ public class SampleViewer extends JDialog {
 		buildBottom();
 		add(Box.createRigidArea(spacer));
 
-		Dimension screenSize = new Dimension(Toolkit.getDefaultToolkit().getScreenSize());
-		screenSize.setSize(screenSize.getWidth() - 250, screenSize.getHeight() - 250);
-		setMaximumSize(screenSize); // prevents window being too big for screen.
 		
 		pack();
 	}
@@ -65,7 +60,7 @@ public class SampleViewer extends JDialog {
 		top.setLayout(new BoxLayout(top, BoxLayout.X_AXIS));
 		
 		drawingComponent = new DrawingComponent();
-		drawingComponent.setScale(0.5);
+		drawingComponent.setScale(determineScale(image));
 		drawingComponent.addImage(image);
 		top.add(drawingComponent);
 		
@@ -81,6 +76,35 @@ public class SampleViewer extends JDialog {
 		bottom.add(btnClose);
 		
 		add(bottom);
+	}
+	
+	/**
+	 * Determines the appropriate scale factor based on the size of the image
+	 * and of the user's screen.
+	 * @param image Image to check against
+	 * @return Double value to use for scaling the view image.
+	 * Returns the smallest of 1.0, the 
+	 */
+	private double determineScale(Image image) {
+		final int MARGIN_X_SIZE = 60;
+		final int MARGIN_Y_SIZE = 120; // leaves enough room for button on the bottom
+		Dimension screenSize = new Dimension(Toolkit.getDefaultToolkit().getScreenSize());
+		// reduce the dimension by the margins given above.
+		screenSize.setSize(screenSize.getWidth() - MARGIN_X_SIZE,
+							screenSize.getHeight() - MARGIN_Y_SIZE);
+		double scaleX = 1.0;
+		double scaleY = 1.0;
+		
+		// calculate X and Y scale factors
+		if (screenSize.getWidth() < image.getWidth(null)) {
+			scaleX = screenSize.getWidth() / image.getWidth(null);
+		}
+		if (screenSize.getHeight() < image.getHeight(null)) {
+			scaleY = screenSize.getHeight() / image.getHeight(null);
+		}
+		
+		// return the smaller scale factor, or 1.0 if both are > 1
+		return Math.min(1.0, Math.min(scaleX, scaleY));
 	}
 	
 	private ActionListener closeListener = new ActionListener() {

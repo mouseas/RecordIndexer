@@ -23,6 +23,8 @@ public class DrawingComponent extends JComponent {
 	 * Default constructor
 	 */
 	public DrawingComponent() {
+		scale = 1.0;
+		
 		shapes = new ArrayList<DrawingShape>();
 		
 		this.setBackground(new Color(255, 255, 255));
