@@ -12,6 +12,7 @@ import javax.swing.JOptionPane;
 import shared.dataTransfer.*;
 import client.model.DataModel;
 import client.serverCommunicator.*;
+import client.views.download.ProjectDialog;
 import client.views.login.LoginDialog;
 import client.views.mainFrame.MainFrame;
 
@@ -25,6 +26,7 @@ public class Controller {
 	
 	private MainFrame mainView;
 	private LoginDialog loginView;
+	private ProjectDialog downloadView;
 	private ServerCommunicator sc;
 	private DataModel dm;
 	
@@ -105,6 +107,12 @@ public class Controller {
 			if (mainView != null) {
 				mainView.setVisible(true);
 			}
+			String welcome = "Welcome, " + user.getFullName() + ".\n" +
+					"You have indexed " + user.getNumIndexedRecords() + " records.";
+			JOptionPane.showMessageDialog(mainView, 
+					welcome,
+					"Welcome",
+					JOptionPane.INFORMATION_MESSAGE);
 		} else if (user == null) { // probably no server connection
 			JOptionPane.showMessageDialog(loginView,
 				    "Error connection to server.",
@@ -127,8 +135,7 @@ public class Controller {
 		saveState(sc.getCurrentUser().getUsername());
 		sc.logout();
 		mainView.setVisible(false);
-		mainView.createAndShowLoginDialog();
-		
+		createAndShowLoginDialog();
 	}
 	
 	/**
@@ -198,6 +205,14 @@ public class Controller {
 		this.loginView = loginView;
 	}
 
+	public ProjectDialog getDownloadView() {
+		return downloadView;
+	}
+
+	public void setDownloadView(ProjectDialog downloadView) {
+		this.downloadView = downloadView;
+	}
+
 	public void save() {
 		// TODO Auto-generated method stub
 		if (!loggedIn()) { return; }
@@ -205,8 +220,17 @@ public class Controller {
 	}
 
 	public void openDownloadWindow() {
-		// TODO Auto-generated method stub
-		
+		downloadProjectList();
+		List<Project> projects = dm.getProjects();
+		ProjectDialog downloadDialog = new ProjectDialog(mainView, this, projects);
+		setDownloadView(downloadDialog);
+		downloadDialog.setVisible(true);
+	}
+
+	public void createAndShowLoginDialog() {
+		LoginDialog loginDialog = new LoginDialog(mainView, this);
+		setLoginView(loginDialog);
+		loginDialog.setVisible(true);
 	}
 
 	/**

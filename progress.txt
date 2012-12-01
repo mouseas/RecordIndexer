@@ -1,0 +1,17 @@
+3 / 3	Server Location
+7 / 7	Login Logout
+0 / 7	Persistent User State
+0 / 7	Download Batch
+0 / 6	View Sample Image
+8 / 8	Main Indexing Window // Still need to deal with split pane scaling
+0 / 14	Image Panel
+0 / 10	Table Data Entry
+0 / 10	Form Data Entry
+0 / 4	Field Help
+0 / 8	Batch State Synch
+0 / 6	Submit Batches
+0 / 10	Quality Checker
+0 / 0	Image Navigator (10 points extra cred)
+
+Total
+18/100

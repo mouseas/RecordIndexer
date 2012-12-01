@@ -102,12 +102,6 @@ public class MainFrame extends JFrame {
 		menubar.setDownloadEnabled(enable);
 	}
 
-	public void createAndShowLoginDialog() {
-		LoginDialog loginDialog = new LoginDialog(this, controller);
-		controller.setLoginView(loginDialog);
-		loginDialog.setVisible(true);
-	}
-
 	/**
 	 * Adapter to make sure controller.exit() is called on closing the window,
 	 * in order to make sure the current state is saved.

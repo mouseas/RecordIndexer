@@ -33,7 +33,7 @@ public class Client {
 						MainFrame mainFrame = new MainFrame();
 						mainFrame.setController(c);
 						c.setMainView(mainFrame);
-						mainFrame.createAndShowLoginDialog(); // open login screen
+						c.createAndShowLoginDialog(); // open login screen
 					}
 				});
 			} catch (Exception e) {
