@@ -46,7 +46,7 @@ public class MainFrameMenubar extends JMenuBar {
 	ActionListener downloadListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			controller.openDownloadWindow();
+			controller.openDownloadDialog();
 		}
 	};
 	

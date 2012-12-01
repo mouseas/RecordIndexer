@@ -135,7 +135,7 @@ public class Controller {
 		saveState(sc.getCurrentUser().getUsername());
 		sc.logout();
 		mainView.setVisible(false);
-		createAndShowLoginDialog();
+		openLoginDialog();
 	}
 	
 	/**
@@ -219,15 +219,22 @@ public class Controller {
 		saveState(sc.getCurrentUser().getUsername());
 	}
 
-	public void openDownloadWindow() {
+	public void openDownloadDialog() {
 		downloadProjectList();
 		List<Project> projects = dm.getProjects();
 		ProjectDialog downloadDialog = new ProjectDialog(mainView, this, projects);
 		setDownloadView(downloadDialog);
 		downloadDialog.setVisible(true);
 	}
+	
+	public void closeDownloadDialog() {
+		if (downloadView != null) {
+			downloadView.dispose();
+			downloadView = null;
+		}
+	}
 
-	public void createAndShowLoginDialog() {
+	public void openLoginDialog() {
 		LoginDialog loginDialog = new LoginDialog(mainView, this);
 		setLoginView(loginDialog);
 		loginDialog.setVisible(true);
