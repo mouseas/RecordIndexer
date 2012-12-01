@@ -262,6 +262,7 @@ public class Controller {
 		if (p == null || batch == null || fields == null) { return; } // something went wrong
 		
 		// if no problems along the way, set the current references and return true.
+		mainView.getMenubar().setDownloadEnabled(false);
 		dm.setCurrentProject(p);
 		dm.setCurrentBatch(batch);
 		dm.setCurrentRecordGrid(records);
@@ -274,7 +275,7 @@ public class Controller {
 	private void downloadImageToModel() {
 		if (dm.getCurrentBatch() == null) { return; }
 		String urlStr = dm.getCurrentBatch().batchImage.getImage().getFilename();
-		System.out.println(urlStr);
+//		System.out.println(urlStr);
 		InputStream inStream = getFileFromServer(urlStr);
 		Image result = null;
 		try {

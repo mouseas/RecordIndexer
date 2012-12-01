@@ -130,6 +130,10 @@ public class MainFrame extends JFrame {
 			// TODO handle window resizing here.
 		}
 	};
+
+	public MainFrameMenubar getMenubar() {
+		return menubar;
+	}
 	
 //	/**
 //	 * Loads any saved window state associated with the current user.
