@@ -12,7 +12,7 @@ import client.views.shared.DrawingComponent;
 @SuppressWarnings("serial")
 public class ViewingAreaPanel extends JPanel {
 	
-	private DrawingComponent drawingComponent;
+	private ViewDrawingComponent drawingComponent;
 	private Image currentImage;
 	private Point2D offset;
 
@@ -21,7 +21,7 @@ public class ViewingAreaPanel extends JPanel {
 	
 	public ViewingAreaPanel() {
 		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-		drawingComponent = new DrawingComponent();
+		drawingComponent = new ViewDrawingComponent();
 		add(drawingComponent);
 		currentImage = null;
 		offset = new Point2D.Double(0,0);

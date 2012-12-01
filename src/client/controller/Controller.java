@@ -223,8 +223,8 @@ public class Controller {
 	}
 
 	public void viewSample(Project p) {
-		// TODO Download and display a sample image in its own dialog
-		
+		SampleController s = new SampleController(sc, p);
+		s.buildAndOpenViewer();
 	}
 	
 	/**
