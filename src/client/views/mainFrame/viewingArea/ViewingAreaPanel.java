@@ -40,6 +40,8 @@ public class ViewingAreaPanel extends JPanel {
 		if (newImage != null) {
 			drawingComponent.addImage(currentImage, offset);
 		}
+		drawingComponent.repaint();
+		drawingComponent.validate();
 		
 	}
 

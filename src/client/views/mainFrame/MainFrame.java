@@ -6,7 +6,6 @@ import java.awt.*;
 import java.awt.event.*;
 
 import client.controller.Controller;
-import client.views.login.LoginDialog;
 import client.views.mainFrame.buttonBar.ButtonPanel;
 import client.views.mainFrame.dataArea.DataAreaPanel;
 import client.views.mainFrame.viewingArea.ViewingAreaPanel;
@@ -100,6 +99,18 @@ public class MainFrame extends JFrame {
 	
 	public void setDownloadEnabled(boolean enable) {
 		menubar.setDownloadEnabled(enable);
+	}
+
+	public ButtonPanel getButtonBar() {
+		return buttonBar;
+	}
+
+	public DataAreaPanel getDataArea() {
+		return dataArea;
+	}
+
+	public ViewingAreaPanel getViewingArea() {
+		return viewingArea;
 	}
 
 	/**

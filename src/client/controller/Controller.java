@@ -2,6 +2,7 @@ package client.controller;
 
 import java.awt.Dimension;
 import java.awt.Image;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
@@ -58,45 +59,27 @@ public class Controller {
 	 * the current project.
 	 * @return Whether the download was successful.
 	 */
-	public boolean downloadNextBatch(Project p) {
-		// TODO this code needs to be somewhere else, and this function
-		// needs to open a Download Batch window.
-		if (!loggedIn()) { return false; }
-		if (p == null) { return false; }
-		if (dm.getCurrentBatch() != null) { return false; } // already have a batch!
+	public void downloadNextBatch(Project p) {
+		if (!loggedIn()) { return; }
+		if (p == null) { return; }
+		if (dm.getCurrentBatch() != null) { return; } // already have a batch!
 		
-		// download the needed parts
-		BatchImage batchImage = sc.requestNextBatch(p.getID());
-		Batch batch = new Batch(batchImage);
-		List<Field> fields = sc.requestFieldsList(p);
-		batch.setFields(fields);
-		int rows = p.getRecordsPerImage();
-		int columns = fields.size();
+		downloadBatchToModel(p);
+		downloadImageToModel();
+		placeImageInView();
 		
-		// generate empty records in 2D array, and in Batch object
-		Record[][] records = new Record[columns][rows];
-		for (int column = 0; column < records.length; column++) {
-			for (int row = 0; row < records[column].length; row++) {
-				records[column][row] = new Record(
-						(row * columns) + column, 
-						batch.batchImage.getID(), 
-						fields.get(column).getID(),
-						row, "");
-				batch.addRecord(records[column][row]);
-			}
+		if (downloadView != null) {
+			downloadView.dispose();
+			downloadView = null;
 		}
-
-		if (p == null || batch == null || fields == null) { return false; } // something went wrong
-		
-		// if no problems along the way, set the current references and return true.
-		dm.setCurrentProject(p);
-		dm.setCurrentBatch(batch);
-		dm.setCurrentRecordGrid(records);
-		return true;
 	}
-	
+
+	/**
+	 * Logs a user in from the login screen.
+	 * @param username
+	 * @param password
+	 */
 	public void login(String username, String password) {
-		// TODO this should be part of the Login window's MVC system.
 		User user = sc.verifyUser(username, password, true);
 		if (user != null && user.getID() >= 0) { // correct login
 			if (loginView != null) {
@@ -115,7 +98,8 @@ public class Controller {
 					JOptionPane.INFORMATION_MESSAGE);
 		} else if (user == null) { // probably no server connection
 			JOptionPane.showMessageDialog(loginView,
-				    "Error connection to server.",
+				    "Error connecting to server.\n" +
+				    "Most likely the server is not running.",
 				    "Server Error",
 				    JOptionPane.WARNING_MESSAGE);
 		} else { // invalid credentials
@@ -161,8 +145,6 @@ public class Controller {
 	
 	public void zoomIn() {
 		System.out.println("Zoom in");
-		Dimension window = mainView.getSize();
-		System.out.println("Width: " + window.width + " Height: " + window.height);
 		// TODO implement zoom in
 	}
 	
@@ -238,6 +220,81 @@ public class Controller {
 		LoginDialog loginDialog = new LoginDialog(mainView, this);
 		setLoginView(loginDialog);
 		loginDialog.setVisible(true);
+	}
+
+	public void viewSample(Project p) {
+		// TODO Download and display a sample image in its own dialog
+		
+	}
+	
+	/**
+	 * Part of the Download Next Batch process, this method does the actual
+	 * downloading, and loads the values into the controller's DataModel 
+	 * object.
+	 * @param p Project to download a batch from.
+	 */
+	private void downloadBatchToModel(Project p) {
+		// download the needed parts
+		BatchImage batchImage = sc.requestNextBatch(p.getID());
+		if (batchImage == null) { 
+			System.out.println("");
+			return; // something failed.
+		} 
+		Batch batch = new Batch(batchImage);
+		List<Field> fields = sc.requestFieldsList(p);
+		batch.setFields(fields);
+		int rows = p.getRecordsPerImage();
+		int columns = fields.size();
+		
+		// generate empty records in 2D array, and in Batch object
+		Record[][] records = new Record[columns][rows];
+		for (int column = 0; column < records.length; column++) {
+			for (int row = 0; row < records[column].length; row++) {
+				records[column][row] = new Record(
+						(row * columns) + column, 
+						batch.batchImage.getID(), 
+						fields.get(column).getID(),
+						row, "");
+				batch.addRecord(records[column][row]);
+			}
+		}
+
+		if (p == null || batch == null || fields == null) { return; } // something went wrong
+		
+		// if no problems along the way, set the current references and return true.
+		dm.setCurrentProject(p);
+		dm.setCurrentBatch(batch);
+		dm.setCurrentRecordGrid(records);
+	}
+
+	/**
+	 * Part of the batch download process, this downloads the image file and
+	 * saves it to the DataModel.
+	 */
+	private void downloadImageToModel() {
+		if (dm.getCurrentBatch() == null) { return; }
+		String urlStr = dm.getCurrentBatch().batchImage.getImage().getFilename();
+		System.out.println(urlStr);
+		InputStream inStream = getFileFromServer(urlStr);
+		Image result = null;
+		try {
+			result = ImageIO.read(inStream);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		if (result != null) {
+			dm.setCurrentBatchImage(result);
+		}
+	}
+	
+	/**
+	 * Part of the batch download process, this places the downloaded image
+	 * into the ViewArea of the MainFrame window.
+	 */
+	private void placeImageInView() {
+		if (dm.getCurrentBatchImage() == null) { return; }
+		Image image = dm.getCurrentBatchImage();
+		mainView.getViewingArea().setImage(image);
 	}
 
 	/**

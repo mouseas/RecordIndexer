@@ -31,6 +31,10 @@ public class ImageReference {
 		XStream xstream = new XStream(new DomDriver());
 		return xstream.toXML(image);
 	}
+
+	public void setFilename(String filename) {
+		this.filename = filename;
+	}
 	
 	
 }

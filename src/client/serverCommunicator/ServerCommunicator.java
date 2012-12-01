@@ -131,6 +131,7 @@ public class ServerCommunicator {
 					"&project=" + p.getID());
 			Object xstreamResult = processRequest(url);
 			ImageReference image = (ImageReference)xstreamResult;
+			image.setFilename(filenameHeader() + image.getFilename());
 			return image;
 		} catch (MalformedURLException e) {
 			System.out.println("Something wrong with the Sample Image url.");
@@ -154,7 +155,12 @@ public class ServerCommunicator {
 					"&project=" + projectID);
 //			System.out.println(url.toString());
 			Object xstreamResult = processRequest(url);
-			return (BatchImage)xstreamResult;
+			BatchImage result = (BatchImage)xstreamResult;
+			// prepend the http handle to the filename.
+			if (result != null) {
+				result.getImage().setFilename(filenameHeader() + result.getImage().getFilename());
+			}
+			return result;
 		} catch (MalformedURLException e) {
 			System.out.println("Something wrong with the Batch url.");
 			System.out.println(e.getMessage());
@@ -175,7 +181,12 @@ public class ServerCommunicator {
 					"&batch=" + batchID);
 //			System.out.println(url.toString());
 			Object xstreamResult = processRequest(url);
-			return (BatchImage)xstreamResult;
+			BatchImage result = (BatchImage)xstreamResult;
+			// prepend the http handle to the filename.
+			if (result != null) {
+				result.getImage().setFilename(filenameHeader() + result.getImage().getFilename());
+			}
+			return result;
 		} catch (MalformedURLException e) {
 			System.out.println("Something wrong with the Batch url.");
 			System.out.println(e.getMessage());
@@ -250,7 +261,16 @@ public class ServerCommunicator {
 					"/field-list" + usernameAndPasswordForURLS() + 
 					"&project=" + p.getID());
 			Object xstreamResult = processRequest(url);
-			return (List<Field>)xstreamResult;
+			List<Field> fields = (List<Field>)xstreamResult;
+			for (Field field : fields) { // prepend http header for all file locations.
+				if (field.getHelpHtmlLoc() != null && field.getHelpHtmlLoc().length() > 0) {
+					field.setHelpHtmlLoc(filenameHeader() + field.getHelpHtmlLoc());
+				}
+				if (field.getKnownDataLoc() != null && field.getKnownDataLoc().length() > 0) {
+					field.setKnownDataLoc(filenameHeader() + field.getKnownDataLoc());
+				}
+			}
+			return fields;
 		} catch (MalformedURLException e) {
 			System.out.println("Something wrong with the Field List url.");
 			System.out.println(e.getMessage());
@@ -284,6 +304,15 @@ public class ServerCommunicator {
 		}
 		System.out.println(sb.toString());
 		return sb.toString();
+	}
+	
+	/**
+	 * Puts in the necessary filename header, to be used at the beginning
+	 * of a file string.
+	 * @return
+	 */
+	private String filenameHeader() {
+		return "http://" + host + ":" + port + "/get/";
 	}
 	
 	/**

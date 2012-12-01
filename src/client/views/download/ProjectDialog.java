@@ -9,6 +9,14 @@ import javax.swing.*;
 import shared.dataTransfer.Project;
 import client.controller.Controller;
 
+/**
+ * Dialog Box to select which project from which to download
+ * a batch. Contains a drop-down with a list of current projects,
+ * a button to download and view a sample image, and cancel and
+ * download buttons.
+ * @author Martin Carney
+ *
+ */
 @SuppressWarnings("serial")
 public class ProjectDialog extends JDialog {
 
@@ -21,15 +29,19 @@ public class ProjectDialog extends JDialog {
 	
 	private JPanel top;
 	private JPanel bottom;
+		
+	private List<Project> projects;
 	
 	private String selected;
-	
-	private List<Project> projects;
 	
 	private static final Dimension spacer = new Dimension(5,5);
 //	private static final Dimension fieldSize = new Dimension(250, 20);
 //	private static final Dimension labelSize = new Dimension(75, 20);
 	
+	/**
+	 * Constructor. Requires the window it is a child of, the controller object,
+	 * and a list of projects to populate the dropdown.
+	 */
 	public ProjectDialog(JFrame frame, Controller controller, List<Project> projects) {
 		super(frame);
 		
@@ -54,14 +66,26 @@ public class ProjectDialog extends JDialog {
 		pack();
 	}
 
+	/**
+	 * Gets the dialog's controller
+	 * @return
+	 */
 	public Controller getController() {
 		return controller;
 	}
 
+	/**
+	 * Sets the dialog's controller.
+	 * @param controller
+	 */
 	public void setController(Controller controller) {
 		this.controller = controller;
 	}
 
+	/**
+	 * Build the top half of the dialog, including label, drop-down selector,
+	 * and view sample button.
+	 */
 	private void buildTop() {
 		top = new JPanel();
 		top.setLayout(new BoxLayout(top, BoxLayout.X_AXIS));
@@ -69,15 +93,22 @@ public class ProjectDialog extends JDialog {
 		top.add(Box.createRigidArea(spacer));
 		top.add(new JLabel("Project"));
 		top.add(Box.createRigidArea(spacer));
+		
 		top.add(buildDropdown());
+		
 		top.add(Box.createRigidArea(spacer));
 		btnViewSample = new JButton("View Sample");
+		btnViewSample.addActionListener(sampleListener);
+		
 		top.add(btnViewSample);
 		top.add(Box.createRigidArea(spacer));
 		
 		add(top);
 	}
 
+	/**
+	 * Build the bottom half of the
+	 */
 	private void buildBottom() {
 		bottom = new JPanel();
 		bottom.setLayout(new BoxLayout(bottom, BoxLayout.X_AXIS));
@@ -101,6 +132,9 @@ public class ProjectDialog extends JDialog {
 		}
 		projectDropdown = new JComboBox<String>(projectNames);
 		projectDropdown.addActionListener(dropdownListener);
+		if (projects.size() > 0) { // put the first item in the "selected" variable.
+			selected = projects.get(0).getTitle();
+		}
 		return projectDropdown;
 	}
 	
@@ -138,6 +172,14 @@ public class ProjectDialog extends JDialog {
 		public void actionPerformed(ActionEvent e) {
 			Project p = getProjectByName((String)projectDropdown.getSelectedItem());
 			controller.downloadNextBatch(p);
+		}
+	};
+	
+	private ActionListener sampleListener = new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			Project p = getProjectByName((String)projectDropdown.getSelectedItem());
+			controller.viewSample(p);
 		}
 	};
 }

@@ -182,7 +182,7 @@ public class TestController implements IController {
 						// app, a project from the Project List will be used.
 				ImageReference image = sc.requestSampleImage(p);
 				if (image != null) {
-					getView().setResponse(filenameHeader() + image.getFilename() + "\n");
+					getView().setResponse(image.getFilename() + "\n");
 				} else {
 					failedResponse();
 				}
@@ -232,7 +232,7 @@ public class TestController implements IController {
 	private void outputBatch(StringBuilder sb, BatchImage batch, Project p, List<Field> fields) {
 		sb.append(batch.getID() + "\n");
 		sb.append(batch.getProjectID() + "\n");
-		sb.append(filenameHeader() + batch.getImage().getFilename() + "\n");
+		sb.append(batch.getImage().getFilename() + "\n");
 		sb.append(p.getY(0) + "\n");
 		sb.append(p.getRowHeight() + "\n");
 		sb.append(p.getRecordsPerImage() + "\n");
@@ -252,13 +252,13 @@ public class TestController implements IController {
 			sb.append((i + 1) + "\n");
 			sb.append(f.getTitle() + "\n");
 			if (f.getHelpHtmlLoc().length() > 0) {
-				sb.append(filenameHeader() + f.getHelpHtmlLoc());
+				sb.append(f.getHelpHtmlLoc());
 			}
 			sb.append("\n");
 			sb.append(f.getXCoord() + "\n");
 			sb.append(f.getWidth() + "\n");
 			if (f.getKnownDataLoc().length() > 0) {
-				sb.append(filenameHeader() + f.getKnownDataLoc());
+				sb.append(f.getKnownDataLoc());
 			}
 			sb.append("\n");
 		}
@@ -403,7 +403,7 @@ public class TestController implements IController {
 					// hash table and only request them the first time that ID is needed.
 					if (b != null) {
 						String filename = b.getImage().getFilename();
-						sb.append(filenameHeader() + filename + "\n");
+						sb.append(filename + "\n");
 					} else {
 						sb.append("File name error\n");
 					}
@@ -465,9 +465,9 @@ public class TestController implements IController {
 		return result;
 	}
 	
-	private String filenameHeader() {
-		return "http://" + sc.getHost() + ":" + sc.getPort() + "/get/";
-	}
+//	private String filenameHeader() {
+//		return "http://" + sc.getHost() + ":" + sc.getPort() + "/get/";
+//	}
 	
 	private void failedResponse() {
 		getView().setResponse(FAIL);
