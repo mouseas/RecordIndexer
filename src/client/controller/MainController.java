@@ -1,9 +1,7 @@
 package client.controller;
 
-import java.awt.Dimension;
 import java.awt.Image;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 import java.util.*;
 
@@ -23,7 +21,7 @@ import client.views.mainFrame.MainFrame;
  * @author Martin Carney
  *
  */
-public class Controller {
+public class MainController {
 	
 	private MainFrame mainView;
 	private LoginDialog loginView;
@@ -37,7 +35,7 @@ public class Controller {
 	 * @param domain
 	 * @param port
 	 */
-	public Controller(String domain, int port) {
+	public MainController(String domain, int port) {
 		sc = new ServerCommunicator(domain, port);
 		dm = new DataModel();
 	}
@@ -143,14 +141,26 @@ public class Controller {
 //		dm.setCurrentProject(null);
 	}
 	
+	/**
+	 * Zooms the view in by one step.
+	 */
 	public void zoomIn() {
 		System.out.println("Zoom in");
-		// TODO implement zoom in
+		double previousScale = mainView.getViewingArea().getCurrentZoom();
+		double newScale = previousScale / 0.75;
+		if (newScale > 0.95 && newScale < 1.05) { newScale = 1.0; } // close to 1
+		mainView.getViewingArea().setZoom(newScale);
 	}
 	
+	/**
+	 * Zooms out one step.
+	 */
 	public void zoomOut() {
 		System.out.println("Zoom out");
-		// TODO implement zoom out
+		double previousScale = mainView.getViewingArea().getCurrentZoom();
+		double newScale = previousScale * 0.75;
+		if (newScale > 0.95 && newScale < 1.05) { newScale = 1.0; } // close to 1
+		mainView.getViewingArea().setZoom(newScale);
 	}
 
 	public void invertImage() {

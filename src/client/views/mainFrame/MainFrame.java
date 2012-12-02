@@ -5,7 +5,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-import client.controller.Controller;
+import client.controller.MainController;
 import client.views.mainFrame.buttonBar.ButtonPanel;
 import client.views.mainFrame.dataArea.DataAreaPanel;
 import client.views.mainFrame.viewingArea.ViewingAreaPanel;
@@ -26,9 +26,14 @@ public class MainFrame extends JFrame {
 	private DataAreaPanel dataArea;
 	private ViewingAreaPanel viewingArea;
 	
-	private Controller controller;
+	private JSplitPane verticalSplit;
 	
-	private static final Dimension minWindowSize = new Dimension(233, 253);
+	private MainController controller;
+	
+	private static final Dimension MIN_WINDOW_SIZE = new Dimension(233, 253);
+	private static final Dimension SPACER = new Dimension(5, 5);
+	private static final int DEFAULT_WINDOW_X = 100;
+	private static final int DEFAULT_WINDOW_Y = 20;
 
 //	private MainFrameDimensions savedDimensions;
 	
@@ -40,8 +45,8 @@ public class MainFrame extends JFrame {
 		
 		setTitle("Record Indexer");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setLocation(100,20);
-		setMinimumSize(minWindowSize);
+		setLocation(DEFAULT_WINDOW_X, DEFAULT_WINDOW_Y);
+		setMinimumSize(MIN_WINDOW_SIZE);
 		
 		getContentPane().addComponentListener(resizeListener);
 		addWindowListener(windowListener);
@@ -51,13 +56,19 @@ public class MainFrame extends JFrame {
 		buttonBar = new ButtonPanel();
 		dataArea = new DataAreaPanel();
 		viewingArea = new ViewingAreaPanel();
-		Image mario = DrawingComponent.loadImage("mario.jpg");
-		viewingArea.setImage(mario);
+//		Image mario = DrawingComponent.loadImage("mario.jpg");
+//		viewingArea.setImage(mario);
 
-		add(Box.createRigidArea(new Dimension(5, 5)));
-		add(buttonBar);
-		add(viewingArea);
-		add(dataArea);
+		JPanel top = new JPanel();
+		verticalSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, top, dataArea);
+		top.setLayout(new BoxLayout(top, BoxLayout.Y_AXIS));
+		
+		top.add(Box.createRigidArea(SPACER));
+		top.add(buttonBar);
+		top.add(Box.createRigidArea(SPACER));
+		top.add(viewingArea);
+
+		add(verticalSplit);
 		
 		pack();
 	}
@@ -85,7 +96,7 @@ public class MainFrame extends JFrame {
 		controller.logout();
 	}
 
-	public void setController(Controller c) {
+	public void setController(MainController c) {
 		controller = c;
 		buttonBar.setController(c);
 		dataArea.setController(c);

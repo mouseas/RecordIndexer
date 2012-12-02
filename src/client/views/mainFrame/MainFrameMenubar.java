@@ -5,7 +5,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
-import client.controller.Controller;
+import client.controller.MainController;
 
 
 @SuppressWarnings("serial")
@@ -20,7 +20,7 @@ public class MainFrameMenubar extends JMenuBar {
 	private boolean menuEnabled;
 	private boolean downloadEnabled;
 	
-	private Controller controller;
+	private MainController controller;
 	
 	public MainFrameMenubar() {
 		super();
@@ -64,11 +64,11 @@ public class MainFrameMenubar extends JMenuBar {
 		}
 	};
 
-	public Controller getController() {
+	public MainController getController() {
 		return controller;
 	}
 
-	public void setController(Controller controller) {
+	public void setController(MainController controller) {
 		this.controller = controller;
 	}
 	

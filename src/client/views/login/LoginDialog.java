@@ -5,12 +5,12 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import client.controller.Controller;
+import client.controller.MainController;
 
 @SuppressWarnings("serial")
 public class LoginDialog extends JDialog {
 	
-	private Controller controller;
+	private MainController controller;
 	
 	private JPanel top;
 	private JPanel bottom;
@@ -25,7 +25,7 @@ public class LoginDialog extends JDialog {
 	private static final Dimension fieldSize = new Dimension(250, 20);
 	private static final Dimension labelSize = new Dimension(75, 20);
 	
-	public LoginDialog(JFrame frame, Controller controller) {
+	public LoginDialog(JFrame frame, MainController controller) {
 		super(frame);
 		
 		this.controller = controller;
@@ -46,11 +46,11 @@ public class LoginDialog extends JDialog {
 		centerOnScreen();
 	}
 
-	public Controller getController() {
+	public MainController getController() {
 		return controller;
 	}
 
-	public void setController(Controller controller) {
+	public void setController(MainController controller) {
 		this.controller = controller;
 	}
 

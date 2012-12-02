@@ -6,7 +6,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.*;
 
-import client.controller.Controller;
+import client.controller.MainController;
 import client.views.shared.DrawingComponent;
 
 @SuppressWarnings("serial")
@@ -17,7 +17,7 @@ public class ViewingAreaPanel extends JPanel {
 	private Point2D offset;
 
 	@SuppressWarnings("unused")
-	private Controller controller;
+	private MainController controller;
 	
 	public ViewingAreaPanel() {
 		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
@@ -44,8 +44,25 @@ public class ViewingAreaPanel extends JPanel {
 		drawingComponent.validate();
 		
 	}
+	
+	/**
+	 * Sets the scale for the drawing component, and translates the image's
+	 * position so that the center stays in the center.
+	 * @param scale The absolute scale for the image, where 1.0 is 1:1.
+	 * Must be > 0
+	 */
+	public void setZoom(double scale) {
+		if (scale <= 0) { return; }
+		
+		drawingComponent.setScale(scale);
+		
+	}
+	
+	public double getCurrentZoom() {
+		return drawingComponent.getScale();
+	}
 
-	public void setController(Controller c) {
+	public void setController(MainController c) {
 		controller = c;
 	}
 }

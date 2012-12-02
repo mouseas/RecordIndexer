@@ -2,7 +2,7 @@ package client.views.mainFrame.buttonBar;
 
 import javax.swing.*;
 
-import client.controller.Controller;
+import client.controller.MainController;
 
 
 import java.awt.*;
@@ -20,7 +20,7 @@ public class ButtonPanel extends JPanel {
 	private JButton btnSave;
 	private JButton btnSubmit;
 
-	private Controller controller;
+	private MainController controller;
 	
 	public ButtonPanel() {
 		createButtons();
@@ -63,7 +63,7 @@ public class ButtonPanel extends JPanel {
 		buttons.add(btnSubmit);
 	}
 
-	public void setController(Controller c) {
+	public void setController(MainController c) {
 		controller = c;
 	}
 	

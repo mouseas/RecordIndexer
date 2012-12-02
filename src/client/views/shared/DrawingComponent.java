@@ -27,11 +27,11 @@ public class DrawingComponent extends JComponent {
 		
 		shapes = new ArrayList<DrawingShape>();
 		
-		this.setBackground(new Color(255, 255, 255));
-		this.setPreferredSize(new Dimension(700, 300));
-		this.setMinimumSize(new Dimension(100, 100));
+		setBackground(new Color(255, 255, 255));
+		setPreferredSize(new Dimension(700, 300));
+		setMinimumSize(new Dimension(100, 100));
 		
-		this.addKeyListener(keyAdapter);
+		addKeyListener(keyAdapter);
 	}
 	
 	/**

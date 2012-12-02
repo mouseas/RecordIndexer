@@ -7,7 +7,7 @@ import java.util.List;
 import javax.swing.*;
 
 import shared.dataTransfer.Project;
-import client.controller.Controller;
+import client.controller.MainController;
 
 /**
  * Dialog Box to select which project from which to download
@@ -20,7 +20,7 @@ import client.controller.Controller;
 @SuppressWarnings("serial")
 public class ProjectDialog extends JDialog {
 
-	private Controller controller;
+	private MainController controller;
 	
 	private JComboBox<String> projectDropdown;
 	private JButton btnViewSample;
@@ -42,7 +42,7 @@ public class ProjectDialog extends JDialog {
 	 * Constructor. Requires the window it is a child of, the controller object,
 	 * and a list of projects to populate the dropdown.
 	 */
-	public ProjectDialog(JFrame frame, Controller controller, List<Project> projects) {
+	public ProjectDialog(JFrame frame, MainController controller, List<Project> projects) {
 		super(frame);
 		
 		this.projects = projects;
@@ -70,7 +70,7 @@ public class ProjectDialog extends JDialog {
 	 * Gets the dialog's controller
 	 * @return
 	 */
-	public Controller getController() {
+	public MainController getController() {
 		return controller;
 	}
 
@@ -78,7 +78,7 @@ public class ProjectDialog extends JDialog {
 	 * Sets the dialog's controller.
 	 * @param controller
 	 */
-	public void setController(Controller controller) {
+	public void setController(MainController controller) {
 		this.controller = controller;
 	}
 

@@ -3,7 +3,7 @@ package client;
 import java.awt.EventQueue;
 
 
-import client.controller.Controller;
+import client.controller.MainController;
 import client.views.mainFrame.MainFrame;
 
 /**
@@ -28,7 +28,7 @@ public class Client {
 //				System.out.println("Port: [" + port + "]");
 				EventQueue.invokeLater(new Runnable() {
 					public void run() {
-						Controller c = new Controller(domain, port);
+						MainController c = new MainController(domain, port);
 						// make the main frame
 						MainFrame mainFrame = new MainFrame();
 						mainFrame.setController(c);

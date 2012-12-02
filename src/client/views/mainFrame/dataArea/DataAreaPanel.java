@@ -2,7 +2,7 @@ package client.views.mainFrame.dataArea;
 
 import javax.swing.*;
 
-import client.controller.Controller;
+import client.controller.MainController;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -17,7 +17,7 @@ public class DataAreaPanel extends JPanel {
 	private double barPosition;
 	
 	@SuppressWarnings("unused")
-	private Controller controller;
+	private MainController controller;
 	
 	public DataAreaPanel() {
 		buildLeftPane();
@@ -33,7 +33,7 @@ public class DataAreaPanel extends JPanel {
 		add(split);
 	}
 
-	public void setController(Controller c) {
+	public void setController(MainController c) {
 		controller = c;
 	}
 	

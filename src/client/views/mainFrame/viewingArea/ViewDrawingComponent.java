@@ -37,7 +37,7 @@ public class ViewDrawingComponent extends DrawingComponent {
 			int dy = e.getY() - (int)lastPoint.getY();
 			
 			for (DrawingShape shape : shapes) {
-				shape.adjustPosition(dx, dy);
+				shape.adjustPosition(dx / getScale(), dy / getScale());
 			}
 
 			lastPoint = new Point2D.Double(e.getX(), e.getY());
