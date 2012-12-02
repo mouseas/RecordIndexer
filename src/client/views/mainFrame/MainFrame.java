@@ -48,16 +48,16 @@ public class MainFrame extends JFrame {
 		setLocation(DEFAULT_WINDOW_X, DEFAULT_WINDOW_Y);
 		setMinimumSize(MIN_WINDOW_SIZE);
 		
-		getContentPane().addComponentListener(resizeListener);
 		addWindowListener(windowListener);
+		addMouseWheelListener(wheelListener);
 
 		setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
 		
 		buttonBar = new ButtonPanel();
 		dataArea = new DataAreaPanel();
 		viewingArea = new ViewingAreaPanel();
-//		Image mario = DrawingComponent.loadImage("mario.jpg");
-//		viewingArea.setImage(mario);
+		Image mario = DrawingComponent.loadImage("mario.jpg");
+		viewingArea.setImage(mario);
 
 		JPanel top = new JPanel();
 		verticalSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, top, dataArea);
@@ -107,6 +107,10 @@ public class MainFrame extends JFrame {
 	public void setMenuEnabled(boolean enable) {
 		menubar.setMenuEnabled(enable);
 	}
+
+	public MainFrameMenubar getMenubar() {
+		return menubar;
+	}
 	
 	public void setDownloadEnabled(boolean enable) {
 		menubar.setDownloadEnabled(enable);
@@ -135,16 +139,23 @@ public class MainFrame extends JFrame {
 		}
 	};
 	
-	private ComponentAdapter resizeListener = new ComponentAdapter() {
+	/**
+	 * Handles scroll wheel activity: zooms in or out with each wheel notch
+	 */
+	private MouseAdapter wheelListener = new MouseAdapter() {
 		@Override
-		public void componentResized(ComponentEvent e) {
-			// TODO handle window resizing here.
+		public void mouseWheelMoved(MouseWheelEvent e) {
+			int notches = e.getWheelRotation();
+			while (notches > 0) {
+				controller.zoomOut();
+				notches--;
+			}
+			while (notches < 0) {
+				controller.zoomIn();
+				notches++;
+			}
 		}
 	};
-
-	public MainFrameMenubar getMenubar() {
-		return menubar;
-	}
 	
 //	/**
 //	 * Loads any saved window state associated with the current user.

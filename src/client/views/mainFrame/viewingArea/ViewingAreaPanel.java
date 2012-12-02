@@ -1,10 +1,10 @@
 package client.views.mainFrame.viewingArea;
 
-import javax.swing.JPanel; // parent class
 import javax.swing.*;
 
 import java.awt.*;
 import java.awt.geom.*;
+import java.awt.image.BufferedImage;
 
 import client.controller.MainController;
 import client.views.shared.DrawingComponent;
@@ -46,6 +46,31 @@ public class ViewingAreaPanel extends JPanel {
 	}
 	
 	/**
+	 * Inverts the image and background, which may aid readability.
+	 */
+	public void invertImage() {
+		if (currentImage == null) { return; }
+		BufferedImage img = (BufferedImage)currentImage;
+		for(int x = 0; x < img.getWidth(null); x++) {
+			for(int y = 0; y < img.getHeight(null); y++) {
+				try {
+				int RGBA = img.getRGB(x, y);
+				Color col = new Color(RGBA, true);
+				col = new Color(255 - col.getRed(),
+								255 - col.getGreen(),
+								255 - col.getBlue(),
+								col.getAlpha());
+				img.setRGB(x, y, col.getRGB());
+				} catch (Exception e) {
+					System.out.println(x + " " + y);
+				}
+			}
+		}
+		drawingComponent.invertBackGround();
+		drawingComponent.repaint();
+	}
+	
+	/**
 	 * Sets the scale for the drawing component, and translates the image's
 	 * position so that the center stays in the center.
 	 * @param scale The absolute scale for the image, where 1.0 is 1:1.
@@ -53,7 +78,6 @@ public class ViewingAreaPanel extends JPanel {
 	 */
 	public void setZoom(double scale) {
 		if (scale <= 0) { return; }
-		
 		drawingComponent.setScale(scale);
 		
 	}

@@ -145,9 +145,8 @@ public class MainController {
 	 * Zooms the view in by one step.
 	 */
 	public void zoomIn() {
-		System.out.println("Zoom in");
 		double previousScale = mainView.getViewingArea().getCurrentZoom();
-		double newScale = previousScale / 0.75;
+		double newScale = previousScale / 0.9;
 		if (newScale > 0.95 && newScale < 1.05) { newScale = 1.0; } // close to 1
 		mainView.getViewingArea().setZoom(newScale);
 	}
@@ -156,16 +155,14 @@ public class MainController {
 	 * Zooms out one step.
 	 */
 	public void zoomOut() {
-		System.out.println("Zoom out");
 		double previousScale = mainView.getViewingArea().getCurrentZoom();
-		double newScale = previousScale * 0.75;
+		double newScale = previousScale * 0.9;
 		if (newScale > 0.95 && newScale < 1.05) { newScale = 1.0; } // close to 1
 		mainView.getViewingArea().setZoom(newScale);
 	}
 
 	public void invertImage() {
-		System.out.println("Invert image");
-		// TODO implement invertImage
+		mainView.getViewingArea().invertImage();
 		
 	}
 

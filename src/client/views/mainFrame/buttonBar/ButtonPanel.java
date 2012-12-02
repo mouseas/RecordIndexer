@@ -70,14 +70,18 @@ public class ButtonPanel extends JPanel {
 	private ActionListener zoomInListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			controller.zoomIn();
+			for (int i = 0; i < 3; i++) {
+				controller.zoomIn(); // 3 small steps
+			}
 		}
 	};
 	
 	private ActionListener zoomOutListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			controller.zoomOut();
+			for (int i = 0; i < 3; i++) {
+				controller.zoomOut(); // 3 small steps
+			}
 		}
 	};
 	

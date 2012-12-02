@@ -29,4 +29,8 @@ public interface DrawingShape {
 	 * @param dy Amount to move along the y axis
 	 */
 	void adjustPosition(double dx, double dy);
+	
+	double getWidth();
+	
+	double getHeight();
 }

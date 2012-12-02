@@ -1,5 +1,6 @@
 package client.views.mainFrame.viewingArea;
 
+import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
@@ -21,6 +22,15 @@ public class ViewDrawingComponent extends DrawingComponent {
 	public ViewDrawingComponent() {
 		this.addMouseListener(mouseAdapter);
 		this.addMouseMotionListener(mouseAdapter);
+	}
+	
+	public void invertBackGround() {
+		backgroundColor = new Color(255 - backgroundColor.getRed(),
+									255 - backgroundColor.getGreen(),
+									255 - backgroundColor.getBlue(),
+									backgroundColor.getAlpha());
+		setBackground(backgroundColor);
+		repaint();
 	}
 	
 	MouseAdapter mouseAdapter = new MouseAdapter() {
@@ -49,4 +59,5 @@ public class ViewDrawingComponent extends DrawingComponent {
 			lastPoint = null;
 		}
 	};
+	
 }
