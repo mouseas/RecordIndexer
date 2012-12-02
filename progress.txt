@@ -4,7 +4,7 @@
 3 / 7	Download Batch
 6 / 6	View Sample Image
 8 / 8	Main Indexing Window // Still need to deal with split pane scaling
-6 / 14	Image Panel (partial on subitem c - zoom with buttons but not with scroll wheel)
+10/ 14	Image Panel
 0 / 10	Table Data Entry
 0 / 10	Form Data Entry
 0 / 4	Field Help
@@ -14,4 +14,4 @@
 0 / 0	Image Navigator (10 points extra credit)
 
 Total
-33/100
+37/100
