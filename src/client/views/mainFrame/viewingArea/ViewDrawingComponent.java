@@ -15,11 +15,13 @@ import client.views.shared.DrawingShape;
  * @author Martin Carney
  *
  */
+@SuppressWarnings("serial")
 public class ViewDrawingComponent extends DrawingComponent {
 
 	private Point2D lastPoint;
 	
 	public ViewDrawingComponent() {
+		super();
 		this.addMouseListener(mouseAdapter);
 		this.addMouseMotionListener(mouseAdapter);
 	}

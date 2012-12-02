@@ -56,8 +56,8 @@ public class MainFrame extends JFrame {
 		buttonBar = new ButtonPanel();
 		dataArea = new DataAreaPanel();
 		viewingArea = new ViewingAreaPanel();
-		Image mario = DrawingComponent.loadImage("mario.jpg");
-		viewingArea.setImage(mario);
+		Image splashScreen = DrawingComponent.loadImage("splashscreen.jpg");
+		viewingArea.setImage(splashScreen);
 
 		JPanel top = new JPanel();
 		verticalSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, top, dataArea);

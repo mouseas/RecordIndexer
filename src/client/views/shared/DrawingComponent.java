@@ -8,7 +8,6 @@ import java.io.*;
 import java.awt.*;
 import java.awt.geom.*;
 import java.awt.image.*;
-import java.awt.event.*;
 
 @SuppressWarnings("serial")
 public class DrawingComponent extends JComponent {
@@ -36,6 +35,7 @@ public class DrawingComponent extends JComponent {
 		backgroundColor = new Color(255, 255, 255);
 		setBackground(backgroundColor);
 		setPreferredSize(new Dimension(700, 300));
+		setSize(getPreferredSize());
 		setMinimumSize(new Dimension(100, 100));
 	}
 	
@@ -61,8 +61,6 @@ public class DrawingComponent extends JComponent {
 		shapes.add(new DrawingImage(image, new Rectangle2D.Double(
 							offset.getX(), offset.getY(), 
 							image.getWidth(null), image.getHeight(null))));
-		
-		determinePreferredSize();
 	}
 	
 	public void removeImage(Image image) {
@@ -93,62 +91,8 @@ public class DrawingComponent extends JComponent {
 	}
 
 	public void setScale(double newScale) {
-		double oldScale = scale;
 		scale = newScale;
-		
-//		double windowWidth = getSize().getWidth();
-//		double windowHeight = getSize().getHeight();
-//		
-//		double dx = (getSize().getWidth() / 2) - (scale * getSize().getWidth()) / 2;
-////		double dy = getSize().getHeight() - (scale / oldScale) * getSize().getHeight();
-//		double dy = 0;
-//		System.out.println(dx + " " + dy + " | " + getSize().getWidth() + " " + getSize().getHeight());
-//		adjustShapePositions(dx, dy);
-		
-		determinePreferredSize();
 		repaint();
-	}
-	
-	/**
-	 * Determine the whole size of the image, and sets the preferred size accordingly
-	 */
-	public void determinePreferredSize() {
-		final int MIN = 50; // smallest allowed size.
-		
-		double minX = 0;
-		double maxX = 0;
-		double minY = 0;
-		double maxY = 0;
-		boolean firstImageLocated = false;
-		
-		for (int i = 0; i < shapes.size(); i++) {
-			DrawingShape shape = shapes.get(i);
-			if (shape instanceof DrawingImage) {
-				DrawingImage image = (DrawingImage)shape;
-				if (!firstImageLocated) { 
-					// first DrawingImage; set values to it.
-					firstImageLocated = true;
-					minX = image.getX();
-					minY = image.getY();
-					maxX = minX + image.getWidth();
-					maxY = minY + image.getHeight();
-				} else { 
-					// additional Drawing Image. Get min and max values from all of them.
-					if (minX > image.getX()) { minX = image.getX(); }
-					if (minY > image.getY()) { minY = image.getY(); }
-					if (maxX < image.getX() + image.getWidth()) {
-						maxX = image.getX() + image.getWidth();
-					}
-					if (maxY < image.getY() + image.getHeight()) {
-						maxY = image.getY() + image.getHeight();
-					}
-				}
-			}
-		}
-		if ((maxX - minX) * scale > MIN && (maxY - minY) * scale > MIN) {
-			setPreferredSize(new Dimension((int)((maxX - minX) * scale),
-										(int)((maxY - minY) * scale)));
-		}
 	}
 
 	/**
@@ -200,36 +144,17 @@ public class DrawingComponent extends JComponent {
 		return (int)d_Y;
 	}
 	
-	private int deviceToWorldX(int d_X) {
-		double w_X = d_X;
-		w_X *= 1.0 / scale;
-		return (int)w_X;
-	}
-	
-	private int deviceToWorldY(int d_Y) {
-		double w_Y = d_Y;
-		w_Y *= 1.0 / scale;
-		return (int)w_Y;
-	}
-
-//	private KeyAdapter keyAdapter = new KeyAdapter() {
-//
-//		@Override
-//		public void keyPressed(KeyEvent e) {
-//			if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-//				adjustShapePositions(-5, 0, shapes);
-//			}
-//			else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-//				adjustShapePositions(5, 0, shapes);
-//			}
-//			else if (e.getKeyCode() == KeyEvent.VK_UP) {
-//				adjustShapePositions(0, -5, shapes);
-//			}
-//			else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-//				adjustShapePositions(0, 5, shapes);
-//			}
-//		}
-//	};
+//	private int deviceToWorldX(int d_X) {
+//		double w_X = d_X;
+//		w_X *= 1.0 / scale;
+//		return (int)w_X;
+//	}
+//	
+//	private int deviceToWorldY(int d_Y) {
+//		double w_Y = d_Y;
+//		w_Y *= 1.0 / scale;
+//		return (int)w_Y;
+//	}
 	
 	class DrawingRect implements DrawingShape {
 

@@ -7,7 +7,6 @@ import java.awt.geom.*;
 import java.awt.image.BufferedImage;
 
 import client.controller.MainController;
-import client.views.shared.DrawingComponent;
 
 @SuppressWarnings("serial")
 public class ViewingAreaPanel extends JPanel {
@@ -25,7 +24,6 @@ public class ViewingAreaPanel extends JPanel {
 		add(drawingComponent);
 		currentImage = null;
 		offset = new Point2D.Double(0,0);
-		
 	}
 	
 	/**
@@ -40,9 +38,23 @@ public class ViewingAreaPanel extends JPanel {
 		if (newImage != null) {
 			drawingComponent.addImage(currentImage, offset);
 		}
-		drawingComponent.repaint();
+		drawingComponent.setScale(scaleFitToView());
 		drawingComponent.validate();
 		
+	}
+	
+	public double scaleFitToView() {
+		if (currentImage == null) { return 1.0; } // set to default scale.
+		double scaleX = 1.0;
+		double scaleY = 1.0;
+		Dimension panel = drawingComponent.getSize();
+		Dimension image = new Dimension(currentImage.getWidth(null),
+										currentImage.getHeight(null));
+		scaleX = panel.getWidth() / image.getWidth();
+		scaleY = panel.getHeight() / image.getHeight();
+		System.out.println(scaleX + " " + scaleY);
+		
+		return Math.min(Math.min(scaleX, scaleY), 1.0);
 	}
 	
 	/**

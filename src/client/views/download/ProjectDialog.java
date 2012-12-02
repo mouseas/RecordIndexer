@@ -32,11 +32,7 @@ public class ProjectDialog extends JDialog {
 		
 	private List<Project> projects;
 	
-	private String selected;
-	
 	private static final Dimension spacer = new Dimension(5,5);
-//	private static final Dimension fieldSize = new Dimension(250, 20);
-//	private static final Dimension labelSize = new Dimension(75, 20);
 	
 	/**
 	 * Constructor. Requires the window it is a child of, the controller object,
@@ -131,10 +127,6 @@ public class ProjectDialog extends JDialog {
 			projectNames[i] = projects.get(i).getTitle();
 		}
 		projectDropdown = new JComboBox<String>(projectNames);
-		projectDropdown.addActionListener(dropdownListener);
-		if (projects.size() > 0) { // put the first item in the "selected" variable.
-			selected = projects.get(0).getTitle();
-		}
 		return projectDropdown;
 	}
 	
@@ -147,18 +139,6 @@ public class ProjectDialog extends JDialog {
 		new Exception("Project name not found in project list!").printStackTrace();
 		return null;
 	}
-
-	private ActionListener dropdownListener = new ActionListener() {
-		@SuppressWarnings("unchecked")
-		@Override
-		public void actionPerformed(ActionEvent e) {
-	        JComboBox<String> cb = (JComboBox<String>)e.getSource();
-	        String projectSelected = (String)cb.getSelectedItem();
-	        System.out.println(projectSelected);
-	        selected = projectSelected;
-//	        updateLabel(petName);
-	    }
-	};
 	
 	private ActionListener cancelListener = new ActionListener() {
 		@Override
