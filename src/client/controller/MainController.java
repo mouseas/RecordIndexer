@@ -14,6 +14,7 @@ import client.serverCommunicator.*;
 import client.views.download.ProjectDialog;
 import client.views.login.LoginDialog;
 import client.views.mainFrame.MainFrame;
+import client.views.mainFrame.dataArea.TableEntryTab;
 
 /**
  * Controls the main view. Event listeners call methods on it, such as download
@@ -65,6 +66,7 @@ public class MainController {
 		downloadBatchToModel(p);
 		downloadImageToModel();
 		placeImageInView();
+		setUpFormAndTableEntryAreas();
 		
 		if (downloadView != null) {
 			downloadView.dispose();
@@ -232,6 +234,13 @@ public class MainController {
 	public void viewSample(Project p) {
 		SampleController s = new SampleController(sc, p);
 		s.buildAndOpenViewer();
+	}
+
+	private void setUpFormAndTableEntryAreas() {
+		// build the table tab from the Data Model.
+		mainView.getDataArea().getTableTab().buildTable(dm);
+		
+		// TODO Implement form entry portion
 	}
 	
 	/**

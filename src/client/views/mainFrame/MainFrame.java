@@ -146,6 +146,7 @@ public class MainFrame extends JFrame {
 		@Override
 		public void mouseWheelMoved(MouseWheelEvent e) {
 			int notches = e.getWheelRotation();
+//			System.out.println(notches + " " + e.hashCode());
 			while (notches > 0) {
 				controller.zoomOut();
 				notches--;

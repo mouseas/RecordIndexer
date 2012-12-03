@@ -5,9 +5,7 @@ import java.net.URL;
 
 import javax.imageio.ImageIO;
 
-import shared.dataTransfer.BatchImage;
-import shared.dataTransfer.ImageReference;
-import shared.dataTransfer.Project;
+import shared.dataTransfer.*;
 
 import client.serverCommunicator.ServerCommunicator;
 import client.views.sample.SampleViewer;

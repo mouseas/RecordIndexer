@@ -11,6 +11,9 @@ import java.awt.event.*;
 public class DataAreaPanel extends JPanel {
 
 	private JTabbedPane leftPane;
+	private TableEntryTab tableTab;
+	private FormEntryTab formTab;
+	
 	private JTabbedPane rightPane;
 	private JSplitPane split;
 	
@@ -35,15 +38,34 @@ public class DataAreaPanel extends JPanel {
 
 	public void setController(MainController c) {
 		controller = c;
+		tableTab.setController(c);
+		
+	}
+
+	public TableEntryTab getTableTab() {
+		return tableTab;
+	}
+
+	public void setTableTab(TableEntryTab tableTab) {
+		this.tableTab = tableTab;
+	}
+
+	public FormEntryTab getFormTab() {
+		return formTab;
+	}
+
+	public void setFormTab(FormEntryTab formTab) {
+		this.formTab = formTab;
 	}
 	
 	private void buildLeftPane() {
 		leftPane = new JTabbedPane();
 		leftPane.setPreferredSize(new Dimension(400,150));
 		leftPane.setMinimumSize(new Dimension(75,50));
-		leftPane.addTab("Table Entry", new TableEntryTab());
-		leftPane.addTab("Form Entry", new FormEntryTab());
-		
+		tableTab = new TableEntryTab(controller);
+		formTab = new FormEntryTab();
+		leftPane.addTab("Table Entry", tableTab);
+		leftPane.addTab("Form Entry", formTab);
 	}
 	
 	private void buildRightPane() {
