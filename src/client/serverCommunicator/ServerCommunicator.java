@@ -279,6 +279,28 @@ public class ServerCommunicator {
 	}
 	
 	/**
+	 * Returns the user's current batch unfinished.
+	 * @param u User to return a batch for
+	 * @return Was the user's batch returned successfully?
+	 */
+	public boolean returnBatch(User u) {
+		try {
+			URL url = new URL(HTTP, host, port, 
+					"/return-batch" + usernameAndPasswordForURLS());
+			String result = processRequestToString(url);
+			if (result.equals("success")) {
+				return true;
+			} else {
+				return false;
+			}
+		} catch (MalformedURLException e) {
+			System.out.println("Something wrong with the Field List url.");
+			System.out.println(e.getMessage());
+		}
+		return false;
+	}
+	
+	/**
 	 * Builds the semi-complicated string used for the search query.
 	 * @param fields
 	 * @param searchValues

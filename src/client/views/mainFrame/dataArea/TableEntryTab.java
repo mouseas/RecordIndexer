@@ -1,6 +1,8 @@
 package client.views.mainFrame.dataArea;
 
 import javax.swing.*;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 
 import java.awt.BorderLayout;
 import java.util.*;
@@ -55,6 +57,7 @@ public class TableEntryTab extends JPanel {
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		table.getTableHeader().setReorderingAllowed(false);
 		add(table.getTableHeader(), BorderLayout.NORTH);
+		tableModel.addTableModelListener(tableSelectionListener);
 		
 		table.validate();
 		table.repaint();
@@ -77,5 +80,19 @@ public class TableEntryTab extends JPanel {
 	public void setController(MainController newController) {
 		controller = newController;
 	}
+	
+	public MainController getController() {
+		return controller;
+	}
+	
+	private TableModelListener tableSelectionListener = new TableModelListener() {
+
+		@Override
+		public void tableChanged(TableModelEvent e) {
+			// TODO Update the form view's selected record + field
+			
+		}
+		
+	};
 	
 }

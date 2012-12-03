@@ -14,7 +14,6 @@ import client.serverCommunicator.*;
 import client.views.download.ProjectDialog;
 import client.views.login.LoginDialog;
 import client.views.mainFrame.MainFrame;
-import client.views.mainFrame.dataArea.TableEntryTab;
 
 /**
  * Controls the main view. Event listeners call methods on it, such as download
@@ -47,7 +46,6 @@ public class MainController {
 	 * @return
 	 */
 	public List<Project> getProjectList() {
-		// TODO this needs to be part of the Download Batch window's MVC system.
 		if (!loggedIn()) { return null; }
 		if (dm.getProjects() == null) { downloadProjectList(); }
 		return dm.getProjects();
@@ -175,7 +173,7 @@ public class MainController {
 	}
 
 	public void exit() {
-		// TODO close the program.
+		// TODO close the program. Should save state before closing.
 		System.out.println("Exit.");
 		mainView.dispose();
 	}
@@ -205,7 +203,6 @@ public class MainController {
 	}
 
 	public void save() {
-		// TODO Auto-generated method stub
 		if (!loggedIn()) { return; }
 		saveState(sc.getCurrentUser().getUsername());
 	}
@@ -234,6 +231,14 @@ public class MainController {
 	public void viewSample(Project p) {
 		SampleController s = new SampleController(sc, p);
 		s.buildAndOpenViewer();
+	}
+	
+	public void returnBatch() {
+		if (sc.getCurrentUser() == null) { return; } // no user; no batch to return.
+		sc.returnBatch(dm.getCurrentUser());
+
+		mainView.getMenubar().setDownloadEnabled(true);
+		System.out.println("Debug Function: Return Batch.");
 	}
 
 	private void setUpFormAndTableEntryAreas() {
@@ -320,7 +325,7 @@ public class MainController {
 	 * @param username
 	 */
 	private void loadState(String username) {
-		// TODO Auto-generated method stub
+		// TODO Load the state belonging to a given user.
 		
 	}
 

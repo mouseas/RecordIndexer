@@ -19,6 +19,8 @@ public class ButtonPanel extends JPanel {
 	private JButton btnToggleHighlight;
 	private JButton btnSave;
 	private JButton btnSubmit;
+	
+	private JButton btnReturnBatch;
 
 	private MainController controller;
 	
@@ -61,6 +63,10 @@ public class ButtonPanel extends JPanel {
 		btnSubmit = new JButton("Submit");
 		btnSubmit.addActionListener(submitListener);
 		buttons.add(btnSubmit);
+		
+		btnReturnBatch = new JButton("Return Batch");
+		btnReturnBatch.addActionListener(returnBatchListener);
+		buttons.add(btnReturnBatch);
 	}
 
 	public void setController(MainController c) {
@@ -110,6 +116,13 @@ public class ButtonPanel extends JPanel {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			controller.submitBatch();
+		}
+	};
+	
+	private ActionListener returnBatchListener = new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			controller.returnBatch();
 		}
 	};
 	

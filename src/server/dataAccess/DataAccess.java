@@ -268,6 +268,28 @@ public class DataAccess {
 	}
 	
 	/**
+	 * Finds the batch assigned to the given user, and marks them as available
+	 * so that (a) the user may download another, and (b) the batch may be
+	 * downloaded again.
+	 * @param user User to search for a locked batch
+	 * @throws SQLException
+	 * @throws ServerException
+	 */
+	public void returnBatchUnfinished(User user) throws SQLException, ServerException {
+		PreparedStatement ps = null;
+		String statement = "UPDATE batches SET in_use = 0 WHERE in_use = ?";
+		try {
+			ps = getConnection().prepareStatement(statement);
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+		}
+		ps.setString(1, user.getUsername());
+		ps.execute();
+		
+		closeQuery(null, ps);
+	}
+	
+	/**
 	 * Saves a list of Records to the database.
 	 * @param inputList List of Record objects to insert or replace.
 	 * @return Whether the records were saved successfully.
