@@ -22,8 +22,11 @@ public class ViewDrawingComponent extends DrawingComponent {
 	
 	public ViewDrawingComponent() {
 		super();
-		this.addMouseListener(mouseAdapter);
-		this.addMouseMotionListener(mouseAdapter);
+		
+		addMouseListener(mouseAdapter);
+		addMouseMotionListener(mouseAdapter);
+		
+		setSize(getPreferredSize());
 	}
 	
 	public void invertBackGround() {

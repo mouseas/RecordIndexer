@@ -62,6 +62,7 @@ public class SampleViewer extends JDialog {
 		drawingComponent = new DrawingComponent();
 		drawingComponent.setScale(determineScale(image));
 		drawingComponent.addImage(image);
+		drawingComponent.determineSizeFromScale();
 		top.add(drawingComponent);
 		
 		add(top);

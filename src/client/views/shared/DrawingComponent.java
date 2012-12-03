@@ -35,7 +35,6 @@ public class DrawingComponent extends JComponent {
 		backgroundColor = new Color(255, 255, 255);
 		setBackground(backgroundColor);
 		setPreferredSize(new Dimension(700, 300));
-		setSize(getPreferredSize());
 		setMinimumSize(new Dimension(100, 100));
 	}
 	
@@ -94,6 +93,25 @@ public class DrawingComponent extends JComponent {
 		scale = newScale;
 		repaint();
 	}
+	
+	/**
+	 * Determines and sets the preferred size for the component based on the
+	 * height & width of all of the images, and the scale.
+	 */
+	public void determineSizeFromScale() {
+		double maxWidth = 0;
+		double maxHeight = 0;
+		for (DrawingShape shape : shapes) {
+			if (shape instanceof DrawingImage) {
+				DrawingImage image = (DrawingImage)shape;
+				maxWidth = Math.max(maxWidth, image.getWidth());
+				maxHeight = Math.max(maxHeight, image.getHeight());
+			}
+		}
+		Dimension result = new Dimension((int)(maxWidth * scale),
+										(int)(maxHeight * scale));
+		setPreferredSize(result);
+	}
 
 	/**
 	 * Draws the DrawingComponent to a Graphics2D object.
@@ -107,7 +125,6 @@ public class DrawingComponent extends JComponent {
 		drawBackground(g2);
 		
     	AffineTransform old= g2.getTransform();
-		
 		for (DrawingShape shape : shapes) {
 			AffineTransform tr2= new AffineTransform(old);
 			double dx = offsetX + (this.getWidth() / 2) - (shape.getWidth() * (scale / 2));
