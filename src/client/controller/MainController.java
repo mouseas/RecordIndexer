@@ -11,6 +11,7 @@ import javax.swing.JOptionPane;
 import shared.dataTransfer.*;
 import client.model.DataModel;
 import client.serverCommunicator.*;
+import client.state.StateSaver;
 import client.views.download.ProjectDialog;
 import client.views.login.LoginDialog;
 import client.views.mainFrame.MainFrame;
