@@ -46,7 +46,7 @@ public class TableEntryTab extends JPanel {
 	 * @param fields List of the fields belonging to the project.
 	 * @param project Project the batch belongs to.
 	 */
-	public void buildTable(List<Field> fields, Project project, Record[][] records) {
+	public void buildTable(List<Field> fields, Project project, List<Record> records) {
 		remove(table.getTableHeader()); // remove the old header.
 		
 		tableModel = new EntryTableModel(fields, project, records);
@@ -70,7 +70,7 @@ public class TableEntryTab extends JPanel {
 	public void buildTable(DataModel dm) {
 		buildTable(dm.getCurrentBatch().getFields(),
 				dm.getCurrentProject(),
-				dm.getCurrentRecordGrid());
+				dm.getCurrentBatch().getRecords());
 	}
 	
 	/**

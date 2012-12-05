@@ -45,19 +45,26 @@ public class StateLoader {
 	 * and the window.
 	 */
 	private void doLoad(File file) throws Exception {
-		loadXMLFileToDoc(file);
-		loadWindowState();
-		loadBatch();
-		loadBatchWindowState();
+		boolean continueLoading = loadXMLFileToDoc(file);
+		if (continueLoading) {
+			loadWindowState();
+			loadBatch();
+			loadBatchWindowState();
+		}
 	}
 
 	/**
 	 * 
 	 * @param file
 	 */
-	private void loadXMLFileToDoc(File file) throws Exception {
-		DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		doc = db.parse(file);
+	private boolean loadXMLFileToDoc(File file) throws Exception {
+		if (file.exists()) {
+			DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			doc = db.parse(file);
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	/**
@@ -121,7 +128,7 @@ public class StateLoader {
 	 * Loads the fields from the document.
 	 */
 	private void loadFields() {
-		NodeList fieldNodes = doc.getElementsByTagName("fields");
+		NodeList fieldNodes = doc.getElementsByTagName("field");
 		if (fieldNodes == null) {
 			return; // no fields to load.
 		}
@@ -138,6 +145,7 @@ public class StateLoader {
 			String knownData = StateHelper.getStringFromParent(fieldElem, "knownDataLocation");
 			
 			Field result = new Field(ID, projectID, title, xCoord, width, helpHtml, knownData);
+			System.out.println("StateLoader.loadFields(): " + title);
 			resultList.add(result);
 		}
 		controller.getDataModel().getCurrentBatch().setFields(resultList);
@@ -173,7 +181,7 @@ public class StateLoader {
 		if (columns < 1 || rows < 1) {
 			controller.errorDialog("Fields and Project not loaded yet.");
 		}
-		Record[][] recordGrid = new Record[columns][rows];
+//		Record[][] recordGrid = new Record[columns][rows];
 		List<Record> recordList = new ArrayList<Record>();
 		
 		int col = 0;
@@ -182,7 +190,7 @@ public class StateLoader {
 		for (int i = 0; i < recordNodes.getLength(); i++) {
 			Element recordElem = (Element)recordNodes.item(i);
 			Record result = buildRecord(recordElem);
-			recordGrid[row][col] = result;
+//			recordGrid[col][row] = result;
 			recordList.add(result);
 			row++;
 			if (row >= rows) {
@@ -190,6 +198,7 @@ public class StateLoader {
 				col++;
 			}
 		}
+		controller.getDataModel().getCurrentBatch().setRecords(recordList);
 	}
 	
 	/**

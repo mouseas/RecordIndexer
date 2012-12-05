@@ -11,18 +11,23 @@ public class EntryTableModel extends AbstractTableModel {
 
 	protected List<Field> fields;
 	protected Project project;
+	protected List<Record> records;
 	
-	protected Record[][] records;
+	int columns; // actual number of columns in the Records
+	int rows;
 	
 	/**
 	 * Constructor. Give it the project and the field list.
 	 * @param fieldsList
 	 * @param proj
 	 */
-	public EntryTableModel(List<Field> fieldsList, Project proj, Record[][] recordGrid) {
+	public EntryTableModel(List<Field> fieldsList, Project proj, List<Record> recs) {
 		fields = fieldsList;
 		project = proj;
-		records = recordGrid;
+		records = recs;
+		
+		columns = getColumnCount() - 1;
+		rows = getRowCount();
 	}
 	
 	@Override
@@ -41,12 +46,12 @@ public class EntryTableModel extends AbstractTableModel {
 	public Object getValueAt(int row, int column) {
 		if (records == null) { return null; } // nada.
 		if (row < 0 || column < 0 || 
-				column > records.length || 
-				row >= records[0].length) {
+				column > columns || 
+				row >= rows) {
 			throw new IndexOutOfBoundsException();
 		}
 		if (column > 0) {
-			return records[column - 1][row].getValue();
+			return records.get(calculateIndexFromCoords(column - 1, row)).getValue();
 		} else {
 			return row + 1;
 		}
@@ -54,9 +59,13 @@ public class EntryTableModel extends AbstractTableModel {
 	
 	@Override
 	public void setValueAt(Object value, int row, int column) {
-		if (value instanceof String && column > 0) {
-			String str = (String) value;
-			records[column - 1][row].setValue(str);
+		if (value instanceof String) {
+			if (column > 0 && column <= columns){
+				String str = (String) value;
+				records.get(calculateIndexFromCoords(column - 1, row)).setValue(str);
+			} else {
+				System.out.println("Attempting to put string into " + row + "," + column);
+			}
 		} else {
 			System.out.println("Attempting to put non-string into " + row + "," + column);
 		}
@@ -81,6 +90,14 @@ public class EntryTableModel extends AbstractTableModel {
 		} else {
 			return false;
 		}
+	}
+	
+	/**
+	 * Calculates the array index based on the desired column and row.
+	 */
+	private int calculateIndexFromCoords(int column, int row) {
+		// order is column 0 rows 1 through n, column 1 rows 1 though n, etc.
+		return (rows * column) + row;
 	}
 
 }

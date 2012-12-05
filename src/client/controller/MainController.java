@@ -11,7 +11,7 @@ import javax.swing.JOptionPane;
 import shared.dataTransfer.*;
 import client.model.DataModel;
 import client.serverCommunicator.*;
-import client.state.StateSaver;
+import client.state.*;
 import client.views.download.ProjectDialog;
 import client.views.login.LoginDialog;
 import client.views.mainFrame.MainFrame;
@@ -391,8 +391,13 @@ public class MainController {
 	 * @param username
 	 */
 	private void loadState(String username) {
-		// TODO Load the state belonging to a given user.
-		
+		StateLoader.loadUserState(this);
+		// TODO load the information from the DataModel.
+		if (userHasBatch) {
+			downloadImageToModel();
+			placeImageInView();
+			setUpFormAndTableEntryAreas();
+		}
 	}
 
 	/**
