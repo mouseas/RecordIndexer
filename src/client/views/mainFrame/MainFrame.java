@@ -56,9 +56,7 @@ public class MainFrame extends JFrame {
 		buttonBar = new ButtonPanel();
 		dataArea = new DataAreaPanel();
 		viewingArea = new ViewingAreaPanel();
-		Image splashScreen = DrawingComponent.loadImage("splashscreen.jpg");
-		viewingArea.setImage(splashScreen);
-
+		
 		JPanel top = new JPanel();
 		verticalSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, top, dataArea);
 		top.setLayout(new BoxLayout(top, BoxLayout.Y_AXIS));

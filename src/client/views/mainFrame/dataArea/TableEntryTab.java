@@ -1,8 +1,8 @@
 package client.views.mainFrame.dataArea;
 
 import javax.swing.*;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
+import javax.swing.event.*;
+import javax.swing.table.*;
 
 import java.awt.BorderLayout;
 import java.util.*;
@@ -15,8 +15,10 @@ import shared.dataTransfer.*;
 public class TableEntryTab extends JPanel {
 
 	private MainController controller;
-	private EntryTableModel tableModel;
+	private TableModel tableModel;
 	private JTable table;
+	
+	private static final TableModel BLANK_TABLE_MODEL = new JTable().getModel();
 	
 	private JPanel scrollContents;
 	private JScrollPane scroll;
@@ -48,17 +50,21 @@ public class TableEntryTab extends JPanel {
 	 */
 	public void buildTable(List<Field> fields, Project project, List<Record> records) {
 		remove(table.getTableHeader()); // remove the old header.
-		
-		tableModel = new EntryTableModel(fields, project, records);
-		table.setModel(tableModel);
-		
-		// set table settings
-		table.setCellSelectionEnabled(true);
-		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		table.getTableHeader().setReorderingAllowed(false);
-		add(table.getTableHeader(), BorderLayout.NORTH);
-		tableModel.addTableModelListener(tableSelectionListener);
-		
+		if (fields == null || project == null || records == null ||
+				fields.size() < 1 || records.size() < 1) {
+			tableModel = BLANK_TABLE_MODEL; // nothing to display
+			table.setModel(tableModel);
+		} else {
+			tableModel = new EntryTableModel(fields, project, records);
+			table.setModel(tableModel);
+			
+			// set table settings
+			table.setCellSelectionEnabled(true);
+			table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			table.getTableHeader().setReorderingAllowed(false);
+			add(table.getTableHeader(), BorderLayout.NORTH);
+			tableModel.addTableModelListener(tableSelectionListener);
+		}
 		table.validate();
 		table.repaint();
 	}
@@ -68,9 +74,14 @@ public class TableEntryTab extends JPanel {
 	 * @param dm Data Model object to build the table from.
 	 */
 	public void buildTable(DataModel dm) {
-		buildTable(dm.getCurrentBatch().getFields(),
-				dm.getCurrentProject(),
-				dm.getCurrentBatch().getRecords());
+		Batch batch = dm.getCurrentBatch();
+		if (batch != null && dm.getCurrentProject() != null) {
+			buildTable(batch.getFields(),
+					dm.getCurrentProject(),
+					batch.getRecords());
+		} else {
+			buildTable(null, null, null); // build empty table.
+		}
 	}
 	
 	/**

@@ -15,6 +15,7 @@ import client.state.*;
 import client.views.download.ProjectDialog;
 import client.views.login.LoginDialog;
 import client.views.mainFrame.MainFrame;
+import client.views.shared.DrawingComponent;
 
 /**
  * Controls the main view. Event listeners call methods on it, such as download
@@ -385,6 +386,13 @@ public class MainController {
 		mainView.getViewingArea().setImage(image);
 	}
 
+	private void prepareEmptyView() {
+		Image splashScreen = DrawingComponent.loadImage("splashscreen.jpg");
+		mainView.getViewingArea().setImage(splashScreen);
+		dm = new DataModel();
+		mainView.getDataArea().getTableTab().buildTable(dm);
+	}
+
 	/**
 	 * Loads the user's state from local file, if any is on file. If not,
 	 * loads the default settings.
@@ -397,6 +405,9 @@ public class MainController {
 			downloadImageToModel();
 			placeImageInView();
 			setUpFormAndTableEntryAreas();
+		} else {
+			System.out.println("Prepare empty view");
+			prepareEmptyView();
 		}
 	}
 
