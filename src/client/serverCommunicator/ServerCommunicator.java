@@ -156,9 +156,10 @@ public class ServerCommunicator {
 //			System.out.println(url.toString());
 			Object xstreamResult = processRequest(url);
 			BatchImage result = (BatchImage)xstreamResult;
+			result.setUsername(currentUser.getUsername());
 			// prepend the http handle to the filename.
 			if (result != null) {
-				result.getImage().setFilename(filenameHeader() + result.getImage().getFilename());
+				result.setImageLoc(filenameHeader() + result.getImageLoc());
 			}
 			return result;
 		} catch (MalformedURLException e) {
@@ -184,7 +185,7 @@ public class ServerCommunicator {
 			BatchImage result = (BatchImage)xstreamResult;
 			// prepend the http handle to the filename.
 			if (result != null) {
-				result.getImage().setFilename(filenameHeader() + result.getImage().getFilename());
+				result.setImageLoc(filenameHeader() + result.getImageLoc());
 			}
 			return result;
 		} catch (MalformedURLException e) {

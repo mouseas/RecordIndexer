@@ -14,6 +14,8 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
 public class Batch {
 	
 	public BatchImage batchImage;
+	public BatchImage getBatchImage() { return batchImage; }
+	public void setBatchImage(BatchImage newBI) { batchImage = newBI; }
 	
 	protected List<Record> records;
 	public List<Record> getRecords() { return records; }

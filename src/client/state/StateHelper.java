@@ -40,4 +40,39 @@ public class StateHelper {
 		return textElem;
 	}
 	
+	/**
+	 * Takes a parent node and the name of the leaf to check for, and returns
+	 * the text of the leaf node, or "" if not found.
+	 * @param elem
+	 * @param leafName
+	 * @return
+	 */
+	public static String getStringFromParent(Element elem, String leafName) {
+		Element leaf = (Element)(elem.getElementsByTagName(leafName).item(0));
+		String result;
+		if (leaf != null) {
+			result = leaf.getTextContent().trim();
+		} else {
+			result = "";
+		}
+		return result;
+	}
+	
+	/**
+	 * Takes a parent node and the name of the leaf to check for, and returns
+	 * the parsed int of the leaf node, or -1 if not found.
+	 * @param elem
+	 * @param leafName
+	 * @return
+	 */
+	public static int getIntFromParent(Element elem, String leafName) {
+		Element leaf = (Element)(elem.getElementsByTagName(leafName).item(0));
+		int result = -1;
+		try {
+			result = Integer.parseInt(leaf.getTextContent().trim());
+		} catch (Exception e) {}
+		
+		return result;
+	}
+	
 }

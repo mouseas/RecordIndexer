@@ -419,7 +419,7 @@ public class DataAccess {
 		try {
 			ps = getConnection().prepareStatement(statement);
 			ps.setInt(1, batch.getProjectID());
-			ps.setString(2, batch.getImage().getFilename());
+			ps.setString(2, batch.getImageLoc());
 			if (batch.isCompleted()) {
 				ps.setInt(3, 1); // 1 means completed.
 			} else {

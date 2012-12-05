@@ -18,6 +18,7 @@ public class StateSaver {
 
 	private MainController controller;
 	private Document doc;
+	private Element root;
 	
 	/**
 	 * Constructor used only internally.
@@ -27,6 +28,8 @@ public class StateSaver {
 	private StateSaver(MainController controller) throws ParserConfigurationException {
 		this.controller = controller;
 		doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+		root = doc.createElement("root");
+		doc.appendChild(root);
 	}
 	
 	/**
@@ -54,41 +57,64 @@ public class StateSaver {
 	 * @param saveFile Where to save the completed Document
 	 */
 	private void doSave(File saveFile) throws Exception{
-		docRecordValues();
+		docRecords();
 		docBatchImage();
 		docWindowLayout();
 		docBatchWindowLayout();
-		docFieldsAndProject();
+		docFields();
+		docProject();
 		saveToFile(saveFile);
-//		System.out.println("Done!");
 	}
 
 	/**
 	 * Get the values from each Record in the batch and add them to the doc.
 	 * If there is not a current batch, this adds nothing to the doc.
 	 */
-	private void docRecordValues() {
-//		System.out.println("Gathering Record Values");
-		Element recordsElem = doc.createElement("records");
-		List<Record> recordsList = controller.getDataModel().getCurrentBatch().getRecords();
-		if (recordsList == null) { return; } // no records, don't include them.
-		for (int i = 0; i < recordsList.size(); i++) {
-			String value = recordsList.get(i).getValue();
-			Element record = StateHelper.buildTextElement("record", value, doc);
-			recordsElem.appendChild(record);
+	private void docRecords() {
+		if (controller.userHasBatch()) {
+			Element recordsElem = doc.createElement("records");
+			List<Record> recordsList = controller.getDataModel().getCurrentBatch().getRecords();
+			if (recordsList == null) { return; } // no records, don't include them.
+			for (int i = 0; i < recordsList.size(); i++) {
+				Record record = recordsList.get(i);
+				Element recordElem = doc.createElement("record");
+				recordElem.appendChild(StateHelper.buildTextElement("ID", 
+						"" + record.getID(), doc));
+				recordElem.appendChild(StateHelper.buildTextElement("batchID", 
+						"" + record.getBatchID(), doc));
+				recordElem.appendChild(StateHelper.buildTextElement("value", 
+						record.getValue(), doc));
+				recordElem.appendChild(StateHelper.buildTextElement("fieldID", 
+						"" + record.getFieldID(), doc));
+				recordElem.appendChild(StateHelper.buildTextElement("rowNum", 
+						"" + record.getRowNumber(), doc));
+				
+				recordsElem.appendChild(recordElem);
+			}
+			root.appendChild(recordsElem);
 		}
-		doc.appendChild(recordsElem);
 	}
 	
 	/**
 	 * Saves the batch image to the doc. This is by far the largest part.
 	 */
 	private void docBatchImage() {
-//		System.out.println("Gathering batch image.");
-		if (controller.loggedIn()) {
-			// TODO implement - take the current image, and save the bytes to an
-			// element. If that proves too difficult, save the url, and then it
-			// can be loaded from the server when the user logs back in.
+		if (controller.userHasBatch()) {
+			BatchImage bi = controller.getDataModel().getCurrentBatch().getBatchImage();
+			Element batchElem = doc.createElement("batchImage");
+			
+			batchElem.appendChild(StateHelper.buildTextElement("ID", 
+					"" + bi.getID(), doc));
+			batchElem.appendChild(StateHelper.buildTextElement("projectID", 
+					"" + bi.getProjectID(), doc));
+			batchElem.appendChild(StateHelper.buildTextElement("imageFilename", 
+					bi.getImageLoc(), doc));
+			batchElem.appendChild(StateHelper.buildTextElement("completed", 
+					"" + bi.isCompleted(), doc));
+			batchElem.appendChild(StateHelper.buildTextElement("username", 
+					"" + bi.getUsername(), doc));
+			
+			root.appendChild(batchElem);
 		}
 	}
 	
@@ -97,7 +123,6 @@ public class StateSaver {
 	 * These settings to not require a current batch.
 	 */
 	private void docWindowLayout() {
-//		System.out.println("Gathering user-specific window layout data.");
 		// TODO implement
 	}
 	
@@ -106,20 +131,60 @@ public class StateSaver {
 	 * as scale (zoom), offset, highlights on/off, inverted state
 	 */
 	private void docBatchWindowLayout() {
-		if (controller.loggedIn()) {
-//			System.out.println("Gathering batch-specific window layout.");
+		if (controller.userHasBatch()) {
 			// TODO implement
 		}
 	}
 
 	/**
-	 * Saves the current batch's project and fields.
+	 * Saves the current batch's fields to the document.
 	 */
-	private void docFieldsAndProject() {
-		if (controller.loggedIn()) {
-//			System.out.println("Gathering batch fields and project data.");
-			// TODO implement
-			// TODO include the field help html? Or just re-load from server?
+	private void docFields() {
+		if (controller.userHasBatch()) {
+			Element fieldsElem = doc.createElement("fields");
+			List<Field> fieldsList = controller.getDataModel().getCurrentBatch().getFields();
+			for (int i = 0; i < fieldsList.size(); i++) {
+				Field field = fieldsList.get(i);
+				Element fieldElem = doc.createElement("field");
+				fieldElem.appendChild(StateHelper.buildTextElement("ID",
+						"" + field.getID(), doc));
+				fieldElem.appendChild(StateHelper.buildTextElement("projectID",
+						"" + field.getProjectID(), doc));
+				fieldElem.appendChild(StateHelper.buildTextElement("title",
+						field.getTitle(), doc));
+				fieldElem.appendChild(StateHelper.buildTextElement("xCoord",
+						"" + field.getXCoord(), doc));
+				fieldElem.appendChild(StateHelper.buildTextElement("width",
+						"" + field.getWidth(), doc));
+				fieldElem.appendChild(StateHelper.buildTextElement("helpHtmlLoc",
+						field.getHelpHtmlLoc(), doc));
+				fieldElem.appendChild(StateHelper.buildTextElement("knownDataLocation",
+						field.getKnownDataLoc(), doc));
+				fieldsElem.appendChild(fieldElem);
+			}
+			root.appendChild(fieldsElem);
+			// TODO Optional: include the field help html
+		}
+	}
+	
+	/**
+	 * Saves the current batch's project to the document.
+	 */
+	private void docProject() {
+		if (controller.userHasBatch()) {
+			Element projectElem = doc.createElement("project");
+			Project proj = controller.getDataModel().getCurrentProject();
+			projectElem.appendChild(StateHelper.buildTextElement("ID",
+					"" + proj.getID(), doc));
+			projectElem.appendChild(StateHelper.buildTextElement("title",
+					proj.getTitle(), doc));
+			projectElem.appendChild(StateHelper.buildTextElement("firstYCoord",
+					"" + proj.getY(0), doc));
+			projectElem.appendChild(StateHelper.buildTextElement("fieldHeight", 
+					"" + proj.getRowHeight(), doc));
+			projectElem.appendChild(StateHelper.buildTextElement("numRows",
+					"" + proj.getRecordsPerImage(), doc));
+			root.appendChild(projectElem);
 		}
 	}
 	

@@ -41,14 +41,32 @@ public class BatchImage extends DataTransferObject {
 	
 	/**
 	 * Gets the image associated with this batch.
+	 * Deprecated: use getImageLoc() instead.
 	 * @return
 	 */
+	@Deprecated
 	public ImageReference getImage() {
 		if (image == null) {
 			image = new ImageReference(getProjectID(), imageFilename);
 		}
 		
 		return image;
+	}
+	
+	/**
+	 * Gets the location of the image for this batch.
+	 * @return
+	 */
+	public String getImageLoc() {
+		return imageFilename;
+	}
+	
+	/**
+	 * Sets the location of the image for this batch. Avoid use.
+	 * @param loc
+	 */
+	public void setImageLoc(String loc) {
+		imageFilename = loc;
 	}
 	
 	/**
@@ -78,6 +96,10 @@ public class BatchImage extends DataTransferObject {
 	public static String serialize(BatchImage batch) {
 		XStream xstream = new XStream(new DomDriver());
 		return xstream.toXML(batch);
+	}
+	public static BatchImage deserialize(String xml) {
+		XStream xstream = new XStream(new DomDriver());
+		return (BatchImage)xstream.fromXML(xml);
 	}
 	
 }

@@ -1,12 +1,14 @@
 package client.state;
 
 import java.io.*;
+import java.util.*;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.w3c.dom.Document;
+import org.w3c.dom.*;
 
+import shared.dataTransfer.*;
 import client.controller.MainController;
 
 public class StateLoader {
@@ -45,9 +47,8 @@ public class StateLoader {
 	private void doLoad(File file) throws Exception {
 		loadXMLFileToDoc(file);
 		loadWindowState();
+		loadBatch();
 		loadBatchWindowState();
-		loadBatchImage();
-		loadFieldsAndProject();
 	}
 
 	/**
@@ -60,23 +61,42 @@ public class StateLoader {
 	}
 	
 	/**
-	 * Load the fields and the project for the current batch, if any.
+	 * Load the fields, project, and records for the current batch, if any.
 	 */
-	private void loadFieldsAndProject() {
-		// TODO Auto-generated method stub
-		
-
-		// fields must be loaded first in order to properly load the records 
-		// to the data model.
-		loadRecords();
+	private void loadBatch() {
+		// The batch image must be loaded first and placed in the DataModel, or
+		// the other methods will fail.
+		loadBatchImage();
+		if (controller.userHasBatch()) {
+			// fields and project must be loaded before records in order to properly load 
+			// the records to the data model.
+			loadFields();
+			loadProject();
+			loadRecords();
+		}
 	}
 
 	/**
 	 * Load the image for the current batch, if any.
 	 */
 	private void loadBatchImage() {
-		// TODO Auto-generated method stub
+		NodeList batchImageNode = doc.getElementsByTagName("batchImage");
+		if (batchImageNode == null || batchImageNode.getLength() < 1) {
+			controller.setUserHasBatch(false);
+			return; // no batch to load.
+		}
 		
+		Element batchImageElem = (Element)batchImageNode.item(0);
+		int ID = StateHelper.getIntFromParent(batchImageElem, "ID");
+		int projectID = StateHelper.getIntFromParent(batchImageElem, "projectID");
+		String imageFilename = StateHelper.getStringFromParent(batchImageElem, "imageFilename");
+		String username = StateHelper.getStringFromParent(batchImageElem, "username");
+		
+		BatchImage bi = new BatchImage(ID, projectID, imageFilename, username);
+		Batch newBatch = new Batch(bi);
+		controller.getDataModel().setCurrentBatch(newBatch);
+		
+		controller.setUserHasBatch(true);
 	}
 
 	/**
@@ -96,12 +116,95 @@ public class StateLoader {
 		// TODO Auto-generated method stub
 		
 	}
+
+	/**
+	 * Loads the fields from the document.
+	 */
+	private void loadFields() {
+		NodeList fieldNodes = doc.getElementsByTagName("fields");
+		if (fieldNodes == null) {
+			return; // no fields to load.
+		}
+		List<Field> resultList = new ArrayList<Field>();
+		for (int i = 0; i < fieldNodes.getLength(); i++) {
+			Element fieldElem = (Element)fieldNodes.item(i);
+			
+			int ID = StateHelper.getIntFromParent(fieldElem, "ID");
+			int projectID = StateHelper.getIntFromParent(fieldElem, "projectID");
+			String title = StateHelper.getStringFromParent(fieldElem, "title");
+			int xCoord = StateHelper.getIntFromParent(fieldElem, "xCoord");
+			int width = StateHelper.getIntFromParent(fieldElem, "width");
+			String helpHtml = StateHelper.getStringFromParent(fieldElem, "helpHtmlLoc");
+			String knownData = StateHelper.getStringFromParent(fieldElem, "knownDataLocation");
+			
+			Field result = new Field(ID, projectID, title, xCoord, width, helpHtml, knownData);
+			resultList.add(result);
+		}
+		controller.getDataModel().getCurrentBatch().setFields(resultList);
+	}
+
+	/**
+	 * Loads the project from the document.
+	 */
+	private void loadProject() {
+		NodeList projectNode = doc.getElementsByTagName("project");
+		if (projectNode == null || projectNode.getLength() < 1) {
+			return; // no project to load.
+		}
+		Element projectElem = (Element)projectNode.item(0);
+
+		int ID = StateHelper.getIntFromParent(projectElem, "ID");
+		String title = StateHelper.getStringFromParent(projectElem, "title");
+		int firstYCoord = StateHelper.getIntFromParent(projectElem, "firstYCoord");
+		int fieldHeight = StateHelper.getIntFromParent(projectElem, "fieldHeight");
+		int numRows = StateHelper.getIntFromParent(projectElem, "numRows");
+		
+		Project result = new Project(ID, firstYCoord, fieldHeight, numRows, title);
+		controller.getDataModel().setCurrentProject(result);
+	}
 	
 	/**
 	 * Loads the record values from the doc into the data model.
 	 */
 	private void loadRecords() {
+		if (controller.getDataModel().getCurrentBatch() == null) { return; } // no batch
+		int columns = controller.getDataModel().getCurrentBatch().getFields().size();
+		int rows = controller.getDataModel().getCurrentProject().getRecordsPerImage();
+		if (columns < 1 || rows < 1) {
+			controller.errorDialog("Fields and Project not loaded yet.");
+		}
+		Record[][] recordGrid = new Record[columns][rows];
+		List<Record> recordList = new ArrayList<Record>();
 		
+		int col = 0;
+		int row = 0;
+		NodeList recordNodes = doc.getElementsByTagName("record");
+		for (int i = 0; i < recordNodes.getLength(); i++) {
+			Element recordElem = (Element)recordNodes.item(i);
+			Record result = buildRecord(recordElem);
+			recordGrid[row][col] = result;
+			recordList.add(result);
+			row++;
+			if (row >= rows) {
+				row -= rows;
+				col++;
+			}
+		}
+	}
+	
+	/**
+	 * Builds a Record from an Element
+	 * @param recordElem
+	 * @return
+	 */
+	private Record buildRecord (Element recordElem) {
+		int ID = StateHelper.getIntFromParent(recordElem, "ID");
+		int batchID = StateHelper.getIntFromParent(recordElem, "batchID");
+		int fieldID = StateHelper.getIntFromParent(recordElem, "fieldID");
+		int rowNum = StateHelper.getIntFromParent(recordElem, "rowNum");
+		String value = StateHelper.getStringFromParent(recordElem, "value");
+		
+		return new Record(ID, batchID, fieldID, rowNum, value);
 	}
 	
 }

@@ -71,6 +71,8 @@ public class MainController {
 		placeImageInView();
 		setUpFormAndTableEntryAreas();
 		
+		userHasBatch = true;
+		
 		if (downloadView != null) {
 			downloadView.dispose();
 			downloadView = null;
@@ -180,7 +182,9 @@ public class MainController {
 	public void exit() {
 		// TODO close the program. Should save state before closing.
 		System.out.println("Exit.");
-		saveState();
+		if (loggedIn()) {
+			saveState();
+		}
 		mainView.dispose();
 	}
 	
@@ -224,8 +228,12 @@ public class MainController {
 		this.dm = dm;
 	}
 
-	public boolean doesUserHaveBatch() {
+	public boolean userHasBatch() {
 		return userHasBatch;
+	}
+	
+	public void setUserHasBatch(boolean bool) {
+		userHasBatch = bool;
 	}
 
 	/**
@@ -353,7 +361,7 @@ public class MainController {
 	 */
 	private void downloadImageToModel() {
 		if (dm.getCurrentBatch() == null) { return; }
-		String urlStr = dm.getCurrentBatch().batchImage.getImage().getFilename();
+		String urlStr = dm.getCurrentBatch().batchImage.getImageLoc();
 //		System.out.println(urlStr);
 		InputStream inStream = getFileFromServer(urlStr);
 		Image result = null;
@@ -435,7 +443,7 @@ public class MainController {
 			return dm.getCurrentBatchImage(); // already have it.
 		}
 		try {
-			String location = dm.getCurrentBatch().batchImage.getImage().getFilename();
+			String location = dm.getCurrentBatch().batchImage.getImageLoc();
 			InputStream stream = getFileFromServer(location);
 			Image result = ImageIO.read(stream);
 			dm.setCurrentBatchImage(result);
