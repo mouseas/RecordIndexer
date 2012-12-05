@@ -29,6 +29,8 @@ public class MainController {
 	private ServerCommunicator sc;
 	private DataModel dm;
 	
+	private boolean userHasBatch;
+	
 	/**
 	 * Constructor. Requires the domain and port number of the server to
 	 * connect to.
@@ -38,6 +40,8 @@ public class MainController {
 	public MainController(String domain, int port) {
 		sc = new ServerCommunicator(domain, port);
 		dm = new DataModel();
+		
+		userHasBatch = false;
 	}
 	
 	/**
@@ -114,7 +118,7 @@ public class MainController {
 	 */
 	public void logout() {
 		if (!loggedIn()) { return; } // already logged out
-		saveState(sc.getCurrentUser().getUsername());
+		saveState();
 		sc.logout();
 		mainView.setVisible(false);
 		openLoginDialog();
@@ -175,6 +179,7 @@ public class MainController {
 	public void exit() {
 		// TODO close the program. Should save state before closing.
 		System.out.println("Exit.");
+		saveState();
 		mainView.dispose();
 	}
 	
@@ -202,9 +207,32 @@ public class MainController {
 		this.downloadView = downloadView;
 	}
 
+	public ServerCommunicator getServerCommunicator() {
+		return sc;
+	}
+
+	public void setServerCommunicator(ServerCommunicator sc) {
+		this.sc = sc;
+	}
+
+	public DataModel getDataModel() {
+		return dm;
+	}
+
+	public void setDataModel(DataModel dm) {
+		this.dm = dm;
+	}
+
+	public boolean doesUserHaveBatch() {
+		return userHasBatch;
+	}
+
+	/**
+	 * Save function called by various listeners.
+	 */
 	public void save() {
 		if (!loggedIn()) { return; }
-		saveState(sc.getCurrentUser().getUsername());
+		saveState();
 	}
 
 	public void openDownloadDialog() {
@@ -222,23 +250,52 @@ public class MainController {
 		}
 	}
 
+	/**
+	 * Builds and opens the login dialog box.
+	 */
 	public void openLoginDialog() {
 		LoginDialog loginDialog = new LoginDialog(mainView, this);
 		setLoginView(loginDialog);
 		loginDialog.setVisible(true);
 	}
 
+	/**
+	 * Opens a window with a sample image from the selected project.
+	 * @param p
+	 */
 	public void viewSample(Project p) {
 		SampleController s = new SampleController(sc, p);
 		s.buildAndOpenViewer();
 	}
 	
+	/**
+	 * Returns the current user's unfinished batch so that the user can get a new 
+	 * batch and the batch may be given to another user.
+	 */
 	public void returnBatch() {
 		if (sc.getCurrentUser() == null) { return; } // no user; no batch to return.
-		sc.returnBatch(dm.getCurrentUser());
+		sc.returnBatch(sc.getCurrentUser());
 
 		mainView.getMenubar().setDownloadEnabled(true);
 		System.out.println("Debug Function: Return Batch.");
+	}
+
+	/**
+	 * Creates and displays a generic error message.
+	 * @param message The message to display
+	 */
+	public void errorDialog(String message) {
+		errorDialog(message, "Error");
+	}
+	
+	/**
+	 * Creates and displays a generic error message.
+	 * @param message The message to display
+	 * @param title The title to display at the top of the dialog.
+	 */
+	public void errorDialog(String message, String title) {
+		JOptionPane.showMessageDialog(mainView, 
+				message, title, JOptionPane.ERROR_MESSAGE);
 	}
 
 	private void setUpFormAndTableEntryAreas() {
@@ -426,10 +483,9 @@ public class MainController {
 		}
 	}
 
-	private void saveState(String username) {
+	private void saveState() {
 		System.out.println("Save current state");
-		// TODO implement save.
-		
+		StateSaver.saveState(this); // made a class just for this.
 	}
 
 	

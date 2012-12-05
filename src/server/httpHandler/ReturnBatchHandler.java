@@ -27,11 +27,11 @@ public class ReturnBatchHandler implements HttpHandler {
 	@Override
 	public void handle(HttpExchange exchange) throws IOException {
 		System.out.println(exchange.getRequestURI().toString());
-		database.startTransaction();
 		boolean commit = false;
 		User user = HelperFunction.verifyUser(database, exchange);
 		OutputStream os = null;
 		String response = null;
+		database.startTransaction();
 		if (user != null && user.getID() >= 0) {
 			try {
 				database.returnBatchUnfinished(user);

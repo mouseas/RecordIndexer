@@ -16,6 +16,7 @@ public class DataModel {
 	private Project currentProject;
 	private Batch currentBatch;
 	private Record[][] currentRecordGrid;
+	@Deprecated // Use ServerCommunicator.getCurrentUser().
 	private User currentUser;
 	private Image currentBatchImage;
 	
@@ -50,10 +51,12 @@ public class DataModel {
 		this.currentRecordGrid = currentRecordGrid;
 	}
 
+	@Deprecated
 	public User getCurrentUser() {
 		return currentUser;
 	}
 
+	@Deprecated
 	public void setCurrentUser(User currentUser) {
 		this.currentUser = currentUser;
 	}
