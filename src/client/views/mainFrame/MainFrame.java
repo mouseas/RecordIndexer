@@ -128,6 +128,10 @@ public class MainFrame extends JFrame {
 	public int getSplitterPos() {
 		return verticalSplit.getDividerLocation();
 	}
+	
+	public void setSplitterPos(int position) {
+		verticalSplit.setDividerLocation(position);
+	}
 
 	/**
 	 * Adapter to make sure controller.exit() is called on closing the window,

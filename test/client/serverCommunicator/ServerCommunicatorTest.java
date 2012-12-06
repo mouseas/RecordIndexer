@@ -85,7 +85,7 @@ public class ServerCommunicatorTest {
 		BatchImage actualBatch = sc.requestNextBatch(0);
 		assertNotNull("No batch from project 0", actualBatch);
 		System.out.println("BATCH: " + actualBatch.getID() + " PID:" + actualBatch.getProjectID()
-				+ " " + actualBatch.getImage().getFilename());
+				+ " " + actualBatch.getImageLoc());
 		BatchImage actualBatch2 = sc.requestNextBatch(2);
 		assertNull("Batch returned from project 2 " +
 					"(all batches should be completed)", actualBatch2);
@@ -161,7 +161,7 @@ public class ServerCommunicatorTest {
 		BatchImage actual = sc.requestSpecificBatch(40);
 		assertNotNull("Null result, expected a batch.", actual);
 		assertEquals(expected.getID(), actual.getID());
-		assertEquals(expected.getImage().getFilename(), actual.getImage().getFilename());
+		assertEquals(expected.getImageLoc(), actual.getImageLoc());
 		assertEquals(expected.getProjectID(), actual.getProjectID());
 	}
 

@@ -2,6 +2,7 @@ package server.dataAccess;
 
 import server.ServerException;
 import shared.dataTransfer.*;
+
 import java.sql.*;
 import java.util.*;
 import java.io.*;
@@ -261,6 +262,30 @@ public class DataAccess {
 		if (completed) { ps.setInt(1, 1); } // completed
 		else { ps.setInt(1, 0); } // not completed
 		ps.setInt(2, input.getID());
+		ps.execute();
+		
+		closeQuery(null, ps);
+		return true;
+	}
+
+	/**
+	 * Sets the number of Indexed Records for the specified user.
+	 * @param user
+	 * @param newNumRecordsIndexed
+	 * @return
+	 */
+	public boolean setNumRecordsIndexed(User user, int newNumRecordsIndexed) 
+			throws SQLException, ServerException {
+		PreparedStatement ps = null;
+		String statement = "UPDATE users SET indexed_records = ?" +
+				" WHERE username = ?";
+		try {
+			ps = getConnection().prepareStatement(statement);
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+		}
+		ps.setInt(1, newNumRecordsIndexed);
+		ps.setString(2, user.getUsername());
 		ps.execute();
 		
 		closeQuery(null, ps);

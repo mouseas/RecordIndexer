@@ -232,7 +232,7 @@ public class TestController implements IController {
 	private void outputBatch(StringBuilder sb, BatchImage batch, Project p, List<Field> fields) {
 		sb.append(batch.getID() + "\n");
 		sb.append(batch.getProjectID() + "\n");
-		sb.append(batch.getImage().getFilename() + "\n");
+		sb.append(batch.getImageLoc() + "\n");
 		sb.append(p.getY(0) + "\n");
 		sb.append(p.getRowHeight() + "\n");
 		sb.append(p.getRecordsPerImage() + "\n");
@@ -402,7 +402,7 @@ public class TestController implements IController {
 					// it would be more efficient for many searches to put these in a
 					// hash table and only request them the first time that ID is needed.
 					if (b != null) {
-						String filename = b.getImage().getFilename();
+						String filename = b.getImageLoc();
 						sb.append(filename + "\n");
 					} else {
 						sb.append("File name error\n");
@@ -430,6 +430,7 @@ public class TestController implements IController {
 		int[] fieldIDs = splitIntString(source);
 		if (fieldIDs == null) { return null; }
 		List<Field> fields = new ArrayList<Field>();
+		if(source.equals("")) { return fields; }
 		for (int i = 0; i < fieldIDs.length; i++) {
 			Field f = new Field(fieldIDs[i], 0, "", 0, 0, "", "");
 			fields.add(f);

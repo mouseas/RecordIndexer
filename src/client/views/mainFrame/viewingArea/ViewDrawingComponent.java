@@ -5,8 +5,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 
-import client.views.shared.DrawingComponent;
-import client.views.shared.DrawingShape;
+import client.views.shared.*;
 
 /**
  * Child of DrawingComponent, this version is used in the MainView, and can be

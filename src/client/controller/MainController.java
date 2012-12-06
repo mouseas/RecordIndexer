@@ -142,12 +142,20 @@ public class MainController {
 	 */
 	public void submitBatch() {
 		System.out.println("MainController.submitBatch()");
-		if (!loggedIn()) { return; }
-		if (dm.getCurrentBatch() == null) { return; }
-//		sc.submitBatch(dm.getCurrentBatch());
-//		dm.setCurrentBatch(null);
-//		dm.setCurrentRecordGrid(null);
-//		dm.setCurrentProject(null);
+		if (!loggedIn()) {
+			errorDialog("No user logged in. This should never happen!");
+			return;
+		}
+		if (dm.getCurrentBatch() == null) { 
+			errorDialog("No batch to submit!");
+			return; 
+		}
+		sc.submitBatch(dm.getCurrentBatch());
+		dm.setCurrentBatch(null);
+		dm.setCurrentProject(null);
+		userHasBatch = false;
+		prepareEmptyView();
+		mainView.getMenubar().setDownloadEnabled(true);
 	}
 	
 	/**
@@ -287,6 +295,10 @@ public class MainController {
 		sc.returnBatch(sc.getCurrentUser());
 
 		mainView.getMenubar().setDownloadEnabled(true);
+		dm.setCurrentBatch(null);
+		dm.setCurrentProject(null);
+		userHasBatch = false;
+		prepareEmptyView();
 		System.out.println("MainController.returnBatch(): Debug Function - Return Batch.");
 	}
 
@@ -353,7 +365,6 @@ public class MainController {
 		mainView.getMenubar().setDownloadEnabled(false);
 		dm.setCurrentProject(p);
 		dm.setCurrentBatch(batch);
-		dm.setCurrentRecordGrid(records);
 	}
 
 	/**

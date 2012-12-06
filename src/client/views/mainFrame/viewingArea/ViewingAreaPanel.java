@@ -58,7 +58,6 @@ public class ViewingAreaPanel extends JPanel {
 										currentImage.getHeight(null));
 		scaleX = panel.getWidth() / image.getWidth();
 		scaleY = panel.getHeight() / image.getHeight();
-		System.out.println("ViewingAreaPanel.scaleFitToView(): " + scaleX + " " + scaleY);
 		
 		return Math.min(Math.min(scaleX, scaleY), 1.0);
 	}

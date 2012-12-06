@@ -43,6 +43,7 @@ public class SubmitBatchHandler implements HttpHandler {
 				database.startTransaction();
 				if (!saveRecords(finishedBatch)) { commit = false; }
 				if (!saveBatch(finishedBatch.batchImage)) { commit = false; }
+				if (!addUserNumIndexedRecords(finishedBatch, user)) { commit = false; }
 				database.endTransaction(commit);
 				if (!commit) { responseCode = 404; }
 			} else {
@@ -54,7 +55,7 @@ public class SubmitBatchHandler implements HttpHandler {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Reads in the xml and outputs it as a FinishedBatch object.
 	 * @param body
@@ -96,6 +97,25 @@ public class SubmitBatchHandler implements HttpHandler {
 		boolean commit = true;
 		try {
 			commit = database.saveBatch(batch, true);
+		} catch (Exception e) {
+			commit = false;
+		}
+		return commit;
+	}
+
+	/**
+	 * Updates the user's number of indexed records by adding their current
+	 * total to the number of records.
+	 * @param batch
+	 * @return
+	 */
+	private boolean addUserNumIndexedRecords(Batch batch, User user) {
+		if (batch == null) { return false; }
+		boolean commit = true;
+		try {
+			int newNumRecordsIndexed = batch.getRecords().size() 
+					+ user.getNumIndexedRecords();
+			commit = database.setNumRecordsIndexed(user, newNumRecordsIndexed);
 		} catch (Exception e) {
 			commit = false;
 		}

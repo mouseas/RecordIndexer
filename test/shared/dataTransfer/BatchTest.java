@@ -24,12 +24,12 @@ public class BatchTest {
 	public void testBatch() {
 		assertEquals(17, b.getID());
 		assertEquals(3, b.getProjectID());
-		assertEquals("test.png", b.getImage().getFilename());
+		assertEquals("test.png", b.getImageLoc());
 	}
 
 	@Test
 	public void testGetImage() {
-		assertEquals("test.png", b.getImage().getFilename());
+		assertEquals("test.png", b.getImageLoc());
 	}
 
 	@Test

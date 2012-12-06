@@ -125,11 +125,22 @@ public class StateSaver {
 	 */
 	private void docWindowLayout() {
 		MainFrame m = controller.getMainView();
+		int windowX = m.getX();
+		int windowY = m.getY();
+		int windowWidth = m.getWidth();
+		int windowHeight = m.getHeight();
 		int dataSplitterPos = m.getDataArea().getSplitterPos();
 		int mainSplitterPos = m.getSplitterPos();
-		// TODO add window size, maybe selected tabs
 		
 		Element windowSettings = doc.createElement("window");
+		windowSettings.appendChild(StateHelper.buildTextElement("windowX", 
+				"" + windowX, doc));
+		windowSettings.appendChild(StateHelper.buildTextElement("windowY", 
+				"" + windowY, doc));
+		windowSettings.appendChild(StateHelper.buildTextElement("windowWidth", 
+				"" + windowWidth, doc));
+		windowSettings.appendChild(StateHelper.buildTextElement("windowHeight", 
+				"" + windowHeight, doc));
 		windowSettings.appendChild(StateHelper.buildTextElement("dataSplitterPos", 
 				"" + dataSplitterPos, doc));
 		windowSettings.appendChild(StateHelper.buildTextElement("mainSplitterPos", 

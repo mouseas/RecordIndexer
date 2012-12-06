@@ -102,7 +102,7 @@ public class DataAccessTest {
 			fail(e.getMessage());
 		}
 		da.addBatch(new BatchImage(3, 1, "batch003.png", "0"));
-		assertEquals("batch002.png", batch2.getImage().getFilename());
+		assertEquals("batch002.png", batch2.getImageLoc());
 		assertEquals(2, batch2.getID());
 	}
 
@@ -254,8 +254,8 @@ public class DataAccessTest {
 			BatchImage actual = da.getNextBatch(1, "test");
 			assertNotNull("No batch returned!", actual);
 			assertEquals(expected.getID(), actual.getID());
-			assertEquals(expected.getImage().getFilename(), 
-					actual.getImage().getFilename());
+			assertEquals(expected.getImageLoc(), 
+					actual.getImageLoc());
 			assertEquals(expected.getProjectID(), actual.getProjectID());
 		} catch (Exception e) {
 			e.printStackTrace();

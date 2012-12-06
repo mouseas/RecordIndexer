@@ -1,16 +1,16 @@
 package client.state;
 
-import java.awt.Color;
+import java.awt.Dimension;
 import java.io.*;
 import java.util.*;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.*;
 
 import org.w3c.dom.*;
 
 import shared.dataTransfer.*;
 import client.controller.MainController;
+import client.views.mainFrame.MainFrame;
 import client.views.mainFrame.viewingArea.ViewingAreaPanel;
 
 public class StateLoader {
@@ -52,6 +52,8 @@ public class StateLoader {
 			loadWindowState();
 			loadBatch();
 			loadBatchWindowState();
+		} else { // new user
+			controller.getMainView().getMenubar().setDownloadEnabled(true);
 		}
 	}
 
@@ -82,6 +84,9 @@ public class StateLoader {
 			loadFields();
 			loadProject();
 			loadRecords();
+			controller.getMainView().getMenubar().setDownloadEnabled(false);
+		} else {
+			controller.getMainView().getMenubar().setDownloadEnabled(true);
 		}
 	}
 
@@ -138,8 +143,26 @@ public class StateLoader {
 	 * and splitter positions.
 	 */
 	private void loadWindowState() {
-		// TODO Auto-generated method stub
+		// get values
+		NodeList windowElemList = doc.getElementsByTagName("window");
+		if (windowElemList == null || windowElemList.getLength() < 1) {
+			return; // nothing to load
+		}
+		Element windowElem = (Element)windowElemList.item(0);
+		int windowX = StateHelper.getIntFromParent(windowElem, "windowX");
+		int windowY = StateHelper.getIntFromParent(windowElem, "windowY");
+		int windowWidth = StateHelper.getIntFromParent(windowElem, "windowWidth");
+		int windowHeight = StateHelper.getIntFromParent(windowElem, "windowHeight");
+		int dataSplitterPos = StateHelper.getIntFromParent(windowElem, "dataSplitterPos");
+		int mainSplitterPos = StateHelper.getIntFromParent(windowElem, "mainSplitterPos");
 		
+		// apply them to window
+		MainFrame m = controller.getMainView();
+		m.setLocation(windowX, windowY);
+		m.setSize(windowWidth, windowHeight);
+		m.setPreferredSize(new Dimension(windowWidth, windowHeight));
+		m.setSplitterPos(mainSplitterPos);
+		m.getDataArea().setSplitterPos(dataSplitterPos);
 	}
 
 	/**
