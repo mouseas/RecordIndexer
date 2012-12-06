@@ -389,6 +389,7 @@ public class MainController {
 		Image splashScreen = DrawingComponent.loadImage("splashscreen.jpg");
 		mainView.getViewingArea().setImage(splashScreen);
 		mainView.getViewingArea().setOffset(0, 0);
+		mainView.getViewingArea().setZoomToIdeal();
 		dm = new DataModel();
 		mainView.getDataArea().getTableTab().buildTable(dm);
 	}
@@ -399,6 +400,7 @@ public class MainController {
 	 * @param username
 	 */
 	private void loadState(String username) {
+		userHasBatch = false; // loadUserState should set this to true if there is a batch.
 		StateLoader.loadUserState(this);
 		// TODO load the information from the DataModel.
 		if (userHasBatch) {

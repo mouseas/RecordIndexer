@@ -239,10 +239,10 @@
    </window>
    <batchWindow>
       <scale>0.6561000000000002</scale>
-      <offsetX>-91.0</offsetX>
-      <offsetY>69.0</offsetY>
+      <offsetX>16.0</offsetX>
+      <offsetY>130.0</offsetY>
       <hilightVisible>false</hilightVisible>
-      <invertedImage>false</invertedImage>
+      <invertedImage>true</invertedImage>
    </batchWindow>
    <fields>
       <field>

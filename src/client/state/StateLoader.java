@@ -1,5 +1,6 @@
 package client.state;
 
+import java.awt.Color;
 import java.io.*;
 import java.util.*;
 
@@ -112,7 +113,6 @@ public class StateLoader {
 	 * highlights on/off, and inverted state.
 	 */
 	private void loadBatchWindowState() {
-		System.out.println("StateLoader.loadBatchWindowState()");
 		// get values
 		NodeList windowElemList = doc.getElementsByTagName("batchWindow");
 		if (windowElemList == null || windowElemList.getLength() < 1) {
@@ -126,11 +126,11 @@ public class StateLoader {
 		boolean invertedImage = StateHelper.getBoolFromParent(windowElem, "invertedImage");
 		
 		// apply them to window
-		ViewingAreaPanel m = controller.getMainView().getViewingArea();
-		m.setZoom(scale);
-		m.setOffset(offsetX, offsetY);
+		ViewingAreaPanel v = controller.getMainView().getViewingArea();
+		v.setZoom(scale);
+		v.setOffset(offsetX, offsetY);
 		// TODO implement setting hilight state
-		m.setInverted(invertedImage);
+		v.setInverted(invertedImage);
 	}
 
 	/**

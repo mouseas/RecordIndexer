@@ -25,7 +25,7 @@ public class ViewingAreaPanel extends JPanel {
 		add(drawingComponent);
 		currentImage = null;
 		
-		imageInverted = false;
+		setImageInverted(false);
 	}
 	
 	/**
@@ -39,6 +39,10 @@ public class ViewingAreaPanel extends JPanel {
 		currentImage = newImage;
 		if (newImage != null) {
 			drawingComponent.addImage(currentImage);
+			if(isInverted()) {
+				invertImage();
+				imageInverted = true; // only allowed override
+			}
 		}
 //		drawingComponent.setScale(scaleFitToView());
 		drawingComponent.validate();
@@ -63,6 +67,7 @@ public class ViewingAreaPanel extends JPanel {
 	 * Inverts the image and background, which may aid readability.
 	 */
 	public void invertImage() {
+		setImageInverted(!isInverted());
 		if (currentImage == null) { return; }
 		BufferedImage img = (BufferedImage)currentImage;
 		for(int x = 0; x < img.getWidth(null); x++) {
@@ -81,8 +86,7 @@ public class ViewingAreaPanel extends JPanel {
 				}
 			}
 		}
-		imageInverted = !imageInverted;
-		drawingComponent.invertBackGround();
+		drawingComponent.invertBackground();
 		drawingComponent.repaint();
 	}
 	
@@ -96,6 +100,11 @@ public class ViewingAreaPanel extends JPanel {
 		if (scale <= 0) { return; } // reject negative numbers
 		drawingComponent.setScale(scale);
 		
+	}
+	
+	public void setZoomToIdeal() {
+		double scale = scaleFitToView();
+		drawingComponent.setScale(scale);
 	}
 	
 	public double getCurrentZoom() {
@@ -125,6 +134,16 @@ public class ViewingAreaPanel extends JPanel {
 	}
 	
 	public void setInverted(boolean inverted) {
-		imageInverted = inverted;
+		if (inverted != isInverted()) {
+			invertImage();
+		}
+	}
+
+	/**
+	 * Used internally to track when imageInverted is changed.
+	 * @param imageInverted What value to set imageInverted to
+	 */
+	private void setImageInverted(boolean imageInverted) {
+		this.imageInverted = imageInverted;
 	}
 }

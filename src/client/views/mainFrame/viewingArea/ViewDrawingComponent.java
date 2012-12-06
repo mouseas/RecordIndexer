@@ -29,11 +29,17 @@ public class ViewDrawingComponent extends DrawingComponent {
 		setSize(getPreferredSize());
 	}
 	
-	public void invertBackGround() {
+	public void invertBackground() {
 		backgroundColor = new Color(255 - backgroundColor.getRed(),
 									255 - backgroundColor.getGreen(),
 									255 - backgroundColor.getBlue(),
 									backgroundColor.getAlpha());
+		setBackground(backgroundColor);
+		repaint();
+	}
+	
+	public void setBackgroundColor(Color col) {
+		backgroundColor = col;
 		setBackground(backgroundColor);
 		repaint();
 	}

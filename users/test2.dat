@@ -233,6 +233,17 @@
       <completed>false</completed>
       <username>test2</username>
    </batchImage>
+   <window>
+      <dataSplitterPos>401</dataSplitterPos>
+      <mainSplitterPos>337</mainSplitterPos>
+   </window>
+   <batchWindow>
+      <scale>0.43046721000000016</scale>
+      <offsetX>-36.0</offsetX>
+      <offsetY>2.0</offsetY>
+      <hilightVisible>false</hilightVisible>
+      <invertedImage>false</invertedImage>
+   </batchWindow>
    <fields>
       <field>
          <ID>0</ID>
