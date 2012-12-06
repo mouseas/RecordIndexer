@@ -2,16 +2,14 @@ package client.model;
 
 import javax.swing.table.AbstractTableModel;
 
-import java.util.*;
-
-import shared.dataTransfer.*;
-
 @SuppressWarnings("serial")
 public class EntryTableModel extends AbstractTableModel {
 
-	protected List<Field> fields;
-	protected Project project;
-	protected List<Record> records;
+	protected DataModel dm;
+	
+//	protected List<Field> fields;
+//	protected Project project;
+//	protected List<Record> records;
 	
 	int columns; // actual number of columns in the Records
 	int rows;
@@ -21,37 +19,41 @@ public class EntryTableModel extends AbstractTableModel {
 	 * @param fieldsList
 	 * @param proj
 	 */
-	public EntryTableModel(List<Field> fieldsList, Project proj, List<Record> recs) {
-		fields = fieldsList;
-		project = proj;
-		records = recs;
+	public EntryTableModel(DataModel dataModel) {
+		setDataModel(dataModel);
 		
-		columns = getColumnCount() - 1;
-		rows = getRowCount();
+		
 	}
 	
 	@Override
 	public int getColumnCount() {
-		if (fields == null) { return 0; }
-		return fields.size() + 1;
+		if (dm == null || dm.getCurrentBatch() == null || 
+				dm.getCurrentBatch().getFields() == null) {	
+			return 0; // nothing to return
+		}
+		return dm.getCurrentBatch().getFields().size() + 1;
 	}
 
 	@Override
 	public int getRowCount() {
-		if (project == null) { return 0; }
-		return project.getRecordsPerImage();
+		if (dm == null || dm.getCurrentProject() == null) { return 0; }
+		return dm.getCurrentProject().getRecordsPerImage();
 	}
 
 	@Override
 	public Object getValueAt(int row, int column) {
-		if (records == null) { return null; } // nada.
+		if (dm == null || dm.getCurrentBatch() == null 
+				|| dm.getCurrentBatch().getRecords() == null) { 
+			return null; 
+		} // nada.
 		if (row < 0 || column < 0 || 
 				column > columns || 
 				row >= rows) {
 			throw new IndexOutOfBoundsException();
 		}
 		if (column > 0) {
-			return records.get(calculateIndexFromCoords(column - 1, row)).getValue();
+			return dm.getCurrentBatch().getRecords()
+					.get(calculateIndexFromCoords(column - 1, row)).getValue();
 		} else {
 			return row + 1;
 		}
@@ -60,9 +62,15 @@ public class EntryTableModel extends AbstractTableModel {
 	@Override
 	public void setValueAt(Object value, int row, int column) {
 		if (value instanceof String) {
+			if (dm == null || dm.getCurrentBatch() == null 
+					|| dm.getCurrentBatch().getRecords() == null) { 
+				return; // no way to set it
+			}
 			if (column > 0 && column <= columns){
 				String str = (String) value;
-				records.get(calculateIndexFromCoords(column - 1, row)).setValue(str);
+				dm.getCurrentBatch().getRecords()
+						.get(calculateIndexFromCoords(column - 1, row))
+						.setValue(str);
 			} else {
 				System.out.println("Attempting to put string into " + row + "," + column);
 			}
@@ -73,11 +81,15 @@ public class EntryTableModel extends AbstractTableModel {
 	
 	@Override
 	public String getColumnName(int column) {
-		if (column > fields.size() || column < 0) { 
+		if (dm == null || dm.getCurrentBatch() == null || 
+				dm.getCurrentBatch().getFields() == null) {	
+			return null; // nothing to return
+		}
+		if (column > dm.getCurrentBatch().getFields().size() || column < 0) { 
 			throw new IndexOutOfBoundsException();
 		}
 		if (column > 0) {
-			return fields.get(column - 1).getTitle();
+			return dm.getCurrentBatch().getFields().get(column - 1).getTitle();
 		} else {
 			return "Record Number";
 		}
@@ -90,6 +102,16 @@ public class EntryTableModel extends AbstractTableModel {
 		} else {
 			return false;
 		}
+	}
+
+	public DataModel getDataModel() {
+		return dm;
+	}
+
+	public void setDataModel(DataModel dm) {
+		this.dm = dm;
+		columns = getColumnCount() - 1;
+		rows = getRowCount();
 	}
 	
 	/**

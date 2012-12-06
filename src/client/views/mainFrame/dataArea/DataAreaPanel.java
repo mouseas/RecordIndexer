@@ -3,6 +3,7 @@ package client.views.mainFrame.dataArea;
 import javax.swing.*;
 
 import client.controller.MainController;
+import client.model.DataModel;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -23,8 +24,8 @@ public class DataAreaPanel extends JPanel {
 	@SuppressWarnings("unused")
 	private MainController controller;
 	
-	public DataAreaPanel() {
-		buildLeftPane();
+	public DataAreaPanel(DataModel dm) {
+		buildLeftPane(dm);
 		buildRightPane();
 		
 		setMinimumSize(new Dimension(150,50));
@@ -69,12 +70,14 @@ public class DataAreaPanel extends JPanel {
 		barPosition = pos / split.getWidth();
 	}
 	
-	private void buildLeftPane() {
+	private void buildLeftPane(DataModel dm) {
 		leftPane = new JTabbedPane();
 		leftPane.setPreferredSize(new Dimension(400,150));
 		leftPane.setMinimumSize(new Dimension(75,50));
 		tableTab = new TableEntryTab(controller);
+		tableTab.setDataModel(dm);
 		formTab = new FormEntryTab();
+		formTab.setDataModel(dm);
 		leftPane.addTab("Table Entry", tableTab);
 		leftPane.addTab("Form Entry", formTab);
 	}
@@ -99,5 +102,10 @@ public class DataAreaPanel extends JPanel {
 //			split.setDividerLocation(absLoc); 
 		}
 	};
+
+	public void setDataModel(DataModel dm) {
+		formTab.setDataModel(dm);
+		tableTab.setDataModel(dm);
+	}
 
 }

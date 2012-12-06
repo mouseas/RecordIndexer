@@ -6,6 +6,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 import client.controller.MainController;
+import client.model.DataModel;
 import client.views.mainFrame.buttonBar.ButtonPanel;
 import client.views.mainFrame.dataArea.DataAreaPanel;
 import client.views.mainFrame.viewingArea.ViewingAreaPanel;
@@ -36,7 +37,7 @@ public class MainFrame extends JFrame {
 
 //	private MainFrameDimensions savedDimensions;
 	
-	public MainFrame() {
+	public MainFrame(DataModel dm) {
 		super(); // do whatever JFrame does. right?
 		
 		menubar = new MainFrameMenubar();
@@ -53,7 +54,7 @@ public class MainFrame extends JFrame {
 		setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
 		
 		buttonBar = new ButtonPanel();
-		dataArea = new DataAreaPanel();
+		dataArea = new DataAreaPanel(dm);
 		viewingArea = new ViewingAreaPanel();
 		
 		JPanel top = new JPanel();

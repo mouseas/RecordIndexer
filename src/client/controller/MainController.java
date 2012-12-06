@@ -235,6 +235,9 @@ public class MainController {
 
 	public void setDataModel(DataModel dm) {
 		this.dm = dm;
+		if (mainView != null) {
+			mainView.getDataArea().setDataModel(dm);
+		}
 	}
 
 	public boolean userHasBatch() {
@@ -402,6 +405,7 @@ public class MainController {
 		mainView.getViewingArea().setOffset(0, 0);
 		mainView.getViewingArea().setZoomToIdeal();
 		dm = new DataModel();
+		mainView.getDataArea().setDataModel(dm);
 		mainView.getDataArea().getTableTab().buildTable(dm);
 	}
 

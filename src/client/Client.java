@@ -30,7 +30,7 @@ public class Client {
 					public void run() {
 						MainController c = new MainController(domain, port);
 						// make the main frame
-						MainFrame mainFrame = new MainFrame();
+						MainFrame mainFrame = new MainFrame(c.getDataModel());
 						mainFrame.setController(c);
 						c.setMainView(mainFrame);
 						c.openLoginDialog(); // open login screen
