@@ -47,7 +47,7 @@ public class DrawingComponent extends JComponent {
 		try {
 			return ImageIO.read(new File(filename));
 		} catch (IOException e) {
-			System.out.println("Failed to load " + filename);
+			System.out.println("DrawingComponent.loadImage(): Failed to load " + filename);
 			return NULL_IMAGE;
 		}
 	}
@@ -90,8 +90,10 @@ public class DrawingComponent extends JComponent {
 	}
 
 	public void setScale(double newScale) {
+		if (newScale <= 0) { return; } // reject negative scales
 		scale = newScale;
 		repaint();
+//		System.out.println("DrawingComponent.setScale(): " + scale);
 	}
 	
 	/**
@@ -111,6 +113,15 @@ public class DrawingComponent extends JComponent {
 		Dimension result = new Dimension((int)(maxWidth * scale),
 										(int)(maxHeight * scale));
 		setPreferredSize(result);
+	}
+	
+	public void setOffset(double offX, double offY) {
+		offsetX = offX;
+		offsetY = offY;
+	}
+	
+	public Point2D getOffset() {
+		return new Point2D.Double(offsetX, offsetY);
 	}
 
 	/**

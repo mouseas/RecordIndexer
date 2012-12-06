@@ -9,7 +9,6 @@ import client.controller.MainController;
 import client.views.mainFrame.buttonBar.ButtonPanel;
 import client.views.mainFrame.dataArea.DataAreaPanel;
 import client.views.mainFrame.viewingArea.ViewingAreaPanel;
-import client.views.shared.*;
 
 /**
  * Main indexing window.
@@ -124,6 +123,10 @@ public class MainFrame extends JFrame {
 
 	public ViewingAreaPanel getViewingArea() {
 		return viewingArea;
+	}
+
+	public int getSplitterPos() {
+		return verticalSplit.getDividerLocation();
 	}
 
 	/**

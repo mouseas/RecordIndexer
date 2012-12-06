@@ -13,7 +13,8 @@ public class ViewingAreaPanel extends JPanel {
 	
 	private ViewDrawingComponent drawingComponent;
 	private Image currentImage;
-	private Point2D offset;
+	
+	private boolean imageInverted;
 
 	@SuppressWarnings("unused")
 	private MainController controller;
@@ -23,7 +24,8 @@ public class ViewingAreaPanel extends JPanel {
 		drawingComponent = new ViewDrawingComponent();
 		add(drawingComponent);
 		currentImage = null;
-		offset = new Point2D.Double(0,0);
+		
+		imageInverted = false;
 	}
 	
 	/**
@@ -36,9 +38,9 @@ public class ViewingAreaPanel extends JPanel {
 		}
 		currentImage = newImage;
 		if (newImage != null) {
-			drawingComponent.addImage(currentImage, offset);
+			drawingComponent.addImage(currentImage);
 		}
-		drawingComponent.setScale(scaleFitToView());
+//		drawingComponent.setScale(scaleFitToView());
 		drawingComponent.validate();
 		
 	}
@@ -52,7 +54,7 @@ public class ViewingAreaPanel extends JPanel {
 										currentImage.getHeight(null));
 		scaleX = panel.getWidth() / image.getWidth();
 		scaleY = panel.getHeight() / image.getHeight();
-		System.out.println(scaleX + " " + scaleY);
+		System.out.println("ViewingAreaPanel.scaleFitToView(): " + scaleX + " " + scaleY);
 		
 		return Math.min(Math.min(scaleX, scaleY), 1.0);
 	}
@@ -74,10 +76,12 @@ public class ViewingAreaPanel extends JPanel {
 								col.getAlpha());
 				img.setRGB(x, y, col.getRGB());
 				} catch (Exception e) {
-					System.out.println(x + " " + y);
+					System.out.println("ViewingAreaPanel.invertImage(): Error at " + x + " " + y);
+					e.printStackTrace();
 				}
 			}
 		}
+		imageInverted = !imageInverted;
 		drawingComponent.invertBackGround();
 		drawingComponent.repaint();
 	}
@@ -89,7 +93,7 @@ public class ViewingAreaPanel extends JPanel {
 	 * Must be > 0
 	 */
 	public void setZoom(double scale) {
-		if (scale <= 0) { return; }
+		if (scale <= 0) { return; } // reject negative numbers
 		drawingComponent.setScale(scale);
 		
 	}
@@ -100,5 +104,27 @@ public class ViewingAreaPanel extends JPanel {
 
 	public void setController(MainController c) {
 		controller = c;
+	}
+	
+	/**
+	 * Sets the absolute offset for the viewing area panel. Used when restoring a
+	 * user's state.
+	 * @param x X offset
+	 * @param y Y offset
+	 */
+	public void setOffset(double x, double y) {
+		drawingComponent.setOffset(x, y);
+	}
+	
+	public Point2D getOffset() {
+		return drawingComponent.getOffset();
+	}
+
+	public boolean isInverted() {
+		return imageInverted;
+	}
+	
+	public void setInverted(boolean inverted) {
+		imageInverted = inverted;
 	}
 }

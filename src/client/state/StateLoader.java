@@ -10,6 +10,7 @@ import org.w3c.dom.*;
 
 import shared.dataTransfer.*;
 import client.controller.MainController;
+import client.views.mainFrame.viewingArea.ViewingAreaPanel;
 
 public class StateLoader {
 
@@ -111,8 +112,25 @@ public class StateLoader {
 	 * highlights on/off, and inverted state.
 	 */
 	private void loadBatchWindowState() {
-		// TODO Auto-generated method stub
+		System.out.println("StateLoader.loadBatchWindowState()");
+		// get values
+		NodeList windowElemList = doc.getElementsByTagName("batchWindow");
+		if (windowElemList == null || windowElemList.getLength() < 1) {
+			return; // nothing to load
+		}
+		Element windowElem = (Element)windowElemList.item(0);
+		double scale = StateHelper.getDoubleFromParent(windowElem, "scale");
+		double offsetX = StateHelper.getDoubleFromParent(windowElem, "offsetX");
+		double offsetY = StateHelper.getDoubleFromParent(windowElem, "offsetY");
+//		boolean hilightsVisible = StateHelper.getBoolFromParent(windowElem, "hilightsVisible");
+		boolean invertedImage = StateHelper.getBoolFromParent(windowElem, "invertedImage");
 		
+		// apply them to window
+		ViewingAreaPanel m = controller.getMainView().getViewingArea();
+		m.setZoom(scale);
+		m.setOffset(offsetX, offsetY);
+		// TODO implement setting hilight state
+		m.setInverted(invertedImage);
 	}
 
 	/**
@@ -145,7 +163,6 @@ public class StateLoader {
 			String knownData = StateHelper.getStringFromParent(fieldElem, "knownDataLocation");
 			
 			Field result = new Field(ID, projectID, title, xCoord, width, helpHtml, knownData);
-			System.out.println("StateLoader.loadFields(): " + title);
 			resultList.add(result);
 		}
 		controller.getDataModel().getCurrentBatch().setFields(resultList);

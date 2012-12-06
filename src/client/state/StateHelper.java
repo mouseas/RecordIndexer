@@ -75,4 +75,37 @@ public class StateHelper {
 		return result;
 	}
 	
+	/**
+	 * Takes a parent node and the name of the leaf to check for, and returns
+	 * the parsed double of the leaf node, or -1 if not found.
+	 * @param elem
+	 * @param leafName
+	 * @return
+	 */
+	public static double getDoubleFromParent(Element elem, String leafName) {
+		Element leaf = (Element)(elem.getElementsByTagName(leafName).item(0));
+		double result = -1;
+		try {
+			result = Double.parseDouble(leaf.getTextContent().trim());
+		} catch (Exception e) {}
+		
+		return result;
+	}
+	
+	/**
+	 * Takes a parent node and the name of the leaf to check for, and returns
+	 * the parsed double of the leaf node, or -1 if not found.
+	 * @param elem
+	 * @param leafName
+	 * @return true if the lead contains "true", or false for any other result.
+	 */
+	public static boolean getBoolFromParent(Element elem, String leafName) {
+		Element leaf = (Element)(elem.getElementsByTagName(leafName).item(0));
+		boolean result = false;
+		try {
+			result = leaf.getTextContent().trim().equalsIgnoreCase("true");
+		} catch (Exception e) {}
+		return result;
+	}
+	
 }

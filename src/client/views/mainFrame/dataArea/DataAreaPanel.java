@@ -17,6 +17,7 @@ public class DataAreaPanel extends JPanel {
 	private JTabbedPane rightPane;
 	private JSplitPane split;
 	
+	@SuppressWarnings("unused")
 	private double barPosition;
 	
 	@SuppressWarnings("unused")
@@ -32,6 +33,7 @@ public class DataAreaPanel extends JPanel {
 		addComponentListener(resizeListener);
 		
 		split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftPane, rightPane);
+		// TODO add a listener that calculates the split's position whenever it is changed.
 		barPosition = 0.5;
 		add(split);
 	}
@@ -56,6 +58,15 @@ public class DataAreaPanel extends JPanel {
 
 	public void setFormTab(FormEntryTab formTab) {
 		this.formTab = formTab;
+	}
+
+	public int getSplitterPos() {
+		return split.getDividerLocation();
+	}
+	
+	public void setSplitterPos(int pos) {
+		split.setDividerLocation(pos);
+		barPosition = pos / split.getWidth();
 	}
 	
 	private void buildLeftPane() {
@@ -82,8 +93,10 @@ public class DataAreaPanel extends JPanel {
 		public void componentResized(ComponentEvent e) {
 			// Set the divider position based on the proportion rather than
 			// absolute position.
-			int absLoc = (int)(barPosition * split.getWidth());
-			split.setDividerLocation(absLoc);
+			
+			// TODO Fix. disabled for now.
+//			int absLoc = (int)(barPosition * split.getWidth());
+//			split.setDividerLocation(absLoc); 
 		}
 	};
 

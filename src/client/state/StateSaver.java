@@ -11,6 +11,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.*;
 
 import client.controller.MainController;
+import client.views.mainFrame.MainFrame;
 
 import shared.dataTransfer.*;
 
@@ -123,7 +124,17 @@ public class StateSaver {
 	 * These settings to not require a current batch.
 	 */
 	private void docWindowLayout() {
-		// TODO implement
+		MainFrame m = controller.getMainView();
+		int dataSplitterPos = m.getDataArea().getSplitterPos();
+		int mainSplitterPos = m.getSplitterPos();
+		// TODO add window size, maybe selected tabs
+		
+		Element windowSettings = doc.createElement("window");
+		windowSettings.appendChild(StateHelper.buildTextElement("dataSplitterPos", 
+				"" + dataSplitterPos, doc));
+		windowSettings.appendChild(StateHelper.buildTextElement("mainSplitterPos", 
+				"" + mainSplitterPos, doc));
+		root.appendChild(windowSettings);
 	}
 	
 	/**
@@ -132,7 +143,25 @@ public class StateSaver {
 	 */
 	private void docBatchWindowLayout() {
 		if (controller.userHasBatch()) {
-			// TODO implement
+			MainFrame m = controller.getMainView();
+			double scale = m.getViewingArea().getCurrentZoom();
+			double offsetX = m.getViewingArea().getOffset().getX();
+			double offsetY = m.getViewingArea().getOffset().getY();
+			boolean hilightsVisible = false; // TODO implement with highlights
+			boolean invertedImage = m.getViewingArea().isInverted();
+			
+			Element batchSettings = doc.createElement("batchWindow");
+			batchSettings.appendChild(StateHelper.buildTextElement("scale", 
+					"" + scale, doc));
+			batchSettings.appendChild(StateHelper.buildTextElement("offsetX", 
+					"" + offsetX, doc));
+			batchSettings.appendChild(StateHelper.buildTextElement("offsetY", 
+					"" + offsetY, doc));
+			batchSettings.appendChild(StateHelper.buildTextElement("hilightVisible", 
+					"" + hilightsVisible, doc));
+			batchSettings.appendChild(StateHelper.buildTextElement("invertedImage", 
+					"" + invertedImage, doc));
+			root.appendChild(batchSettings);
 		}
 	}
 

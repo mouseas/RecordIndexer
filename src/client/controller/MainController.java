@@ -70,6 +70,7 @@ public class MainController {
 		downloadBatchToModel(p);
 		downloadImageToModel();
 		placeImageInView();
+		mainView.getViewingArea().setZoom(mainView.getViewingArea().scaleFitToView());
 		setUpFormAndTableEntryAreas();
 		
 		userHasBatch = true;
@@ -140,7 +141,7 @@ public class MainController {
 	 * Submits a finished batch to the server.
 	 */
 	public void submitBatch() {
-		System.out.println("Submit Batch");
+		System.out.println("MainController.submitBatch()");
 		if (!loggedIn()) { return; }
 		if (dm.getCurrentBatch() == null) { return; }
 //		sc.submitBatch(dm.getCurrentBatch());
@@ -175,14 +176,13 @@ public class MainController {
 	}
 
 	public void toggleHilight() {
-		System.out.println("Toggle highlights");
+		System.out.println("MainController.toggleHilight()");
 		// TODO implement toggleHilight
 		
 	}
 
 	public void exit() {
 		// TODO close the program. Should save state before closing.
-		System.out.println("Exit.");
 		if (loggedIn()) {
 			saveState();
 		}
@@ -287,7 +287,7 @@ public class MainController {
 		sc.returnBatch(sc.getCurrentUser());
 
 		mainView.getMenubar().setDownloadEnabled(true);
-		System.out.println("Debug Function: Return Batch.");
+		System.out.println("MainController.returnBatch(): Debug Function - Return Batch.");
 	}
 
 	/**
@@ -325,7 +325,7 @@ public class MainController {
 		// download the needed parts
 		BatchImage batchImage = sc.requestNextBatch(p.getID());
 		if (batchImage == null) { 
-			System.out.println("");
+			System.out.println("MainController.downloadBatchToModel: Something failed.");
 			return; // something failed.
 		} 
 		Batch batch = new Batch(batchImage);
@@ -363,7 +363,6 @@ public class MainController {
 	private void downloadImageToModel() {
 		if (dm.getCurrentBatch() == null) { return; }
 		String urlStr = dm.getCurrentBatch().batchImage.getImageLoc();
-//		System.out.println(urlStr);
 		InputStream inStream = getFileFromServer(urlStr);
 		Image result = null;
 		try {
@@ -389,6 +388,7 @@ public class MainController {
 	private void prepareEmptyView() {
 		Image splashScreen = DrawingComponent.loadImage("splashscreen.jpg");
 		mainView.getViewingArea().setImage(splashScreen);
+		mainView.getViewingArea().setOffset(0, 0);
 		dm = new DataModel();
 		mainView.getDataArea().getTableTab().buildTable(dm);
 	}
@@ -406,7 +406,6 @@ public class MainController {
 			placeImageInView();
 			setUpFormAndTableEntryAreas();
 		} else {
-			System.out.println("Prepare empty view");
 			prepareEmptyView();
 		}
 	}
@@ -509,7 +508,6 @@ public class MainController {
 	}
 
 	private void saveState() {
-		System.out.println("Save current state");
 		StateSaver.saveState(this); // made a class just for this.
 	}
 
