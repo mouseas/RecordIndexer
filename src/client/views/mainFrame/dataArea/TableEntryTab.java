@@ -4,12 +4,13 @@ import javax.swing.*;
 import javax.swing.event.*;
 
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
 
 import client.controller.MainController;
 import client.model.*;
 
 @SuppressWarnings("serial")
-public class TableEntryTab extends JPanel {
+public class TableEntryTab extends JPanel implements DMListener {
 
 	private MainController controller;
 	private EntryTableModel tableModel;
@@ -17,6 +18,8 @@ public class TableEntryTab extends JPanel {
 	
 	private JPanel scrollContents;
 	private JScrollPane scroll;
+	
+	private DataModel dm;
 	
 	/**
 	 * Constructor.
@@ -53,8 +56,9 @@ public class TableEntryTab extends JPanel {
 		table.setCellSelectionEnabled(true);
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		table.getTableHeader().setReorderingAllowed(false);
+		table.getSelectionModel().addListSelectionListener(tableSelectionListener);
 		add(table.getTableHeader(), BorderLayout.NORTH);
-		tableModel.addTableModelListener(tableSelectionListener);
+		tableModel.addTableModelListener(tableChangeListener);
 		
 		table.validate();
 		table.repaint();
@@ -72,18 +76,52 @@ public class TableEntryTab extends JPanel {
 		return controller;
 	}
 	
-	private TableModelListener tableSelectionListener = new TableModelListener() {
+	/**
+	 * Handles when the user types a change into one of the cells.
+	 */
+	private TableModelListener tableChangeListener = new TableModelListener() {
 
 		@Override
 		public void tableChanged(TableModelEvent e) {
-			// TODO Update the form view's selected record + field
-			
+			// TODO handle when changes are made through the table.
+		}
+	};
+	
+	/**
+	 * Handles when the table has a change in selection.
+	 */
+	private ListSelectionListener tableSelectionListener = new ListSelectionListener() {
+
+		@Override
+		public void valueChanged(ListSelectionEvent e) {
+			int col = table.getSelectedColumn();
+			int row = table.getSelectedRow();
+			dm.select(col, row);
 		}
 		
 	};
 
-	public void setDataModel(DataModel dm) {
-		tableModel.setDataModel(dm);
+	public void setDataModel(DataModel dataModel) {
+		if (dm != null) {
+			dm.removeSelectionChangeListener(this);
+		}
+		dm = dataModel;
+		if (dm != null) {
+			dm.addSelectionChangeListener(this);
+		}
+		tableModel.setDataModel(dataModel);
+	}
+
+	@Override
+	public void selectionChanged(ActionEvent e) {
+		tableModel.removeTableModelListener(tableChangeListener);
+		int col = dm.getColSelected();
+		int row = dm.getRowSelected();
+		if (col >= 0 && row >= 0) {
+			table.setRowSelectionInterval(row, row);
+			table.setColumnSelectionInterval(col, col);
+		}
+		tableModel.addTableModelListener(tableChangeListener);
 	}
 	
 }

@@ -43,8 +43,8 @@ public class EntryFormListModel extends DefaultListModel<String> {
 		return dm;
 	}
 
-	public void setDataModel(DataModel dm) {
-		this.dm = dm;
+	public void setDataModel(DataModel dataModel) {
+		dm = dataModel;
 		fireContentsChanged(this, 0, 0); // trigger an update.
 	}
 

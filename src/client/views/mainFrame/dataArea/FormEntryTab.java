@@ -1,18 +1,22 @@
 package client.views.mainFrame.dataArea;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.util.List;
 import java.util.ArrayList;
 
 import javax.swing.*;
-import javax.swing.event.ListDataListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
+import client.model.DMListener;
 import client.model.DataModel;
 import client.model.EntryFormListModel;
 
 @SuppressWarnings("serial")
-public class FormEntryTab extends JPanel {
+public class FormEntryTab extends JPanel implements DMListener {
 	
+	@SuppressWarnings("unused")
 	private List<FormElement> rowElements;
 	private JPanel elementsHolder;
 	private JList<String> rowList;
@@ -24,8 +28,8 @@ public class FormEntryTab extends JPanel {
 	public FormEntryTab() {
 		rowNumbersModel = new EntryFormListModel(dm);
 		rowList = new JList<String>(rowNumbersModel);
-		rowList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		rowList.setLayoutOrientation(JList.VERTICAL);
+		rowList.setSelectedIndex(0);
+		rowList.addListSelectionListener(rowSelectListener);
 		
 		listScrollPane = new JScrollPane(rowList);
 		listScrollPane.setPreferredSize(new Dimension(50, 300));
@@ -40,8 +44,40 @@ public class FormEntryTab extends JPanel {
 	}
 	
 	public void setDataModel(DataModel dataModel) {
+		if (dm != null) {
+			dm.removeSelectionChangeListener(this);
+		}
 		dm = dataModel;
+		if (dm != null) {
+			dm.addSelectionChangeListener(this);
+		}
+		
 		rowNumbersModel.setDataModel(dm);
+	}
+	
+	/**
+	 * Handles when an item in the list on the left is selected. Specifically,
+	 * it updates the DataModel about a change in selection.
+	 */
+	private ListSelectionListener rowSelectListener = new ListSelectionListener() {
+		@Override
+		public void valueChanged(ListSelectionEvent e) {
+			if(!e.getValueIsAdjusting()) { // is the user done making a selection?
+				int rowSelected = rowList.getSelectedIndex();
+				if (rowSelected >= 0) {
+					dm.selectRow(rowSelected);
+				}
+			}
+		}
+	};
+
+	@Override
+	public void selectionChanged(ActionEvent e) {
+		rowList.removeListSelectionListener(rowSelectListener);
+		if (dm != null && dm.getRowSelected() >= 0) {
+			rowList.setSelectedIndex(dm.getRowSelected());
+		}
+		rowList.addListSelectionListener(rowSelectListener);
 	}
 	
 	

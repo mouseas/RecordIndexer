@@ -2,7 +2,9 @@ package client.model;
 
 import shared.dataTransfer.*;
 
+import java.awt.Dimension;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
 import java.util.*;
 
 /**
@@ -21,11 +23,15 @@ public class DataModel {
 	private User currentUser;
 	private Image currentBatchImage;
 	
+	private Dimension selectedCell;
+	private List<DMListener> listeners;
+	
 	/**
 	 * Default constructor. Everything is null.
 	 */
 	public DataModel() {
-		
+		selectedCell = new Dimension(0, 0);
+		listeners = new ArrayList<DMListener>();
 	}
 
 	public List<Project> getProjects() {
@@ -79,5 +85,42 @@ public class DataModel {
 	public void setCurrentProject(Project currentProject) {
 		this.currentProject = currentProject;
 	}
+	
+	/**
+	 * Sets the currently selected column and row.
+	 * @param col
+	 * @param row
+	 */
+	public void select(int col, int row) {
+		selectedCell.setSize(col, row);
+		for (int i = 0; i < listeners.size(); i++) {
+			listeners.get(i).selectionChanged(new ActionEvent(this, i, "n/a"));
+		}
+	}
+	
+	public void selectRow(int row) {
+		select(selectedCell.width, row);
+	}
+	
+	public void selectColumn(int col) {
+		select(col, selectedCell.height);
+	}
+	
+	public void addSelectionChangeListener(DMListener listener) {
+		listeners.add(listener);
+	}
+	
+	public void removeSelectionChangeListener(DMListener listener) {
+		listeners.remove(listener);
+	}
+
+	public int getRowSelected() {
+		return selectedCell.height;
+	}
+	
+	public int getColSelected() {
+		return selectedCell.width;
+	}
+	
 	
 }
