@@ -63,7 +63,8 @@ public class DataModel {
 	}
 	
 	/**
-	 * Sets the currently selected column and row.
+	 * Sets the currently selected column and row, then notifies listeners of
+	 * the change in selection.
 	 * @param col
 	 * @param row
 	 */
@@ -96,6 +97,42 @@ public class DataModel {
 	
 	public int getColSelected() {
 		return selectedCell.width;
+	}
+	
+	public void setValue(int col, int row, String value) {
+		int index = calculateIndexFromCoords(col, row);
+		currentBatch.getRecords().get(index).setValue(value);
+	}
+	
+	public String getValue(int col, int row) {
+		int index = calculateIndexFromCoords(col, row);
+		return currentBatch.getRecords().get(index).getValue();
+	}
+	
+	public int getNumRows() {
+		if (currentProject == null) {
+			return 0;
+		}
+		return currentProject.getRecordsPerImage();
+	}
+	
+	public int getNumColumns() {
+		if (currentBatch == null || currentBatch.getFields() == null) {
+			return 0;
+		}
+		return currentBatch.getFields().size();
+	}
+	
+	/**
+	 * Calculates the array index based on the desired column and row.
+	 */
+	private int calculateIndexFromCoords(int column, int row) {
+		// order is column 0 rows 1 through n, column 1 rows 1 though n, etc.
+		if (currentBatch == null || currentBatch.getRecords() == null ||
+				currentBatch.getFields() == null || currentProject == null) {
+			return 0; // nothing there
+		}
+		return (column * getNumRows()) + row;
 	}
 	
 	

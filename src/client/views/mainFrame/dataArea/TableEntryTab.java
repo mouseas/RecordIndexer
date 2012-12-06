@@ -57,8 +57,8 @@ public class TableEntryTab extends JPanel implements DMListener {
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		table.getTableHeader().setReorderingAllowed(false);
 		table.getSelectionModel().addListSelectionListener(tableSelectionListener);
+		table.getColumnModel().addColumnModelListener(tableColumnSelectionListener);
 		add(table.getTableHeader(), BorderLayout.NORTH);
-		tableModel.addTableModelListener(tableChangeListener);
 		
 		table.validate();
 		table.repaint();
@@ -77,26 +77,51 @@ public class TableEntryTab extends JPanel implements DMListener {
 	}
 	
 	/**
-	 * Handles when the user types a change into one of the cells.
-	 */
-	private TableModelListener tableChangeListener = new TableModelListener() {
-
-		@Override
-		public void tableChanged(TableModelEvent e) {
-			// TODO handle when changes are made through the table.
-		}
-	};
-	
-	/**
 	 * Handles when the table has a change in selection.
 	 */
 	private ListSelectionListener tableSelectionListener = new ListSelectionListener() {
 
 		@Override
 		public void valueChanged(ListSelectionEvent e) {
-			int col = table.getSelectedColumn();
+			int col = table.getSelectedColumn() - 1;
+			if (col < 0) { col = 0; }
 			int row = table.getSelectedRow();
 			dm.select(col, row);
+		}
+		
+	};
+	
+	/**
+	 * the tableSelectionListener doesn't notice column changes in the same row. This
+	 * listener catches column changes within the same row.
+	 */
+	private TableColumnModelListener tableColumnSelectionListener = 
+					new TableColumnModelListener() {
+
+		@Override
+		public void columnAdded(TableColumnModelEvent arg0) {
+			// do nothing
+		}
+
+		@Override
+		public void columnMarginChanged(ChangeEvent arg0) {
+			// do nothing
+		}
+
+		@Override
+		public void columnMoved(TableColumnModelEvent arg0) {
+			// do nothing
+		}
+
+		@Override
+		public void columnRemoved(TableColumnModelEvent arg0) {
+			// do nothing
+		}
+
+		@Override
+		public void columnSelectionChanged(
+				ListSelectionEvent e) {
+			tableSelectionListener.valueChanged(e);
 		}
 		
 	};
@@ -104,6 +129,7 @@ public class TableEntryTab extends JPanel implements DMListener {
 	public void setDataModel(DataModel dataModel) {
 		if (dm != null) {
 			dm.removeSelectionChangeListener(this);
+			//remove listening from old DM and add to new one
 		}
 		dm = dataModel;
 		if (dm != null) {
@@ -114,14 +140,12 @@ public class TableEntryTab extends JPanel implements DMListener {
 
 	@Override
 	public void selectionChanged(ActionEvent e) {
-		tableModel.removeTableModelListener(tableChangeListener);
-		int col = dm.getColSelected();
+		int col = dm.getColSelected() + 1;
 		int row = dm.getRowSelected();
 		if (col >= 0 && row >= 0) {
 			table.setRowSelectionInterval(row, row);
 			table.setColumnSelectionInterval(col, col);
 		}
-		tableModel.addTableModelListener(tableChangeListener);
 	}
 	
 }

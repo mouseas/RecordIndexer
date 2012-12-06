@@ -4,14 +4,14 @@
       <record>
          <ID>0</ID>
          <batchID>2</batchID>
-         <value/>
+         <value>LASTNAME 1</value>
          <fieldID>0</fieldID>
          <rowNum>0</rowNum>
       </record>
       <record>
          <ID>4</ID>
          <batchID>2</batchID>
-         <value/>
+         <value>LASTNAME 2</value>
          <fieldID>0</fieldID>
          <rowNum>1</rowNum>
       </record>
@@ -60,14 +60,14 @@
       <record>
          <ID>1</ID>
          <batchID>2</batchID>
-         <value/>
+         <value>FIRSTNAME 1</value>
          <fieldID>1</fieldID>
          <rowNum>0</rowNum>
       </record>
       <record>
          <ID>5</ID>
          <batchID>2</batchID>
-         <value/>
+         <value>FIRSTNAME 2</value>
          <fieldID>1</fieldID>
          <rowNum>1</rowNum>
       </record>
@@ -116,14 +116,14 @@
       <record>
          <ID>2</ID>
          <batchID>2</batchID>
-         <value/>
+         <value>GENDER 1</value>
          <fieldID>2</fieldID>
          <rowNum>0</rowNum>
       </record>
       <record>
          <ID>6</ID>
          <batchID>2</batchID>
-         <value/>
+         <value>GENDER 2</value>
          <fieldID>2</fieldID>
          <rowNum>1</rowNum>
       </record>
@@ -172,14 +172,14 @@
       <record>
          <ID>3</ID>
          <batchID>2</batchID>
-         <value/>
+         <value>AGE 1</value>
          <fieldID>3</fieldID>
          <rowNum>0</rowNum>
       </record>
       <record>
          <ID>7</ID>
          <batchID>2</batchID>
-         <value/>
+         <value>AGE 2</value>
          <fieldID>3</fieldID>
          <rowNum>1</rowNum>
       </record>

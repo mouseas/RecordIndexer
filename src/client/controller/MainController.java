@@ -326,6 +326,7 @@ public class MainController {
 	private void setUpFormAndTableEntryAreas() {
 		// build the table tab from the Data Model.
 		mainView.getDataArea().getTableTab().buildTable(dm);
+		mainView.getDataArea().getFormTab().rebuildFormElements();
 		dm.select(0, 0);
 		
 		// TODO Implement form entry portion

@@ -35,6 +35,7 @@ public class FormEntryTab extends JPanel implements DMListener {
 		listScrollPane.setPreferredSize(new Dimension(50, 300));
 		
 		rowElements = new ArrayList<FormElement>();
+		
 		elementsHolder = new JPanel();
 		elementsHolder.setLayout(new BoxLayout(elementsHolder, BoxLayout.Y_AXIS));
 		setLayout(new BorderLayout());
@@ -43,18 +44,87 @@ public class FormEntryTab extends JPanel implements DMListener {
 		add(listScrollPane, BorderLayout.WEST);
 	}
 	
+	/**
+	 * Changes the DataModel the form uses for rendering and editing.
+	 * @param dataModel
+	 */
 	public void setDataModel(DataModel dataModel) {
 		if (dm != null) {
-			dm.removeSelectionChangeListener(this);
+			dm.removeSelectionChangeListener(this); 
+			// move listening from old DataModel to new one.
 		}
 		dm = dataModel;
 		if (dm != null) {
 			dm.addSelectionChangeListener(this);
 		}
-		
 		rowNumbersModel.setDataModel(dm);
+		rebuildFormElements();
 	}
 	
+	/**
+	 * Sets a value by column, using the current row selection from the JList on the left.
+	 * @param col
+	 * @param value
+	 */
+	public void setValue(int col, String value) {
+		int row = rowList.getSelectedIndex();
+		dm.setValue(col, row, value);
+	}
+
+	/**
+	 * Whenever the selection is changed by another part of the program,
+	 * this updates the selection for the table.
+	 */
+	@Override
+	public void selectionChanged(ActionEvent e) {
+		if (dm != null && dm.getRowSelected() >= 0) {
+			rowList.removeListSelectionListener(rowSelectListener); 
+			// disable listener temporarily to prevent looping.
+			
+			int row = dm.getRowSelected();
+			int column = dm.getColSelected();
+			rowElements.get(column).requestFocus();
+			for (int i = 0; i < rowElements.size(); i++) {
+				String value = dm.getValue(i, row);
+				rowElements.get(i).setText(value);
+			}
+			rowList.setSelectedIndex(row);
+			rowList.addListSelectionListener(rowSelectListener);
+		}
+	}
+
+	/**
+	 * Select a specific column.
+	 * @param column
+	 */
+	public void selectColumn(int column) {
+		dm.removeSelectionChangeListener(this);
+		dm.selectColumn(column);
+		dm.addSelectionChangeListener(this);
+	}
+	
+	/**
+	 * Discards the current list of FormElements and builds a new one. Use when
+	 * changing the number of items in the left-side list.
+	 */
+	public void rebuildFormElements() {
+		elementsHolder.removeAll();
+		for (int i = 0; i < rowElements.size(); i++) {
+			rowElements.get(i).preDispose();
+		}
+		rowElements.clear();
+		if (dm != null && dm.getCurrentBatch() != null && 
+				dm.getCurrentBatch().getFields() != null) {
+			int count = dm.getCurrentBatch().getFields().size();
+			for (int i = 0; i < count; i++) {
+				String fieldName = dm.getCurrentBatch().getFields().get(i).getTitle();
+				FormElement elem = new FormElement(fieldName, "", this, i);
+				elementsHolder.add(elem);
+				rowElements.add(elem);
+			}
+		}
+	}
+
 	/**
 	 * Handles when an item in the list on the left is selected. Specifically,
 	 * it updates the DataModel about a change in selection.
@@ -70,15 +140,6 @@ public class FormEntryTab extends JPanel implements DMListener {
 			}
 		}
 	};
-
-	@Override
-	public void selectionChanged(ActionEvent e) {
-		rowList.removeListSelectionListener(rowSelectListener);
-		if (dm != null && dm.getRowSelected() >= 0) {
-			rowList.setSelectedIndex(dm.getRowSelected());
-		}
-		rowList.addListSelectionListener(rowSelectListener);
-	}
 	
 	
 }
