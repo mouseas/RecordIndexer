@@ -4,7 +4,7 @@
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="lib" path="C:/Users/Martin/workspace/RecordIndexer/lib/sqlitejdbc-v056.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Martin/workspace/RecordIndexer/lib/xstream-1.4.2.jar"/>
+	<classpathentry kind="lib" path="/users/guest/m/mouseasw/workspace/RecordIndexer/lib/sqlitejdbc-v056.jar"/>
+	<classpathentry kind="lib" path="/users/home1/guest/m/mouseasw/workspace/RecordIndexer/lib/xstream-1.4.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

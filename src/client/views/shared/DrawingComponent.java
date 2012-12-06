@@ -12,7 +12,7 @@ import java.awt.image.*;
 @SuppressWarnings("serial")
 public class DrawingComponent extends JComponent {
 
-	private static Image NULL_IMAGE = new BufferedImage(10, 10, BufferedImage.TYPE_INT_ARGB);
+	public static final Image NULL_IMAGE = new BufferedImage(10, 10, BufferedImage.TYPE_INT_ARGB);
 	
 	protected double scale;
 	protected double offsetX;

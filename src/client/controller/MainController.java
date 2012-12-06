@@ -383,8 +383,9 @@ public class MainController {
 		Image result = null;
 		try {
 			result = ImageIO.read(inStream);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
+			result = DrawingComponent.NULL_IMAGE;
 		}
 		if (result != null) {
 			dm.setCurrentBatchImage(result);
@@ -459,6 +460,7 @@ public class MainController {
 		while (in.hasNext()) {
 			result.append(in.nextLine() + "\n");
 		}
+		in.close();
 		// return it
 		return result.toString();
 	}

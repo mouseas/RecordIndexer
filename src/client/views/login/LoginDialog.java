@@ -97,9 +97,9 @@ public class LoginDialog extends JDialog {
 		labels.add(temp);
 		
 		// TODO remove username and password from fields once done testing
-		fldUsername = new JTextField("test1"); // debug - put in test1 user info to save me typing it each time.
+		fldUsername = new JTextField(); // debug - put in test1 user info to save me typing it each time.
 		fldUsername.setPreferredSize(fieldSize);
-		fldPassword = new JPasswordField("test1"); // debug
+		fldPassword = new JPasswordField(); // debug
 		fldPassword.setPreferredSize(fieldSize);
 		boxes.add(fldUsername);
 		boxes.add(Box.createRigidArea(spacer));

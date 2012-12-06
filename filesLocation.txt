@@ -1,1 +1,1 @@
-c:\Users\Martin\workspace\RecordIndexer\demo\indexer_data\Records\
+/users/home1/guest/m/mouseasw/workspace/RecordIndexer/demo/indexer_data/Records/
