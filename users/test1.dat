@@ -237,9 +237,9 @@
       <windowX>100</windowX>
       <windowY>20</windowY>
       <windowWidth>830</windowWidth>
-      <windowHeight>561</windowHeight>
-      <dataSplitterPos>401</dataSplitterPos>
-      <mainSplitterPos>337</mainSplitterPos>
+      <windowHeight>542</windowHeight>
+      <dataSplitterPos>428</dataSplitterPos>
+      <mainSplitterPos>326</mainSplitterPos>
    </window>
    <batchWindow>
       <scale>0.4103967168262654</scale>

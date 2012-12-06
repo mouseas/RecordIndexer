@@ -1,6 +1,5 @@
 package client.views.mainFrame.dataArea;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,6 +17,8 @@ public class FormElement extends JPanel {
 	
 	private FormEntryTab parent;
 	
+	private static final Dimension PART_SIZE = new Dimension(150, 25);
+	
 	/**
 	 * Primary constructor, takes the label text and a value for the text box.
 	 * @param labelStr
@@ -28,15 +29,17 @@ public class FormElement extends JPanel {
 		this.column = column;
 		
 		label = new JLabel(labelStr);
-		label.setPreferredSize(new Dimension(150, 15));
+		label.setPreferredSize(PART_SIZE);
+		label.setMinimumSize(PART_SIZE);
 		textField = new JTextField(valueStr);
 		textField.addActionListener(changeListener);
 		textField.addFocusListener(focusListener);
-		textField.setPreferredSize(new Dimension(150, 15));
+		textField.setPreferredSize(PART_SIZE);
+		textField.setMinimumSize(PART_SIZE);
 		
-		setLayout(new BorderLayout());
-		add(label, BorderLayout.WEST);
-		add(textField, BorderLayout.EAST);
+		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+		add(label);
+		add(textField);
 	}
 	
 	/**

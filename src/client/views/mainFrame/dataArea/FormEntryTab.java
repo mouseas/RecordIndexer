@@ -38,9 +38,10 @@ public class FormEntryTab extends JPanel implements DMListener {
 		
 		elementsHolder = new JPanel();
 		elementsHolder.setLayout(new BoxLayout(elementsHolder, BoxLayout.Y_AXIS));
+		JScrollPane elementScroll = new JScrollPane(elementsHolder);
 		setLayout(new BorderLayout());
 		
-		add(elementsHolder, BorderLayout.EAST);
+		add(elementScroll, BorderLayout.EAST);
 		add(listScrollPane, BorderLayout.WEST);
 	}
 	
@@ -101,6 +102,17 @@ public class FormEntryTab extends JPanel implements DMListener {
 		dm.removeSelectionChangeListener(this);
 		dm.selectColumn(column);
 		dm.addSelectionChangeListener(this);
+	}
+	
+	/**
+	 * Sets the text cursor into the correct JTextField in the form elements.
+	 */
+	public void setFormFocus() {
+		int column = dm.getColSelected();
+		if (rowElements.size() > column) {
+			System.out.println("FormEntryTab.setFormFocus()");
+			rowElements.get(column).requestFocusInWindow();
+		}
 	}
 	
 	/**

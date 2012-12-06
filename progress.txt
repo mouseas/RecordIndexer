@@ -6,12 +6,12 @@
 8 / 8	Main Indexing Window // Still need to deal with split pane scaling
 10/ 14	Image Panel
 10/ 10	Table Data Entry
-0 / 10	Form Data Entry
+10 / 10	Form Data Entry
 0 / 4	Field Help
-0 / 8	Batch State Synch
+4 / 8	Batch State Synch
 6 / 6	Submit Batches
 0 / 10	Quality Checker
 0 / 0	Image Navigator (10 points extra credit)
 
 Total
-64/100
+78/100

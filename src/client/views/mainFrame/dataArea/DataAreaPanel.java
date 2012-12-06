@@ -1,6 +1,8 @@
 package client.views.mainFrame.dataArea;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import client.controller.MainController;
 import client.model.DataModel;
@@ -78,6 +80,7 @@ public class DataAreaPanel extends JPanel {
 		tableTab.setDataModel(dm);
 		formTab = new FormEntryTab();
 		formTab.setDataModel(dm);
+		leftPane.addChangeListener(formTabSelectedListener);
 		leftPane.addTab("Table Entry", tableTab);
 		leftPane.addTab("Form Entry", formTab);
 	}
@@ -101,6 +104,18 @@ public class DataAreaPanel extends JPanel {
 //			int absLoc = (int)(barPosition * split.getWidth());
 //			split.setDividerLocation(absLoc); 
 		}
+	};
+	
+	/**
+	 * Puts the cursor into the selected field in the form when the tab becomes active.
+	 */
+	private ChangeListener formTabSelectedListener = new ChangeListener() {
+
+		@Override
+		public void stateChanged(ChangeEvent arg0) {
+			formTab.setFormFocus();
+		}
+		
 	};
 
 	public void setDataModel(DataModel dm) {
