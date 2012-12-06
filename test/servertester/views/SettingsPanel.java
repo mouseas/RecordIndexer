@@ -11,9 +11,11 @@ public class SettingsPanel extends BasePanel {
 	
 	private JTextField _hostTextField;
 	private JTextField _portTextField;
+	@SuppressWarnings("rawtypes")
 	private JComboBox _opComboBox;
 	private JButton _executeButton;
 	
+	@SuppressWarnings("rawtypes")
 	public SettingsPanel() {
 		super();
 		

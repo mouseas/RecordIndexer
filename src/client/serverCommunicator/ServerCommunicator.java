@@ -452,6 +452,7 @@ public class ServerCommunicator {
 				sb.append("\n");
 			}
 		}
+		in.close();
 		return sb.toString();
 	}
 	

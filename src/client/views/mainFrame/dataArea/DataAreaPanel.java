@@ -21,7 +21,6 @@ public class DataAreaPanel extends JPanel {
 	@SuppressWarnings("unused")
 	private double barPosition;
 	
-	@SuppressWarnings("unused")
 	private MainController controller;
 	
 	public DataAreaPanel(DataModel dm) {

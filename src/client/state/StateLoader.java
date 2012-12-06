@@ -224,19 +224,11 @@ public class StateLoader {
 //		Record[][] recordGrid = new Record[columns][rows];
 		List<Record> recordList = new ArrayList<Record>();
 		
-		int col = 0;
-		int row = 0;
 		NodeList recordNodes = doc.getElementsByTagName("record");
 		for (int i = 0; i < recordNodes.getLength(); i++) {
 			Element recordElem = (Element)recordNodes.item(i);
 			Record result = buildRecord(recordElem);
-//			recordGrid[col][row] = result;
 			recordList.add(result);
-			row++;
-			if (row >= rows) {
-				row -= rows;
-				col++;
-			}
 		}
 		controller.getDataModel().getCurrentBatch().setRecords(recordList);
 	}

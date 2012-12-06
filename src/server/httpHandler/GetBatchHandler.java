@@ -29,13 +29,16 @@ public class GetBatchHandler implements HttpHandler {
 		User user = HelperFunction.verifyUser(database, exchange);
 		int projectID = Integer.parseInt(HelperFunction.getQueryItem(exchange, "project="));
 		OutputStream os = null;
-		String response = buildBatch(projectID, user.getUsername());
+		String response = "";
 		int responseCode = 200;
 		
 		if (user == null){ // invalid user credentials
 			response = "Forbidden: Invalid user credentials.";
 			responseCode = 403;
-		} else if (response == null){ // user is valid, but batch not available.
+		} else {
+			response = buildBatch(projectID, user.getUsername());
+		}
+		if (response == null){ // user is valid, but batch not available.
 			response = "Not found: No batch available or SQL error.";
 			responseCode = 404;
 		} // if no problems, send the xml.

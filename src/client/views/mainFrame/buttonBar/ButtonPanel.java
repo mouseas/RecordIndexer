@@ -66,7 +66,7 @@ public class ButtonPanel extends JPanel {
 		
 		btnReturnBatch = new JButton("Return Batch");
 		btnReturnBatch.addActionListener(returnBatchListener);
-		buttons.add(btnReturnBatch);
+//		buttons.add(btnReturnBatch);
 	}
 
 	public void setController(MainController c) {
